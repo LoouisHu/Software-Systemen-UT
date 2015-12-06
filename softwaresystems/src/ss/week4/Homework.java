@@ -1,0 +1,21 @@
+package ss.week4;
+
+public class Homework {
+
+	public static void main(String[] args){
+	LinearProduct f1 = new LinearProduct(new Exponent(4), new Constant(4));
+	Function f2 = f1.integrand();
+	Function f3 = f1.derivative();
+	System.out.println("f(x) = " + f1 + ", f(8) =  " + f1.apply(8));
+	System.out.println("f(x) = " + f2 + ", f(8) =  " + f2.apply(8));
+	System.out.println("f(x) = " + f3 + ", f(8) =  " + f3.apply(8));	
+	
+	Sum g1 = new Sum(new Constant(15), new Constant(15));
+	Function g2 = g1.integrand();
+	Function g3 = g1.derivative();
+	System.out.println("f(x) = " + g1);
+	System.out.println("f(x) = " + g2);
+	System.out.println("f(x) = " + g3);
+	
+	}
+}
