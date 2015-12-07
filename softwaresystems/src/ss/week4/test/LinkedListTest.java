@@ -47,7 +47,7 @@ public class LinkedListTest {
     @Test
     public void testRemove() {
         list.remove(object2);
-        assertEquals(list.get(1), object3);
         assertEquals(list.size(), 2);
+        assertEquals(list.get(1), object3);
     }
 }

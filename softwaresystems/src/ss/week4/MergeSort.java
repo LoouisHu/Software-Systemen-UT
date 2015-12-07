@@ -120,6 +120,7 @@ public class MergeSort {
 		list.add(2);
 		list.add(1);
 		list.add(6);
+		list.add(10);
 		System.out.println(bubbleSort(list));
 		System.out.println(mergeSort(list));
 	}
