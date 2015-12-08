@@ -67,7 +67,7 @@ public class Board {
      * @return true if 0 <= index < DIM*DIM
      */
     //@ ensures \result == (0 <= index && index < DIM * DIM);
-    /*@pure*/
+    /*@pure*/ 	
     public boolean isField(int index) {
     	// TODO: implement, see exercise P-4.18
         return (index < (Board.DIM * Board.DIM) && index >= 0);
