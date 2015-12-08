@@ -50,4 +50,9 @@ public class LinkedListTest {
         assertEquals(list.size(), 2);
         assertEquals(list.get(1), object3);
     }
+    
+    @Test
+    public void testGet(){
+    	assertEquals(list.get(1), object2);
+    }
 }

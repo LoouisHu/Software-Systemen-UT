@@ -44,8 +44,9 @@ public class Board {
     public Board deepCopy() {
     	// TODO: implement, see exercise P-4.18
         Board newBoard = new Board();
-        for (i = 0; i < (Board.DIM * Board.DIM); i++)
-        	newboard.setField(i, this.getField(i));
+        for (int i = 0; i < (Board.DIM * Board.DIM); i++)
+        	newBoard.setField(i, this.getField(i));
+        return newBoard;
     }
 
     /**
@@ -157,9 +158,10 @@ public class Board {
     /*@pure*/
     public boolean isFull() {
     	// TODO: implement, see exercise P-4.18
-        for (int i = 0; i < Board.DIM*Board.DIM; i++){
-        	if (fields[i].equals(Mark.EMPTY));
-        	return false;
+        for (int i = 0; i <= Board.DIM*Board.DIM; i++){
+        	if (fields[i].equals(Mark.EMPTY)) {
+        		return false;
+        	}
         }
         	return true;
     }

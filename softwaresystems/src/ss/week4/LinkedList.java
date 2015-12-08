@@ -55,7 +55,8 @@ public class LinkedList<Element> {
         // TODO: implement, see exercise P-4.18
     	// for loop dat alle indexi doorloopt
     	for (int i=0; i< this.size(); i++){
-    		//De next van de node mag niet null zijn, de element van de next moet gelijk zijn met de element van findBefore()
+    		//De next van de node mag niet null zijn (dat is bij de laatste index
+    		//de element van de next moet gelijk zijn met de element van findBefore()
 			if (getNode(i).next != null && this.getNode(i).next.getElement() == element ){
 				//Het returnt de Node waarvoor geld dat de element van die node hetzelfde is als de gegeven methode waar een element wordt opgeroepen (zoals remove(Element element))
 				return getNode(i);
@@ -71,8 +72,8 @@ public class LinkedList<Element> {
     }
 
     //@ requires 0 <= i && i < this.size();
-    private /*@ pure @*/ Node getNode(int i) {
-        Node p = first;
+    private /*@ pure @*/ Node getNode(int i) { //Returns de Node
+        Node p = first; //
         int pos = 0;
         while (pos != i) {
             p = p.next;

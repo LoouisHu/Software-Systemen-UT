@@ -1,6 +1,5 @@
 package ss.week4;
 
-import ss.week4.LinkedList.Node;
 
 public class DoublyLinkedList<Element> {
 
