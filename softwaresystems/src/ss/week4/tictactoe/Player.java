@@ -1,6 +1,5 @@
 package ss.week4.tictactoe;
 
-import ss.week4.tictactoe.Mark;
 
 /**
  * Abstract class for keeping a player in the Tic Tac Toe game. Module 2 lab

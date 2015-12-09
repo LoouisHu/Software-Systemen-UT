@@ -6,7 +6,7 @@ public class MergeSort {
 	public static <E extends Comparable<E>>
 	
 	List<E> mergesort(List<E> list){
-		List<E> res = new ArrayList();
+		List<E> res = new ArrayList<E>();
 		if (list.size() <= 1){
 			res = list;
 		} else {
@@ -16,12 +16,12 @@ public class MergeSort {
 			int fi = 0;
 			int si = 0;
 			while (fi < fst.size() && si < snd.size()) {
-				if (fst.get(fi).compareTo(snd.get(si) < 0) ){
+				if (fst.get(fi).compareTo(snd.get(si)) < 0 ){
 					res.add(fst.get(fi));
-					fi = fi + 1;
+					fi++;
 				} else {
 					res.add(snd.get(si));
-					si = si + 1;
+					si++;
 				}
 			}
 			if (fi < fst.size()) {

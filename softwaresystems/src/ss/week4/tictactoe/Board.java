@@ -1,6 +1,5 @@
 package ss.week4.tictactoe;
 
-import ss.week4.tictactoe.Mark;
 
 /**
  * Game student for the Tic Tac Toe game. Module 2 lab assignment.
@@ -31,6 +30,7 @@ public class Board {
      */
     //@ ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) == Mark.EMPTY);
     public Board() {
+    	this.fields = new Mark[DIM*DIM];
     	reset();
     }
 
@@ -158,12 +158,13 @@ public class Board {
     /*@pure*/
     public boolean isFull() {
     	// TODO: implement, see exercise P-4.18
-        for (int i = 0; i <= Board.DIM*Board.DIM; i++){
+    	boolean vol = true;
+        for (int i = 0; i < Board.DIM*Board.DIM; i++){
         	if (fields[i].equals(Mark.EMPTY)) {
-        		return false;
+        		vol = false;
         	}
         }
-        	return true;
+        	return vol;
     }
 
     /**
@@ -176,10 +177,7 @@ public class Board {
     /*@pure*/
     public boolean gameOver() {
     	// TODO: implement, see exercise P-4.18
-        for (int i = 0; i < Board.DIM * Board.DIM; i++);
-        	if (isFull() || isWinner(Mark.OO) || isWinner(Mark.XX));
-        		return true;
-        	
+        	return isFull() || hasWinner();
         		
     }
 
