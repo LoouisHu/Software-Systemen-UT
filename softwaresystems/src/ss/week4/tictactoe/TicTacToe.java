@@ -9,9 +9,11 @@ package ss.week4.tictactoe;
  */
 public class TicTacToe {
 	public static void main(String[] args) {
+		if (args.length == 2){
 		Player p1 = new HumanPlayer(args[0], Mark.OO);
 		Player p2 = new HumanPlayer(args[1], Mark.XX);
 		Game g = new Game(p1, p2);
 		g.start();
+		}
 	}
 }
