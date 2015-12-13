@@ -101,6 +101,9 @@ public class MapUtil {
 	public static <K, V, W> Map<K, W> compose(Map<K, V> f, Map<V, W> g) {
         // TODO: implement, see exercise P-5.5
 		Map<K,W> result = new HashMap <K,W>();
+		if (!compatible(f,g)){
+			return null;
+		}
 		
 		//for (K key)
         return null;
