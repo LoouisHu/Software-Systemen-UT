@@ -27,7 +27,7 @@ public class IsSurjectiveOnRangeTest {
         f1.put(2, 'b');
 
         range = new HashSet<Character>(Arrays.asList('a', 'b'));
-
+        
         assertTrue(MapUtil.isSurjectiveOnRange(f1, range));
     }
 

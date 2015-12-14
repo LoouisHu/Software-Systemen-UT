@@ -1,19 +1,15 @@
 package week5;
 
-import static org.junit.Assert.assertTrue;
 
 import java.util.*;
 
 public class MapUtil {
+	/*@
+	 @ ensures \result == (\forall K x1, K x2 : map.keySet()); x1 != x2; map.get(x1) != map.get(x2));
+	 @ pure
+	 */
     public static <K, V> boolean isOneOnOne(Map<K, V> map) {
         // TODO: implement, see exercise P-5.1
-    	/* @ requires map != null;
-    	 * @ ensures x1 != x2;
-    	 * @ ensures \result == \forall (x1, x2 : map.entrySet());
-    	 * @ ensures x1.getValue() == x2.getValue()
-    	 * @ pure
-    	 */
-
     	for(Map.Entry<K, V> x1 : map.entrySet() ){
     		for(Map.Entry<K, V> x2 : map.entrySet()){
     			if (x1 != x2){
@@ -28,18 +24,17 @@ public class MapUtil {
     	
     	}
     /* @ pure;
-     * @ ensures f != null;
-     * @ ensures \result == (\forall range;
-     * @ ensures 
+     * @ 
+     * @ ensures \result == (\forall Object Y; range.contains(Y); \exist Object X; f.contains(X)); f.get(X).equals(Y); 
      */
     public static <K, V> 
     	boolean isSurjectiveOnRange(Map<K, V> f, Set<V> range) {
         // TODO: implement, see exercise P-5.2
-   
-    		if(!f.containsValue(range)){
-    			return false;
+    		for(V value : range){
+    			if(!f.containsValue(value)){
+    				return false;
+    			}
     		}
-    	
     	return true;
     }
 //    	for (V y : range){
@@ -55,8 +50,12 @@ public class MapUtil {
 //    		}
 //    	}
 //    	return true;
-    // @requires map != null;
-    // @ensures (\forall V y ; \result.containsKey(y))
+
+    
+    
+    /*
+     *@ensures \result == (\forall Object x; map.keySet().contains(x) ; \result.get(map.get(x)).equals(x);)
+     */
     public static <K, V> Map<V, Set<K>> inverse(Map<K, V> map) {
         // TODO: implement, see exercise P-5.3
     	Map<V, Set<K>> result = new HashMap<V, Set<K>>();
@@ -71,22 +70,21 @@ public class MapUtil {
     	}
     	return result;
     }
-    //@ensures map != null;
-    //@ensures 
+    // @ requires MapUtil.isOneOnOne(map);
+    // @ ensures \result.keyset.equals(map.values()) && \result.values().equals(map.keySet());
+	// @ ensures (\forall Object x; map.values().contains(x); \result.get(map.get(x)).equals(x);
 	public static <K, V> Map<V, K> inverseBijection(Map<K, V> map) {
         // TODO: implement, see exercise P-5.3
 		Map <V, K> result = new HashMap<V, K>();
-		for (V value : map.values()){
 			for (K key : map.keySet()){
-				if (map.get(key) == value) {
-					result.put(value, key);
-					break;
-				}
+				result.put(map.get(key), key);
 			}
-		}
+		
         return result;
 	}
-	
+	/*
+	 * @ensures \result == (\forall Object x; f.keySet.contains(x); \result.get(x).equals(g.get(f.get(x)))
+	 */
 	public static <K, V, W> boolean compatible(Map<K, V> f, Map<V, W> g) {
         // TODO: implement, see exercise P-5.4
 		
@@ -98,21 +96,24 @@ public class MapUtil {
 		
         return true;
 	}
+	
+	
+/*
+ * @ requires compatible(f,g);
+ * @ ensures (\forall Object x; f.keySet().contains(x); \result.keySet().contains(x) && \result.get(x).equals(g.get(f.get(x))));
+ */
+	
 	public static <K, V, W> Map<K, W> compose(Map<K, V> f, Map<V, W> g) {
         // TODO: implement, see exercise P-5.5
-		Map<K,W> result = new HashMap <K,W>();
-		if (!compatible(f,g)){
-			return null;
+		if (compatible(f, g)){
+			Map<K,W> result = new HashMap <K,W>();
+			for (K key : f.keySet()){
+				
+				result.put(key, g.get(f.get(key)));
+				}
+			
+			return result;
 		}
-		
-		//for (K key)
-        return null;
-	}
-	public static void main(String[] args){
-		Map lmao = new HashMap();
-		lmao.put(1, 3);
-		lmao.put(2, 3);
-		lmao.put(2, 3);
-		System.out.println(isOneOnOne(lmao));
+		return null;
 	}
 }
