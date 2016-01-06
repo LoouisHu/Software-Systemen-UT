@@ -1,20 +1,9 @@
 package week6.cards;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 
-public class Card
-{
+public class Card implements Serializable {
 
 	// ---- constants -----------------------------------
 
@@ -41,6 +30,95 @@ public class Card
 
 	// ---- class methods -------------------------------------
 
+	//Exercise P-6.4
+	public void write(PrintWriter pw) {
+		pw.write(this.toString());
+	}
+	
+	//Exercise P-6.7 write
+	public void write(DataOutput out) throws IOException {
+		try {
+			out.writeChar(this.getRank());
+			out.writeChar(this.getSuit());
+		} catch (IOException e) {
+			e.printStackTrace(System.out);
+		}
+	}
+	
+	//Exercise P-6.8 write
+	public void write(ObjectOutput out) throws IOException {
+		try {
+			out.writeObject(this);
+		} catch (IOException e) {
+			e.printStackTrace(System.out);
+		}
+	}
+
+	//Exercise P-6.5
+	public static Card read(BufferedReader in) throws EOFException {
+		if (in.equals(null)) {
+			return null;
+		}
+		String[] words = new String[2];
+		Scanner s = new Scanner(in);
+		if (!s.hasNextLine()) {
+			s.close();
+			throw new EOFException();
+			
+		}
+		
+		
+		int i = 0;
+		while (s.hasNext()) {
+			words[i] = s.next();
+			i++;
+		}
+		s.close();
+		
+		Card result = null;
+		char posssuit = suitString2Char(words[0]);
+		char possrank = rankString2Char(words[1]);
+		if (isValidSuit(posssuit) && isValidRank(possrank)) {
+			result = new Card(posssuit, possrank);
+		}
+		return result;
+	}
+	
+	//Exercise P-6.7 read
+	public static Card read(DataInput in) throws EOFException {
+		String text;
+		Card result = null;
+		if (in.equals(null)) {
+			return null;
+		}
+		try {
+			char posssuit = in.readChar();
+			char possrank = in.readChar();
+			if (isValidSuit(posssuit) && isValidRank(possrank)) {
+				result = new Card(posssuit, possrank);
+			}
+		} catch(IOException e) {
+			e.printStackTrace(System.out);
+		}
+		
+		return result;
+	}
+	
+	//Exercise P-6-8 read
+	public static Card read(ObjectInput in) throws EOFException {
+		Card result = null;
+		if (in.equals(null)) {
+			return null;
+		}
+		try {
+			result =  (Card) in.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace(System.out);
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Translates a char encoding of rank into it's String representation.
 	 * @return the String representation of rank
@@ -174,79 +252,6 @@ public class Card
 		return result;
 	}
 	
-	public void write(PrintWriter writer){
-		if (writer != null) {
-			writer.println(this.toString());
-		}
-	}
-	
-	public static Card write(DataOutput out) throws IOException{
-		if (out != null){
-			out.writeUTF();
-		}
-		
-	}
-	
-	public static Card read(BufferedReader in) throws EOFException{
-		if (in == null) {
-			return null;
-		}
-		Scanner scan = new Scanner(in);
-		String suit = "";
-		String rank = "";
-		try {
-			suit = scan.next();
-			rank = scan.next();
-			scan.close();
-		} catch (Exception e){
-			throw new EOFException();
-			
-		}
-		if (suit == null || rank == null){
-			throw new EOFException();
-		}
-		return new Card(suitString2Char(suit), rankString2Char(rank));
-		
-	}
-	
-	public static Card read(DataInput in) throws EOFException{
-		if (in == null){
-			return null;
-		}
-		String data = "";
-		try {
-			data = in.readUTF();			
-		} catch (IOException e){
-			throw new EOFException();
-		}
-		Scanner scan = new Scanner(data);
-		String suit = "";
-		String rank = "";
-		try{
-			suit = scan.next();
-			rank = scan.next();
-			scan.close();
-		} catch (Exception e){
-			throw new EOFException();
-		}
-		if (suit == null || rank == null){
-			throw new EOFException();
-		}
-		return new Card(suitString2Char(suit), rankString2Char(rank));
-		}
-	
-
-	
-	public static void main(String[] args) {
-		Card c1 = new Card(Card.DIAMONDS, '9');
-		Card c2 = new Card(Card.JACK, '2');
-		PrintWriter PW = new PrintWriter(File file);
-		c1.write();
-		c2.write();
-	}
-	
-	
-	
 	// ---- instance variabeles -----------------------------------
 
 	/*@
@@ -260,7 +265,7 @@ public class Card
 	   private invariant isValidRank(rank);
 	 */
 	/**
-	 * Rank of this card.
+	 * Rank of this card..
 	 */
 	private char rank;
 
@@ -407,3 +412,17 @@ public class Card
 		return isRankFollowing(this.getRank(), card.getRank());
 	}
 }
+
+//	--------------MAIN----------------
+
+//	public static void main(String[] args) {
+//		String file = args.length >= 1 ? args[0] : null;
+//		try {
+//			PrintWriter writer = new PrintWriter(new FileWriter(file));
+//			new Card(CLUBS, JACK).write(writer);
+//			writer.close();
+//		} catch (IOException e) {
+//			System.out.println(e.getMessage());
+//		}
+//	}
+//}

@@ -1,14 +1,14 @@
-package ss.week6.voteMachine.gui;
+package week6.voteMachine.gui;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Scanner;
 
-import ss.week6.voteMachine.PartyList;
-import ss.week6.voteMachine.VoteList;
-import ss.week6.voteMachine.VoteMachine;
-import ss.week6.voteMachine.VoteView;
+import week6.voteMachine.PartyList;
+import week6.voteMachine.VoteList;
+import week6.voteMachine.VoteMachine;
+import week6.voteMachine.VoteView;
 
 public class VoteGUIView implements VoteView {
 	private VoteMachine voteMachine;

@@ -1,10 +1,10 @@
-package ss.week6.test;
+package week6.test;
 
 import org.junit.Before;
 import org.junit.Test;
-import ss.week6.ArgumentLengthsDifferException;
-import ss.week6.TooFewArgumentsException;
-import ss.week6.WrongArgumentException;
+import week6.ArgumentLengthsDifferException;
+import week6.TooFewArgumentsException;
+import week6.WrongArgumentException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

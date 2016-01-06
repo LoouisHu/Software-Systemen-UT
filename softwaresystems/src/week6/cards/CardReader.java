@@ -1,4 +1,4 @@
-package ss.week6.cards;
+package week6.cards;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

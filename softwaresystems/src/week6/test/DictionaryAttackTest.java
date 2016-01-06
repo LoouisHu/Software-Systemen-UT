@@ -1,8 +1,8 @@
-package ss.week6.test;
+package week6.test;
 
 import org.junit.Before;
 import org.junit.Test;
-import ss.week6.dictionaryattack.DictionaryAttack;
+import week6.dictionaryattack.DictionaryAttack;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ public class DictionaryAttackTest {
     private DictionaryAttack dictionaryAttack;
 
     /** Path to the text file */
-    private static final String PATH = ""; //Your path to the test folder
+    private static final String PATH = "C:\\Users\\Louis\\git\\softwaresystems\\src\\week6\\test\\"; //Your path to the test folder
 
     @Before
     public void setUp() {

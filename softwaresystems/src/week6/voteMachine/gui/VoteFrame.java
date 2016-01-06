@@ -1,4 +1,4 @@
-package ss.week6.voteMachine.gui;
+package week6.voteMachine.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;

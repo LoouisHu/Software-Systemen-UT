@@ -1,9 +1,9 @@
-package ss.week6.test;
+package week6.test;
 
 import org.junit.Before;
 import org.junit.Test;
-import ss.week6.voteMachine.PartyList;
-import ss.week6.voteMachine.VoteList;
+import week6.voteMachine.PartyList;
+import week6.voteMachine.VoteList;
 
 import java.util.Map;
 

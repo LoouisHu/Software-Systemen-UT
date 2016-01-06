@@ -10,10 +10,18 @@ public class HelloWorld {
 	}
 
 	public static void main(String[] args) {
+		boolean doorgaan = true;
+		while (doorgaan){	
 		in = new Scanner(System.in);
 		System.out.println("Enter the name Louis:");
 		String name = in.nextLine();
-		System.out.println(name + ": Hello!");
+		
+		if (name.equals("")){
+			doorgaan = false;
+		} else { 
+			System.out.println(name + ": Hello!");
+		}
+		}
 	}
 
 }
