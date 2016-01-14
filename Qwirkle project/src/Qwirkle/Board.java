@@ -32,12 +32,13 @@ public class Board {
 		if (!oldX && !oldY) {
 			answer = false;
 		}
+		
 		if (boardSpaces[theMove.getCoord().getX()][theMove.getCoord().getY()] != null){
 			answer = false;
 		}
 		int adjecends =0;
 		for(int i=0; i<4; i++){
-			Coord c = theMove.getCoord().getAdjecendCoords()[i];
+			Coord c = theMove.getCoord().getAdjacentCoords()[i];
 		    if(boardSpaces[c.getX()][c.getY()] != null){
 		    	adjecends++;
 		    }
@@ -134,6 +135,10 @@ public class Board {
 		}
 		return answer;
 		}
+	
+	public void boardAddMove(Move move){
+		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
+	}
 	
 	
 	public boolean gameOver(){

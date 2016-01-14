@@ -16,7 +16,7 @@ public class Coord {
 	public int getY(){
 		return vertical;
 	}
-	public Coord[] getAdjecendCoords(){
+	public Coord[] getAdjacentCoords(){
 		Coord[] coords = new Coord[4];
 		coords[0] = new Coord(horizontal+1,vertical);
 		coords[1] = new Coord(horizontal-1,vertical);
