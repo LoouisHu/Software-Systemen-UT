@@ -1,13 +1,17 @@
 package Qwirkle;
 
+import java.util.Set;
+
 public abstract class Player {
 	
  // -- Instance variables -----------------------------------------
 
 	 private String name;
-	 private Tile[] hand;
+	 private Set<Tile> hand;
+	 private Board deepcopy;
+	 private Board board;
 	 
-	 public Player(String name, Tile[] hand){
+	 public Player(String name, Set<Tile> hand){
 		 this.name = name;
 		 this.hand = hand;
 	 }
@@ -16,9 +20,17 @@ public abstract class Player {
 		 return name;
 	 }
 	
-	 public Tile[] getHand(){
+	 public Set<Tile> getHand(){
 		 return hand;
 	 }
 	    
+	 
+	public void MakeMove(){
+		
+	}
+	
+	public void TradeTiles(){
+		
+	}
 }
 
