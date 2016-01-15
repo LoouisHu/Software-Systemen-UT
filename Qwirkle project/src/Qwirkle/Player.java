@@ -32,17 +32,28 @@ public abstract class Player {
 		if(currentMoves.size() == 0){
 			deepCopy = board;
 		}
-		if(this.getHand().contains(tile) && deepCopy.validMove(movie, currentMoves)){
-			deepCopy.boardAddMove(movie);
+		if(this.getHand().contains(tile) && board.validMove(movie, currentMoves)){
+			board.boardAddMove(movie);
+			currentMoves.add(movie);
+			hand.remove(movie.getTile());
 		}
+	}
+	
+	public void undoTurn(){
+		Move lastMove = currentMoves.get(currentMoves.size()-1);
+		board.boardRemove(lastMove.getCoord());
+		hand.add(lastMove.getTile());
+	    currentMoves.remove(lastMove);
 	}
 	
 	public void confirmTurn(){
 		
+//      sent board to server
 	}
 	
 	public void TradeTiles(){
-		
+//      request new set<Tile> from server: hand = handRequestedSet
+		hand = handRequestedSet;
 	}
 }
 
