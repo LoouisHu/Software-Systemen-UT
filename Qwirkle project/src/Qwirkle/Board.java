@@ -12,11 +12,14 @@ public class Board {
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
 	}
-
+	
+	//@ pure
 	public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
-
+	
+	//@pure
+	//@ensures this.getCoord().getX() 
 	public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean answer = true;
 		boolean oldY = true;
@@ -36,14 +39,14 @@ public class Board {
 		if (boardSpaces[theMove.getCoord().getX()][theMove.getCoord().getY()] != null) {
 			answer = false;
 		}
-		int adjecends = 0;
+		int adjacents = 0;
 		for (int i = 0; i < 4; i++) {
 			Coord c = theMove.getCoord().getAdjacentCoords()[i];
 			if (boardSpaces[c.getX()][c.getY()] != null) {
-				adjecends++;
+				adjacents++;
 			}
 		}
-		if (adjecends == 0) {
+		if (adjacents == 0) {
 			answer = false;
 		}
 		if (!(inLineV(theMove) && inLineH(theMove))) {
