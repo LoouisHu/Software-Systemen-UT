@@ -5,11 +5,23 @@ import java.util.Set;
 
 public class Game {
 
-	public Set<Tile> tiles;
+	private Set<Tile> tiles;
 	
-	public Map<Player, Integer> scores;
+	private Map<Player, Integer> scores;
 	
-	public int turn;
+	private int turn;
 	
+	
+	public void nextTurn(){
+		turn++;
+	}
+	
+	public int getTurn(){
+		return turn;
+	}
+	
+	public Map<Player, Integer> getScores(){
+		return scores;
+	}
 	
 }
