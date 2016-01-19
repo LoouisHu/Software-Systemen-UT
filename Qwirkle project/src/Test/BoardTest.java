@@ -11,12 +11,12 @@ import org.junit.Test;
 
 import Qwirkle.Board;
 import Qwirkle.Coord;
-import Qwirkle.HumanPlayer;
 import Qwirkle.Move;
-import Qwirkle.Player;
 import Qwirkle.Tile;
 import Qwirkle.Tile.Color;
 import Qwirkle.Tile.Shape;
+import player.HumanPlayer;
+import player.Player;
 
 public class BoardTest {
 	

@@ -1,6 +1,8 @@
-package Qwirkle;
+package player;
 
 import java.util.Set;
+
+import Qwirkle.Tile;
 
 public class ComputerPlayer extends Player {
 	

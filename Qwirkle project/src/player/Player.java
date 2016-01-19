@@ -1,8 +1,13 @@
-package Qwirkle;
+package player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import Qwirkle.Board;
+import Qwirkle.Coord;
+import Qwirkle.Move;
+import Qwirkle.Tile;
 
 public abstract class Player {
 	
@@ -58,7 +63,7 @@ public abstract class Player {
 	}
 	
 	public void confirmTurn(){
-//      sent board to server
+//      send board to server
 		currentMoves.removeAll(currentMoves);
 	}
 	

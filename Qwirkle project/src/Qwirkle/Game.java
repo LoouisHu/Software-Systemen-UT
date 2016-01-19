@@ -3,6 +3,8 @@ package Qwirkle;
 import java.util.Map;
 import java.util.Set;
 
+import player.Player;
+
 public class Game {
 
 	private Set<Tile> tiles;
