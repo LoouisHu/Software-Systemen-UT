@@ -140,6 +140,10 @@ public class Board {
 		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
 	}
 	
+	public void boardRemove(Coord coord){
+		boardSpaces[coord.getX()][coord.getY()] = null;
+	}
+	
 	
 	public boolean gameOver(){
 		boolean answer = false;
