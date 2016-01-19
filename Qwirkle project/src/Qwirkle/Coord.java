@@ -18,10 +18,18 @@ public class Coord {
 	}
 	public Coord[] getAdjacentCoords(){
 		Coord[] coords = new Coord[4];
+		if(horizontal != DIM){
 		coords[0] = new Coord(horizontal+1,vertical);
-		coords[1] = new Coord(horizontal-1,vertical);
-		coords[2] = new Coord(horizontal,vertical+1);
-		coords[3] = new Coord(horizontal,vertical-1);
+		}
+		if(horizontal != 0){
+			coords[1] = new Coord(horizontal-1,vertical);			
+		}
+		if(vertical != DIM){
+			coords[2] = new Coord(horizontal,vertical+1);
+		}
+		if(vertical != 0){
+			coords[3] = new Coord(horizontal,vertical-1);
+		}
 		return coords;
 		
 	}

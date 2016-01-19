@@ -1,7 +1,9 @@
 package Qwirkle;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 public class Board {
 	
 	public static Tile[][] boardSpaces;
@@ -18,9 +20,11 @@ public class Board {
 	
 
 	public boolean validMove(Move theMove, List<Move> movesMade){
+		boolean firstMove = (boardSpaces[91][91] == null);
 		boolean answer = true;
 		boolean oldY = true;
 		boolean oldX = true;
+		if(!firstMove){
 		for (Move m : movesMade) {
 			if(m.getCoord().getX() != theMove.getCoord().getX()) {
 				oldX = false;
@@ -47,6 +51,9 @@ public class Board {
 			answer = false;
 		}
 		if(!(inLineV(theMove) && inLineH(theMove))){
+			answer = false;
+		}
+		} else if(theMove.getCoord().getX() != 91 || theMove.getCoord().getY() != 91){
 			answer = false;
 		}
 		
@@ -144,6 +151,17 @@ public class Board {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
 	
+	public Set<Move> getUsedSpaces(){
+		Set<Move> result = new HashSet<Move>();
+		for(int i=0; i<DIM; i++){
+			for(int j=0; j<DIM; j++){
+				if(boardSpaces[i][j] != null){
+					result.add(new Move(boardSpaces[i][j], new Coord(i,j)));
+				}
+			}
+		}
+		return result;
+	}
 	
 	public boolean gameOver(){
 		boolean answer = false;
