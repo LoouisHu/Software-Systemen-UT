@@ -31,6 +31,6 @@ public class Coord {
 			coords[3] = new Coord(horizontal,vertical-1);
 		}
 		return coords;
-		
+
 	}
 }

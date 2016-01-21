@@ -46,15 +46,19 @@ public class BoardTest {
 		tiless.add(t1);
 		tiless.add(t2);
 		tiless.add(t3);
-		Coord c1 = new Coord(0, 0);
-		Coord c2 = new Coord(1, 0);
-		Coord c3 = new Coord(2, 0);
+		Coord c1 = new Coord(91, 91);
+		Coord c2 = new Coord(92, 91);
+		Coord c3 = new Coord(93, 91);
 		Player louis = new HumanPlayer("louis", tiless);
 		louis.makeMove(t1, c1);
 		louis.makeMove(t2, c2);
 		louis.makeMove(t3, c3);
-		assertTrue(board.boardSpaces[0][0] == t1);
-		assertTrue(board.boardSpaces[1][0] == t2);
-		assertFalse(board.boardSpaces[2][0] == t3);
+		assertTrue(board.boardSpaces[91][91] == t1);
+		System.out.println("Joepie ik kom hier!");
+		System.out.println(t2.toString());
+		System.out.println(board.boardSpaces[92][91].toString());
+		//System.out.println(board.boardSpaces[92][91].getColor() + board.boardSpaces[92][91].getShape());
+		assertTrue(board.boardSpaces[92][91] == t2);
+		assertFalse(board.boardSpaces[93][91] == t3);
 	}
 }

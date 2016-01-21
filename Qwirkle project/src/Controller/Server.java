@@ -1,9 +1,6 @@
 package Controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,7 +10,7 @@ public class Server {
 	
 	private Board board;
 	private boolean running;
-	private static int portNumber = 666;
+	private static int portNumber;
 	
 	public void Server(){
 		running = true;
@@ -24,7 +21,13 @@ public class Server {
 	public void run() {
 		ServerSocket serverSocket = null;
 		try {
+			int p = 0;
 			serverSocket = new ServerSocket(portNumber);
+			portNumber = serverSocket.getLocalPort();
+			System.out.println("A player has connected to port: " + portNumber + ".");
+			serverSocket.accept();
+			System.out.println("Player " + p + " has connected.");
+			//if connection is closed, use serverSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -34,7 +37,9 @@ public class Server {
 			try {
 				Socket clientSoc;
 				clientSoc = serverSocket.accept();
-				new Thread(new PlayerHandler(clientSoc, board)).start();
+				PlayerHandler playerHandler = new PlayerHandler(clientSoc, board);
+				new Thread(playerHandler).start();
+//				addHandler(playerHandler);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
