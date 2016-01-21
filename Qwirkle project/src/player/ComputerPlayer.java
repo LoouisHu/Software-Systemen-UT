@@ -1,10 +1,13 @@
 package player;
 
+import java.util.List;
 import java.util.Set;
 
+import Qwirkle.Board;
+import Qwirkle.Move;
 import Qwirkle.Tile;
 
-public class ComputerPlayer extends Player {
+public class ComputerPlayer extends Player implements Strategy{
 	
 	private Strategy strat;
 
@@ -16,6 +19,19 @@ public class ComputerPlayer extends Player {
 	public ComputerPlayer(String name, Set<Tile> hand, Strategy strat){
 		super(name, hand);
 		this.strat = strat;
+	}
+
+	@Override
+	public String determineMove(Board board) {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+
+	@Override
+	public List<Move> strategyPlay(Board board) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

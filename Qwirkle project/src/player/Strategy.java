@@ -1,14 +1,14 @@
 package player;
 
 import java.util.List;
+import java.util.Set;
 
-import Qwirkle.Board;
-import Qwirkle.Move;
+import Qwirkle.*;
 
 public interface Strategy {
 	
-	public String determineMove(Board board);
+	public String determineMove(Board board, Set<Tile> tile);
 	
-	public List<Move> strategyPlay(Board board);
+	public List<Move> strategyPlay(Board board, List<Tile> hand, Player player, int tileSize);
 
 }

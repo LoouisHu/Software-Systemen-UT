@@ -1,10 +1,12 @@
 package player;
 
 import java.util.List;
+import java.util.Set;
 
 import Qwirkle.Board;
 import Qwirkle.Move;
-//TODO bitches vragen over de determinemove
+import Qwirkle.Tile;
+
 public class RetardedStrategy implements Strategy {
 	
 	private Player player;
@@ -14,9 +16,10 @@ public class RetardedStrategy implements Strategy {
 	}
 
 	@Override
-	public String determineMove(Board board) {
+	public String determineMove(Board board, Set<Tile> hand) {
 		// TODO Auto-generated method stub
 		
+		Player p = new ComputerPlayer("RS", hand);
 		return null;
 	}
 
@@ -25,5 +28,18 @@ public class RetardedStrategy implements Strategy {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String determineMove(Board board, Set<Tile> tile) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Move> strategyPlay(Board board, List<Tile> hand, Player player, int tileSize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
