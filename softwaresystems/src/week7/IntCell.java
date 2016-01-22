@@ -1,4 +1,4 @@
-package ss.week7;
+package week7;
 
 public class IntCell {
     private int contents = 0;

@@ -14,10 +14,16 @@ public abstract class Player {
  // -- Instance variables -----------------------------------------
 
 	 private String name;
+	 
 	 private Set<Tile> hand;
+	 
 	 private Board deepCopy;
+	 
 	 private Board board;
+	 
 	 private List<Move> currentMoves;
+	 
+	 //-----Constructor------
 	 
 	 public Player(String name, Set<Tile> hand){
 		 this.name = name;
@@ -25,19 +31,22 @@ public abstract class Player {
 		 currentMoves = new ArrayList<Move>();
 		 board = new Board();
 	 }
-	 
+	 //------Queries-------
 	 public String getName(){
-		 return name;
+		 return this.name;
 	 }
 	
 	 public Set<Tile> getHand(){
-		 return hand;
+		 return this.hand;
 	 }
+	 
+	 //----Setters-----
 	 
 	 public void setHand(Set<Tile> newHand){
 		 hand.addAll(newHand);
 	 }
-	    
+	
+	 //----Methods-----
 	 
 	public void makeMove(Tile tile, Coord coord){
 		Move movie = new Move(tile, coord);

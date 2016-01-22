@@ -1,4 +1,4 @@
-package ss.week7;
+package week7;
 
 public class ConcatThread extends Thread {
     private static String text = ""; // global variable

@@ -43,11 +43,11 @@ public class Tile {
 		return String.valueOf(shape.u);
 	}
 	
-	public static void main(String[] args){
+	/*public static void main(String[] args){
 		Shape s = Shape.CIRCLE;
 		Color c = Color.RED;
 		Tile t = new Tile(c, s);
 		System.out.println(c.toString() + t.toString());
-	}
+	}*/
 	
 }
