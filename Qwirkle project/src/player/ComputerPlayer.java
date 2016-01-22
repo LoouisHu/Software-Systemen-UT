@@ -21,12 +21,6 @@ public class ComputerPlayer extends Player implements Strategy{
 		this.strat = strat;
 	}
 
-	@Override
-	public String determineMove(Board board) {
-		// TODO Auto-generated method stub
-		
-		return null;
-	}
 
 	@Override
 	public String determineMove(Board board, Set<Tile> tile) {

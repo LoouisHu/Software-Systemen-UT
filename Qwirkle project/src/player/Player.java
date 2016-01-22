@@ -23,6 +23,10 @@ public abstract class Player {
 	 
 	 private List<Move> currentMoves;
 	 
+// -- Abstract implementations --
+	 
+	 public abstract void determinePutMove(Board board);
+	 
 	 //-----Constructor------
 	 
 	 public Player(String name, Set<Tile> hand){
@@ -74,6 +78,10 @@ public abstract class Player {
 	public void confirmTurn(){
 //      send board to server
 		currentMoves.removeAll(currentMoves);
+	}
+	
+	public Board getBoard(){
+		return board;
 	}
 	
 }
