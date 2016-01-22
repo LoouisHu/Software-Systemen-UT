@@ -22,6 +22,11 @@ public class PlayerHandler implements Runnable{
 		
 		try {
 			in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+			String lline;
+			while((lline = in.readLine()) != null){
+				//implement commands to be read;
+				//implement commands to be send?;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,4 +1,4 @@
-package ss.week7.challenge;
+package week7.challenge;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;

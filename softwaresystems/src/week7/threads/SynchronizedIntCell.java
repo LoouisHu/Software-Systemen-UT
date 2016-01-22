@@ -2,32 +2,32 @@ package week7.threads;
 
 public class SynchronizedIntCell implements IntCell {
 	private int value = 0;
-
+	private boolean valueSet = false;
+	
 	public synchronized void setValue(int valueArg) {
-		while (value != 0) {
+		while (valueSet) {
 			try {
-				this.notify();
 				this.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		value = valueArg;
-		this.notify();
+		valueSet = true;
+		this.notifyAll();
 	}
 
 	public synchronized int getValue() {
-		while (value == 0) {
+		while (!valueSet) {
 			try {
-				this.notify();
 				this.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		int oldval = value;
-		value = 0;
-		this.notify();
+		valueSet = false;
+		this.notifyAll();
 		return oldval;
 	}
 }

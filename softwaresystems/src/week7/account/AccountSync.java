@@ -4,8 +4,8 @@ public class AccountSync {
 
 	public static void main(String[] args){
 		Account account = new Account();
-		Thread t1 = new MyThread(100, 200, account);
-		Thread t2 = new MyThread(-100,200, account);
+		Thread t1 = new Thread(new MyThread(100, 200, account));
+		Thread t2 = new Thread(new MyThread(-100,200, account));
 		
 		t1.start();
 		t2.start();

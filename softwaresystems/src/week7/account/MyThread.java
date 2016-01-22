@@ -1,6 +1,6 @@
 package week7.account;
 
-public class MyThread extends Thread{
+public class MyThread implements Runnable{
 	double theAmount;
 	int theFrequency;
 	Account theAccount;
