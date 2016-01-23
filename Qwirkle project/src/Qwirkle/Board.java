@@ -67,6 +67,7 @@ public class Board {
 	}
 /*
  * @ requires
+ * check of de eerste naast m klopt met de regels, maar de volgende daar naast niet
  */
 	
 	
