@@ -191,20 +191,20 @@ public class Board {
 		String result = "";
 		String line = "";
 		for(int i = 0; i < DIM*2; i++) {
-			line += "_";
+			line += "-";
 		}
 		result += line;
 		for(int y = 0; y < DIM; y++) {
+			result += "|";
 			for(int x = 0; x < DIM; x++) {
 				Tile t = boardSpaces[x][y];
-				result += "|";
 				if(t != null) {
 					result += t.getShape().u + "|";
 				} else {
 					result += " |";
 				}
 			}
-			result += line;
+			result += "\n" + line + "\n";
 		}
 		return result;
 	}
