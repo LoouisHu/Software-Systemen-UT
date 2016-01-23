@@ -37,14 +37,16 @@ public class Game {
 		return scores;
 	}
 	
-	public 
-	
 	public boolean gameOver() {
-		
+		return false;
 	}
 
 	public boolean hasWinner() {
 		boolean answer = false;
 		return answer;
+	}
+	
+	public Board getBoard() {
+		return board;
 	}
 }
