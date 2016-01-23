@@ -56,5 +56,9 @@ public class TileBag {
 		return this.tiles.size();
 	}
 	
+	//checks whether the tilebag is empty
+	public boolean isEmpty(){
+		return this.tiles.isEmpty();
+	}
 
 }

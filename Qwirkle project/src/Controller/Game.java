@@ -16,6 +16,8 @@ public class Game {
 	
 	private TileBag tilebag;
 	
+	private Player player;
+	
 	public Game(int aantalspelers) {
 		tilebag = new TileBag();
 	}
@@ -35,8 +37,7 @@ public class Game {
 	public 
 	
 	public boolean gameOver() {
-		boolean answer = false;
-		return answer;
+		
 	}
 
 	public boolean hasWinner() {
