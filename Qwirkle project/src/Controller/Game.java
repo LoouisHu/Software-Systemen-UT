@@ -3,6 +3,7 @@ package Controller;
 import java.util.Map;
 import java.util.Set;
 
+import Qwirkle.Board;
 import Qwirkle.Tile;
 import player.Player;
 
@@ -17,6 +18,8 @@ public class Game {
 	private TileBag tilebag;
 	
 	private Player player;
+	
+	private Board board;
 	
 	public Game(int aantalspelers) {
 		tilebag = new TileBag();

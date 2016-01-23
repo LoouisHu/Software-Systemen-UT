@@ -29,9 +29,10 @@ public class ComputerPlayer extends Player implements Strategy{
 	}
 
 	@Override
-	public List<Move> strategyPlay(Board board, List<Tile> hand, Player player, int tileSize) {
+	public void determinePutMove(Board board) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
+
 
 }
