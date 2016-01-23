@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import Qwirkle.Tile.Color;
+import Qwirkle.Tile.Shape;
+
 public class Board {
 
 	public static Tile[][] boardSpaces;
@@ -211,6 +214,7 @@ public class Board {
 	
 	public static void main(String args[]) {
 		Board b = new Board();
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.STAR), new Coord(0,0)));
 		System.out.println(b.toString());
 	}
 }
