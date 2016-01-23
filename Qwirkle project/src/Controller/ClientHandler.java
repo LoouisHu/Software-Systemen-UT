@@ -171,11 +171,13 @@ public class ClientHandler extends Thread{
 							}
 						}
 					}
+					break;
 				case Protocol.SWAP:
 					while(sc.hasNext()) {
 						
 					}
 					server.getGame(this).swap(tiles);
+					break;
 			}
 		}
 		
@@ -358,9 +360,12 @@ public class ClientHandler extends Thread{
 		Tile t;
 		char color = s.charAt(0);
 		char shape = s.charAt(1);
+		switch(color) {
+		case Color.toChar():
+			
+		}
 		
-		
-		t = new Tile(color, shape);
+		t = new Tile(Color., shape);
 		return t;
 	}
 }

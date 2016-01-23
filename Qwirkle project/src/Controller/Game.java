@@ -58,6 +58,7 @@ public class Game {
 		for(Tile t: tiles) {
 			tilebag.returnTile(t);
 		}
+		tilebag.shuffle();
 		return result;
 	}
 }

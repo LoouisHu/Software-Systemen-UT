@@ -63,6 +63,5 @@ public class TileBag {
 	
 	public void returnTile(Tile t) {
 		tiles.add(t);
-		shuffle();
 	}
 }
