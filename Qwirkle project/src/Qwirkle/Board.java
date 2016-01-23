@@ -203,6 +203,7 @@ public class Board {
 				Tile t = boardSpaces[x][y];
 				if(t != null) {
 					result += t.getShape().c + "|";
+					System.out.println(t.getShape().c);
 				} else {
 					result += " |";
 				}
