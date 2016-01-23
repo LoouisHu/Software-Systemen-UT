@@ -196,7 +196,7 @@ public class Board {
 		for(int i = 0; i < DIM*2; i++) {
 			line += "-";
 		}
-		result += line;
+		result += line + "\n";
 		for(int y = 0; y < DIM; y++) {
 			result += "|";
 			for(int x = 0; x < DIM; x++) {
