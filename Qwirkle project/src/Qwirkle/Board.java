@@ -187,4 +187,30 @@ public class Board {
 
 	}
 
+	public String toString() {
+		String result = "";
+		String line = "";
+		for(int i = 0; i < DIM*2; i++) {
+			line += "_";
+		}
+		result += line;
+		for(int y = 0; y < DIM; y++) {
+			for(int x = 0; x < DIM; x++) {
+				Tile t = boardSpaces[x][y];
+				result += "|";
+				if(t != null) {
+					result += t.getShape().u + "|";
+				} else {
+					result += " |";
+				}
+			}
+			result += line;
+		}
+		return result;
+	}
+	
+	public static void main(String args[]) {
+		Board b = new Board();
+		System.out.println(b.toString());
+	}
 }
