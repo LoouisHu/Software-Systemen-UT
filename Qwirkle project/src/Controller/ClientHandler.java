@@ -37,7 +37,6 @@ public class ClientHandler extends Thread{
 	 * @invariant naam != null
 	 */
 	private String naam;
-	private int aantalSpelers;
 	
 	/**
      * Construeert een ClientHandler object.
@@ -154,48 +153,28 @@ public class ClientHandler extends Thread{
 		String commando;
 		if(sc.hasNext()){
 			commando = sc.next();
-			if(commando.equals(Protocol.JOIN)){
-				if(server.containsCH(this)){
-					if(sc.hasNext()){
-						String tempnaam = sc.next();
-						if(server.contains(tempnaam, this)){
-							int nummer = 1;
-							/**
-							 * @invariant for all int nummer > 2: server.contains(tempnaam + (nummer - 1), this) == true
-							 */
-							while(server.contains(tempnaam+nummer, this)){
-								nummer++;
-							}
-							tempnaam += nummer;
-						}
-						naam = tempnaam;
+			switch(commando) {
+				case Protocol.HELLO:
+					if(server.containsCH(this)){
 						if(sc.hasNext()){
-							try{
-								aantalSpelers = Integer.parseInt(sc.next());
-								if(!sc.hasNext() && aantalSpelers > 0 && aantalSpelers <= 4) {
-									sendMessage(Protocol.CONNECTED + " " + naam);
-									if(!server.check(aantalSpelers)){
-										sendMessage(Protocol.PLAYERS + server.getLobby(this));
-									}
-								} else {
-									if(aantalSpelers == 0) {
-										sendMessage(Protocol.NO_CHALLENGE);
-									}
-									quit();
-								}
-							} catch(NumberFormatException e){
-								quit();
+							String tempnaam = sc.next();
+							if(server.contains(tempnaam, this) && tempnaam.length() >= 1 && tempnaam.length() <= 16 && tempnaam.matches("[a-zA-Z]*")) {
+								server.remove(this);
+								sendMessage(Protocol.KICK + " name already exists");
+							} else {
+								naam = tempnaam;
+								sendMessage(Protocol.WELCOME + " " + naam + " " + server.getNumber());
 							}
-						} else {
-							quit();
 						}
-					} else {
-						quit();
 					}
-				} else {
-					cheateralert();
-				}
-			} else if(commando.equals(Protocol.SET_TILE)){
+				case Protocol.SWAP:
+					
+			}
+		}
+		
+		
+		
+			else if(commando.equals(Protocol.SET_TILE)){
 				if(!server.containsCH(this)){
 					if(server.checkBeurt(this) && server.checkTile(this)){
 						if(sc.hasNext()){
@@ -366,13 +345,5 @@ public class ClientHandler extends Thread{
 	 */
 	public String getNaam(){
 		return naam;
-	}
-	
-	/**
-	 * Levert het aantal spelers op waarmee de Client van deze 
-	 * ClientHandler wil spelen.
-	 */
-	public int getAantalSpelers(){
-		return aantalSpelers;
 	}
 }
