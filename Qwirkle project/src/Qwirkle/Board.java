@@ -193,7 +193,7 @@ public class Board {
 	public String toString() {
 		String result = "";
 		String line = "";
-		for(int i = 0; i < DIM*2; i++) {
+		for(int i = 0; i < DIM*3; i++) {
 			line += "-";
 		}
 		result += line + "\n";
@@ -202,8 +202,7 @@ public class Board {
 			for(int x = 0; x < DIM; x++) {
 				Tile t = boardSpaces[x][y];
 				if(t != null) {
-					result += t.getShape().c + "|";
-					System.out.println(t.getShape().c);
+					result += t.getColor().c + t.getShape().c + "|";
 				} else {
 					result += " |";
 				}
