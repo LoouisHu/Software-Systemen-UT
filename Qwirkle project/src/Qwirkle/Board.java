@@ -202,7 +202,8 @@ public class Board {
 			for(int x = 0; x < DIM; x++) {
 				Tile t = boardSpaces[x][y];
 				if(t != null) {
-					result += t.getColor().c + t.getShape().c + "|";
+					result += t.getColor().c;
+					result += t.getShape().c + "|";
 				} else {
 					result += "  |";
 				}
