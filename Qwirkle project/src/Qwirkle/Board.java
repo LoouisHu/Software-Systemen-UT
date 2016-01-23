@@ -204,7 +204,7 @@ public class Board {
 				if(t != null) {
 					result += t.getColor().c + t.getShape().c + "|";
 				} else {
-					result += " |";
+					result += "  |";
 				}
 			}
 			result += "\n" + line + "\n";
