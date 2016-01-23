@@ -6,8 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import Qwirkle.Tile;
-import Qwirkle.Tile.Color;
-import Qwirkle.Tile.Shape;
+
 //TODO gebruiken voor de server;
 public class TileBag {
 	
@@ -26,7 +25,9 @@ public class TileBag {
 		
 		for (Tile.Color c : Tile.Color.values()){
 			for( Tile.Shape s : Tile.Shape.values()){
-				this.tiles.add(new Tile(c, s));
+				for(int i = 0; i < 3; i++) {
+					this.tiles.add(new Tile(c, s));
+				}
 			}
 		}
 	}

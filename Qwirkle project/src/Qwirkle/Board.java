@@ -176,20 +176,6 @@ public class Board {
 		return result;
 	}
 
-	public boolean gameOver() {
-		boolean answer = false;
-		return answer;
-	}
-
-	public boolean hasWinner() {
-		boolean answer = false;
-		return answer;
-	}
-
-	public void Start() {
-
-	}
-
 	public String toString() {
 		String result = "";
 		String line = "";

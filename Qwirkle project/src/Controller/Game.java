@@ -1,8 +1,9 @@
-package Qwirkle;
+package Controller;
 
 import java.util.Map;
 import java.util.Set;
 
+import Qwirkle.Tile;
 import player.Player;
 
 public class Game {
@@ -13,6 +14,11 @@ public class Game {
 	
 	private int turn;
 	
+	private TileBag tilebag;
+	
+	public Game(int aantalspelers) {
+		tilebag = new TileBag();
+	}
 	
 	public void nextTurn(){
 		turn++;
@@ -26,4 +32,15 @@ public class Game {
 		return scores;
 	}
 	
+	public 
+	
+	public boolean gameOver() {
+		boolean answer = false;
+		return answer;
+	}
+
+	public boolean hasWinner() {
+		boolean answer = false;
+		return answer;
+	}
 }
