@@ -49,4 +49,16 @@ public class Game {
 	public Board getBoard() {
 		return board;
 	}
+	
+	public Tile[] swap(Tile[] tiles) {
+		Tile[] result = new Tile[tiles.length];
+		for(int i = 0; i < tiles.length; i++) {
+			result[i] = tilebag.drawTile();
+		}
+		for(Tile t: tiles) {
+			tilebag.returnTile(t);
+		}
+		tilebag.shuffle();
+		return result;
+	}
 }
