@@ -60,5 +60,9 @@ public class TileBag {
 	public boolean isEmpty(){
 		return this.tiles.isEmpty();
 	}
-
+	
+	public void returnTile(Tile t) {
+		tiles.add(t);
+		shuffle();
+	}
 }

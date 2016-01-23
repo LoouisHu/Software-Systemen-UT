@@ -8,6 +8,9 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import Qwirkle.Tile;
+import Qwirkle.Tile.Color;
+
 /**
  * Klasse ClientHandler is de communicatie tussen Client en Server. Ook verwerkt het de berichten van Client volgens het Protocol.
  */
@@ -158,9 +161,10 @@ public class ClientHandler extends Thread{
 					if(server.containsCH(this)){
 						if(sc.hasNext()){
 							String tempnaam = sc.next();
-							if(server.contains(tempnaam, this) && tempnaam.length() >= 1 && tempnaam.length() <= 16 && tempnaam.matches("[a-zA-Z]*")) {
+							if(server.contains(tempnaam, this) && tempnaam.length() < 1 && tempnaam.length() > 16 && !tempnaam.matches("[a-zA-Z]*")) {
+								sendMessage(Protocol.KICK + " name already exists or name too long or use only letters");
 								server.remove(this);
-								sendMessage(Protocol.KICK + " name already exists");
+								shutdown();
 							} else {
 								naam = tempnaam;
 								sendMessage(Protocol.WELCOME + " " + naam + " " + server.getNumber());
@@ -168,7 +172,10 @@ public class ClientHandler extends Thread{
 						}
 					}
 				case Protocol.SWAP:
-					
+					while(sc.hasNext()) {
+						
+					}
+					server.getGame(this).swap(tiles);
 			}
 		}
 		
@@ -345,5 +352,15 @@ public class ClientHandler extends Thread{
 	 */
 	public String getNaam(){
 		return naam;
+	}
+	
+	public Tile convertTextToTile(String s) {
+		Tile t;
+		char color = s.charAt(0);
+		char shape = s.charAt(1);
+		
+		
+		t = new Tile(color, shape);
+		return t;
 	}
 }

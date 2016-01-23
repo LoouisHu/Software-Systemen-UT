@@ -312,7 +312,6 @@ public class Server extends Thread {
 	public void endGame(ClientHandler ch) {
 		int kamernummer = zoekCH(ch);
 		for(ClientHandler c: rooms.get(kamernummer)) {
-			c.sendMessage(Protocol.QUIT_SERVER);
 			c.shutdown();
 		}
 		remove(ch);
@@ -381,5 +380,9 @@ public class Server extends Thread {
 			playerNumber = playerNumber %(MAXPLAYERS - 1);
 		}
 		return result;
+	}
+	
+	public Game getGame(ClientHandler ch) {
+		return games.get(zoekCH(ch));
 	}
 }
