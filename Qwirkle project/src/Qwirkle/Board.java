@@ -202,7 +202,7 @@ public class Board {
 			for(int x = 0; x < DIM; x++) {
 				Tile t = boardSpaces[x][y];
 				if(t != null) {
-					result += t.getShape().u + "|";
+					result += t.getShape().c + "|";
 				} else {
 					result += " |";
 				}
