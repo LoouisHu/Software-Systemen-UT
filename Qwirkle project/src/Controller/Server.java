@@ -18,6 +18,7 @@ public class Server extends Thread {
 	 */
 	private int port;
 	private ServerSocket ss;
+	private int a;
 	
 	/**
 	 * @invariant games != null
