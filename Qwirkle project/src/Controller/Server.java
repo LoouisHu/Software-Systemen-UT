@@ -12,7 +12,6 @@ public class Server extends Thread {
 	
 	private Board board;
 	private static int portNumber;
-	
 
 	/**
 	 * @invariant port > 0 && port < 65536
