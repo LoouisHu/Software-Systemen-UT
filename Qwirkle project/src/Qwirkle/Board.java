@@ -193,7 +193,7 @@ public class Board {
 	public String toString() {
 		String result = "";
 		String line = "";
-		for(int i = 0; i < DIM*3; i++) {
+		for(int i = 0; i < DIM*3 + 1; i++) {
 			line += "-";
 		}
 		result += line + "\n";
