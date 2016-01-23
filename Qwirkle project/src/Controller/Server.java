@@ -10,15 +10,15 @@ import Qwirkle.Board;
 
 public class Server extends Thread {
 	
-	private Board board;
-	private static int portNumber;
+	private Game game;
+	private int playerNumber;
+	public static final int MAXPLAYERS = 4;
 
 	/**
 	 * @invariant port > 0 && port < 65536
 	 */
 	private int port;
 	private ServerSocket ss;
-	private int a;
 	
 	/**
 	 * @invariant games != null
@@ -28,7 +28,7 @@ public class Server extends Thread {
 	/**
 	 * @invariant kamers != null
 	 */
-	private ArrayList<ClientHandler[]> kamers;
+	private ArrayList<ClientHandler[]> rooms;
 
 	/**
 	 * @invariant lobby != null
@@ -43,7 +43,7 @@ public class Server extends Thread {
 	 */
 	public Server(int port){
 		this.port = port;
-		kamers = new ArrayList<ClientHandler[]>();
+		rooms = new ArrayList<ClientHandler[]>();
 		lobby = new ArrayList<ClientHandler>();
 		games = new ArrayList<Game>();
 	}
@@ -81,7 +81,7 @@ public class Server extends Thread {
 			}
 		} 
 		if(!contains){
-			for(ClientHandler[] kamer: kamers){
+			for(ClientHandler[] kamer: rooms){
 				for(ClientHandler speler: kamer){
 					if(speler!=ch && !contains){
 						contains = speler.getNaam().equals(naam);
@@ -93,7 +93,7 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * Controleert of de meegegeven ClientHandler zich in de lobby bevind.
+	 * Controleert of de meegegeven ClientHandler zich in de lobby bevindt.
 	 * 
 	 * @require ch!=null
 	 */
@@ -109,18 +109,6 @@ public class Server extends Thread {
 	public void broadcast(String message){
 		for(ClientHandler ch: lobby){
 			ch.sendMessage(message);
-		}
-	}
-	
-	/**
-	 * Broadcast de message naar alle Clienthandlers in het spel waar
-	 * de ClientHandler ch aan meedoet.
-	 * 
-	 * @require ch != null && message != null
-	 */
-	public void broadcastIG(ClientHandler ch, String message){
-		for(ClientHandler ch1: kamers.get(zoekCH(ch))){
-			ch1.sendMessage(message);
 		}
 	}
 	
@@ -186,26 +174,25 @@ public class Server extends Thread {
 	 * @require spelers.length >= 2 && spelers.length <= 4
 	 * @ensure games.contains(spel) == true
 	 */
-	public void startNewGame(ClientHandler[] spelers){
-		Spel spel;
+	public void startNewGame(ClientHandler[] players){
+		Game game;
 		String spelernamen;
-		if(spelers.length == 2){
-			spel = new Spel(spelers[0].getNaam(), spelers[1].getNaam());
-			spelernamen = spelers[0].getNaam() + " " + spelers[1].getNaam();
-		} else if(spelers.length == 3){
-			spel = new Spel(spelers[0].getNaam(), spelers[1].getNaam(), spelers[2].getNaam());
-			spelernamen = spelers[0].getNaam() + " " + spelers[1].getNaam() + " " + spelers[2].getNaam();
+		if(players.length == 2){
+			game = new Game(players[0].getNaam(), players[1].getNaam());
+			spelernamen = players[0].getNaam() + " " + players[1].getNaam();
+		} else if(players.length == 3){
+			game = new Game(players[0].getNaam(), players[1].getNaam(), players[2].getNaam());
+			spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " " + players[2].getNaam();
 		} else {
-			spel = new Spel(spelers[0].getNaam(), spelers[1].getNaam(), spelers[2].getNaam(), spelers[3].getNaam());
-			spelernamen = spelers[0].getNaam() + " " + spelers[1].getNaam() + " " + spelers[2].getNaam() + " " + spelers[3].getNaam();
+			game = new Game(players[0].getNaam(), players[1].getNaam(), players[2].getNaam(), players[3].getNaam());
+			spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " " + players[2].getNaam() + " " + players[3].getNaam();
 		} 
-		games.add(spel);
-		kamers.add(spelers);
-		for(ClientHandler ch: spelers){
+		games.add(game);
+		rooms.add(players);
+		for(ClientHandler ch: players){
 			lobby.remove(ch);
-			ch.sendMessage(Protocol.START + " " + spelernamen);
 		}
-		spelers[0].sendMessage(Protocol.YOUR_TURN);
+		players[0].sendMessage(Protocol.YOUR_TURN);
 	}	
 	
 	/**
@@ -276,7 +263,7 @@ public class Server extends Thread {
 	public void nextPlayer(ClientHandler ch){
 		int zoek = zoekCH(ch);
 		if(zoek>=0){
-			for(ClientHandler ch1: kamers.get(zoek)){
+			for(ClientHandler ch1: rooms.get(zoek)){
 				if(games.get(zoek).getBeurt().equals(ch1.getNaam())){
 					ch1.sendMessage(Protocol.YOUR_TURN);
 				}
@@ -304,8 +291,8 @@ public class Server extends Thread {
 		/**
 		 * @invariant for all int i > 0: !kamers.get(i-1).contains(ch)
 		 */
-		for(int i = 0; i<kamers.size() && !found; i++){
-			for(ClientHandler ch1: kamers.get(i)){
+		for(int i = 0; i<rooms.size() && !found; i++){
+			for(ClientHandler ch1: rooms.get(i)){
 				if(ch == ch1){
 					kamer = i;
 					found = true;
@@ -324,7 +311,7 @@ public class Server extends Thread {
 	 */
 	public void endGame(ClientHandler ch) {
 		int kamernummer = zoekCH(ch);
-		for(ClientHandler c: kamers.get(kamernummer)) {
+		for(ClientHandler c: rooms.get(kamernummer)) {
 			c.sendMessage(Protocol.QUIT_SERVER);
 			c.shutdown();
 		}
@@ -347,7 +334,7 @@ public class Server extends Thread {
 			if(kamernummer >= 0 && kamernummer < games.size()) {
 				synchronized(games){
 					games.remove(kamernummer);
-					kamers.remove(kamernummer);
+					rooms.remove(kamernummer);
 				}
 			}
 		}
@@ -367,7 +354,7 @@ public class Server extends Thread {
 			shutdown();
 		}
 		try{
-			for(ClientHandler[] kamer: kamers) {
+			for(ClientHandler[] kamer: rooms) {
 				for(ClientHandler speler: kamer) {
 					speler.sendMessage(Protocol.QUIT_SERVER);
 					speler.shutdown();
@@ -385,5 +372,14 @@ public class Server extends Thread {
 		} catch (IOException e) {
 			System.out.println("Er is iets mis met ServerSocket");
 		}
+	}
+	
+	public int getNumber() {
+		int result = this.playerNumber;
+		this.playerNumber++;
+		if(this.playerNumber > MAXPLAYERS - 1) {
+			playerNumber = playerNumber %(MAXPLAYERS - 1);
+		}
+		return result;
 	}
 }
