@@ -28,7 +28,7 @@ public class Board {
 	/*
 	 * @ 
 	 */
-	public boolean validMove(/*@ non_null */Move theMove,/*@ non_null */ List<Move> movesMade) {
+	public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);
 		boolean answer = true;
 		boolean oldY = true;
@@ -74,7 +74,7 @@ public class Board {
  */
 	
 	
-	public boolean inLineV(/*@ non_null */Move m) {
+	public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -156,16 +156,16 @@ public class Board {
 		return answer;
 	}
 
-	public void boardAddMove(/*@ non_null */Move move) {
+	public void boardAddMove(Move move) {
 		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
 	}
 
-	public void boardRemove(/*@ non_null */Coord coord) {
+	public void boardRemove(Coord coord) {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
 
-	public Set<Move> getUsedSpaces() {
-		Set<Move> result = new HashSet<Move>();
+	public List<Move> getUsedSpaces() {
+		List<Move> result = new ArrayList<Move>();
 		for (int i = 0; i < DIM; i++) {
 			for (int j = 0; j < DIM; j++) {
 				if (boardSpaces[i][j] != null) {
@@ -175,6 +175,7 @@ public class Board {
 		}
 		return result;
 	}
+	
 
 	public String toString() {
 		String result = "";

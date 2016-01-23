@@ -40,14 +40,17 @@ public class Tile {
 	}
 	
 	public String toString(){
-		return String.valueOf(shape.u);
+		String result = "";
+		result += color.c;
+		result += shape.c;
+		return String.valueOf(result);
 	}
 	
-	/*public static void main(String[] args){
-		Shape s = Shape.CIRCLE;
-		Color c = Color.RED;
-		Tile t = new Tile(c, s);
-		System.out.println(c.toString() + t.toString());
-	}*/
+//	public static void main(String[] args){
+//		Shape s = Shape.CIRCLE;
+//		Color c = Color.RED;
+//		Tile t = new Tile(c, s);
+//		System.out.println(t.toString());
+//	}
 	
 }

@@ -22,16 +22,18 @@ public class ComputerPlayer extends Player implements Strategy{
 	}
 
 
-	@Override
-	public String determineMove(Board board, Set<Tile> tile) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public void determinePutMove(Board board) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Move determineMove(Board board, List<Tile> hand) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
