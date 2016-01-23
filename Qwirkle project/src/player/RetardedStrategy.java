@@ -31,6 +31,11 @@ public class RetardedStrategy implements Strategy {
 				}
 			}
 		}
+		if (result == null){
+			for (int l = 0; l < hand.size(); l++){
+				hand.
+			}
+		}
 		return result;
 
 	}

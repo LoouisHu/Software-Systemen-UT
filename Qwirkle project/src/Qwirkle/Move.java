@@ -9,7 +9,7 @@ public class Move {
 		this.tile = tile;
 		this.coord = coord;
 	}
-
+	
 	public Tile getTile() {
 		return tile;
 	}
