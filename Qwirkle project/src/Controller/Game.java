@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,10 +52,10 @@ public class Game {
 		return board;
 	}
 	
-	public Tile[] swap(Tile[] tiles) {
-		Tile[] result = new Tile[tiles.length];
-		for(int i = 0; i < tiles.length; i++) {
-			result[i] = tilebag.drawTile();
+	public List<Tile> swap(List<Tile> tiles) {
+		List<Tile> result = new ArrayList<Tile>();
+		for(int i = 0; i < tiles.size(); i++) {
+			result.add(tilebag.drawTile());
 		}
 		for(Tile t: tiles) {
 			tilebag.returnTile(t);

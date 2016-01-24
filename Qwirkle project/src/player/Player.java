@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import Controller.Game;
 import Qwirkle.Board;
 import Qwirkle.Coord;
 import Qwirkle.Move;
@@ -15,38 +16,38 @@ public abstract class Player {
 
 	 private String name;
 	 
-	 private Set<Tile> hand;
+	 private List<Tile> hand;
 	 
 	 private Board deepCopy;
 	 
 	 private Board board;
 	 
+	 private Game game;
+	 
 	 private List<Move> currentMoves;
-	 
-// -- Abstract implementations --
-	 
-	 public abstract void determinePutMove(Board board);
+
 	 
 	 //-----Constructor------
 	 
-	 public Player(String name, Set<Tile> hand){
+	 public Player(String name, List<Tile> hand, Board board, Game game){
 		 this.name = name;
 		 this.hand = hand;
+		 this.board = board;
+		 this.game = game;
 		 currentMoves = new ArrayList<Move>();
-		 board = new Board();
 	 }
 	 //------Queries-------
 	 public String getName(){
 		 return this.name;
 	 }
 	
-	 public Set<Tile> getHand(){
+	 public List<Tile> getHand(){
 		 return this.hand;
 	 }
 	 
 	 //----Setters-----
 	 
-	 public void setHand(Set<Tile> newHand){
+	 public void setHand(List<Tile> newHand){
 		 hand.addAll(newHand);
 	 }
 	

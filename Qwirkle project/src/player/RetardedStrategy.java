@@ -1,9 +1,8 @@
 package player;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import Controller.Game;
 import Qwirkle.Board;
 import Qwirkle.Coord;
 import Qwirkle.Move;
@@ -12,7 +11,7 @@ import Qwirkle.Tile;
 public class RetardedStrategy implements Strategy {
 
 	@Override
-	public Move determineMove(Board board, List<Tile> hand) {
+	public Move determineMove(Board board, List<Tile> hand, Game game) {
 		// TODO Auto-generated method stub
 		Move result = null;
 		boolean isFound = false;
@@ -33,11 +32,10 @@ public class RetardedStrategy implements Strategy {
 		}
 		if (result == null){
 			for (int l = 0; l < hand.size(); l++){
-				hand.
+				game.swap(hand);
 			}
 		}
 		return result;
-
 	}
 
 }
