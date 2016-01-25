@@ -11,6 +11,10 @@ import Qwirkle.Board;
 public class Server extends Thread {
 	
 	private Game game;
+	
+	/*
+	 * @invariant 0 <= playerNumber < MAXPLAYERS
+	 */
 	private int playerNumber;
 	public static final int MAXPLAYERS = 4;
 
@@ -385,5 +389,9 @@ public class Server extends Thread {
 	
 	public Game getGame(ClientHandler ch) {
 		return games.get(zoekCH(ch));
+	}
+	
+	public int remainingTiles() {
+		return game.getTileBag().remainingTiles();
 	}
 }

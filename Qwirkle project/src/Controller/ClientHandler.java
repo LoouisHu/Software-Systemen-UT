@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import Qwirkle.Tile;
@@ -162,9 +164,7 @@ public class ClientHandler extends Thread{
 						if(sc.hasNext()){
 							String tempnaam = sc.next();
 							if(server.contains(tempnaam, this) && tempnaam.length() < 1 && tempnaam.length() > 16 && !tempnaam.matches("[a-zA-Z]*")) {
-								sendMessage(Protocol.KICK + " name already exists or name too long or use only letters");
-								server.remove(this);
-								shutdown();
+								kick("name already exists or name too long or use only letters");
 							} else {
 								naam = tempnaam;
 								sendMessage(Protocol.WELCOME + " " + naam + " " + server.getNumber());
@@ -173,110 +173,27 @@ public class ClientHandler extends Thread{
 					}
 					break;
 				case Protocol.SWAP:
+					List<Tile> tiles = new ArrayList<Tile>();
 					while(sc.hasNext()) {
-						
+						tiles.add(convertTextToTile(sc.next()));
 					}
-					server.getGame(this).swap(tiles);
+					if(tiles.size() <= server.remainingTiles()) {
+						List<Tile> swapped = server.getGame(this).swap(tiles);
+						String swapcommand = Protocol.NEW;
+						for(Tile t:swapped) {
+							swapcommand += " " + t.toString();
+						}
+						sendMessage(swapcommand);
+					} else {
+						kick("Swapping tiles amount larger than tiles left in the bag");
+					}
 					break;
+				case Protocol.
 			}
 		}
 		
 		
 		
-			else if(commando.equals(Protocol.SET_TILE)){
-				if(!server.containsCH(this)){
-					if(server.checkBeurt(this) && server.checkTile(this)){
-						if(sc.hasNext()){
-							String blok = sc.next();
-							if(sc.hasNext()){
-								try{
-									int cijfer = Integer.parseInt(sc.next());
-									if(cijfer<9 && cijfer>=0 && (blok.toLowerCase().charAt(0)-97)>=0 && (blok.toLowerCase().charAt(0)-97)<9){
-										int[] coords = Bord.zetConverter(blok, cijfer);
-										if(!sc.hasNext() && server.geldigeZet(server.zoekCH(this), coords[0], coords[1])){
-											server.doeZet(server.zoekCH(this), coords[0], coords[1]);
-											server.broadcastIG(this, Protocol.BROADCAST_SET_TILE + " " + blok + " " + cijfer + " " + naam);
-											if(server.checkAfgelopen(this)){
-												if(!server.result(this).equals("remise")){
-													winnaar();
-												} else {
-													remise();
-												}
-											}
-										} else {
-											cheateralert();
-										}
-									} else {
-										cheateralert();
-									}
-								} catch(NumberFormatException e){
-									cheateralert();
-								}
-							} else{
-								cheateralert();
-							}
-						} else{
-							cheateralert();
-						}
-					} else {
-						cheateralert();
-					}
-				} else {
-					quit();
-				}
-			} else if(commando.equals(Protocol.TURN_BLOCK)){
-				if(!server.containsCH(this)){
-					if(server.checkBeurt(this) && !server.checkTile(this)){
-						if(sc.hasNext()){
-							String blokje = sc.next();
-							int blok = (int)(blokje.toLowerCase().charAt(0))-97;
-							if(sc.hasNext() && blok >= 0 && blok < 9){
-								String richting = sc.next();
-								if((richting.equals("cw") || richting.equals("ccw")) && !sc.hasNext()){
-									int draairichting = -1;
-									if(richting.equals("cw")){
-										draairichting = 1;
-									}
-									server.draaiBlok(server.zoekCH(this), blok, draairichting);
-									server.broadcastIG(this, Protocol.BROADCAST_TURN_BLOCK + " " + blokje + " " + richting + " " + naam);
-									if(server.checkAfgelopen(this)){
-										if(!server.result(this).equals("remise")){
-											winnaar();
-										} else {
-											remise();
-										}
-									} else {
-										server.nextPlayer(this);
-									}
-								} else {
-									cheateralert();
-								}
-							} else {
-								cheateralert();
-							}
-						} else {
-							cheateralert();
-						}
-					} else {
-						cheateralert();
-					}
-				} else {
-					quit();
-				}
-			} else if(commando.equals(Protocol.QUIT)){
-				if(!sc.hasNext()){
-					disconnected();
-				} else {
-					quit();
-				}
-			} else if(commando.equals(Protocol.CHAT)){
-				if(server.containsCH(this)){
-					server.broadcast(Protocol.CHAT_SERVER + " " + naam + " " + message.substring(Protocol.CHAT_SERVER.length() + 1));
-				} else {
-					server.broadcastIG(this, Protocol.CHAT_SERVER + " " + naam + " " + message.substring(Protocol.CHAT_SERVER.length() + 1));
-				} 
-			}
-		}
 	}
 	
 	/**
@@ -291,51 +208,12 @@ public class ClientHandler extends Thread{
 	}
 
 	/**
-	 * Broadcast dat het spel is afgelopen met een remise naar
-	 * alle spelers van het spel waar deze Client zich in
-	 * bevind. Vervolgens krijgt elke zo'n speler ook een 
-	 * Protocol.QUIT.
-	 */
-	public void remise(){
-		server.broadcastIG(this, Protocol.END_GAME + " " + 2);
-		server.endGame(this);
-	}
-
-	/**
-	 * Broadcast dat het spel is afgelopen omdat deze Client 
-	 * zich niet aan het Protocol heeft gehouden naar
-	 * alle spelers van het spel waar deze Client zich in
-	 * bevind. Vervolgens krijgt elke zo'n speler ook een 
-	 * Protocol.QUIT.
-	 */
-	public void cheateralert(){
-		server.broadcastIG(this, Protocol.END_GAME + " 3 " + naam);
-		server.endGame(this);
-	}
-	
-
-	/**
-	 * Als deze Client al een spelletje begonnen is, dan
-	 * wordt gebroadcast aan de medespelers dat deze Client
-	 * het spelletje heeft afgesloten. Ook krijgen ze een 
-	 * Protocol.QUIT mee. Als deze Client nog in de lobby 
-	 * zit, wordt hij alleen uit de lobby verwijderd
-	 */
-	public void disconnected(){
-		if(!server.containsCH(this)) {
-			server.broadcastIG(this, Protocol.END_GAME + " 4 " + naam);
-			server.endGame(this);
-		} else {
-			server.remove(this);
-		}
-	}
-
-	/**
 	 * Stuurt de Client van deze ClientHandler een Protocol.QUIT
 	 */
-	public void quit() {
-		sendMessage(Protocol.QUIT_SERVER);
+	public void kick(String reason) {
+		sendMessage(Protocol.KICK + " " + reason);
 		server.remove(this);
+		shutdown();
 	}
 	
 	/**
@@ -360,12 +238,7 @@ public class ClientHandler extends Thread{
 		Tile t;
 		char color = s.charAt(0);
 		char shape = s.charAt(1);
-		switch(color) {
-		case Color.toChar():
-			
-		}
-		
-		t = new Tile(Color., shape);
+		t = new Tile(color, shape);
 		return t;
 	}
 }

@@ -1,25 +1,42 @@
 package view;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Observable;
 import java.util.Scanner;
 
+import Controller.Protocol;
 import Qwirkle.Board;
 import Qwirkle.Tile;
 
 
-public class TUI {
+public class TUI extends Observable implements Runnable {
+	private int playerNumber;
+	private Socket sock;
+	private BufferedReader in;
+	private BufferedWriter out;
+	private Scanner scan;
 	
-
-	private Scanner in;
-	
-	public TUI(String ip, int port){
-
-		this.timer = timer;
-		this.gebruikcomputer = gebruikcomputer;
-		this.cgui = cgui;
+	public TUI() {
+		String ip = "";
+		String port = "";
+		String name = "";
 		InetAddress inet = null;
 		int portnr = 0;
+		
+		scan = new Scanner(System.in);
+		if(scan.hasNext()) {
+			ip = scan.next();
+		}
+		System.out.println(ip);
+		ip = getUsername();
+		System.out.println(ip);
 		
 		try {
 			inet = InetAddress.getByName(ip);
@@ -49,15 +66,79 @@ public class TUI {
 				System.out.println("Socketfout. Voer het juiste ip-adres en de juiste port nummer in.");
 			}
 		
-			sendJoin(naam + " " + aantalspelers);
+			sendHello(name);
 			
-			this.start();
-		
+			new Thread(this).start();
+		}
+	}
+	
+	/**
+	 * Stuurt een Protocol.JOIN met een bericht.
+	 * @require message != null
+	 */
+	public void sendHello(String name) {
+		sendMessage(Protocol.HELLO + " " + name);
+	}
+	
+	/**
+	 * Hiermee kan de Client-kant een bericht sturen naar de server.
+	 * @require message != null
+	 */
+	public void sendMessage(String message) {
+		try {
+			out.write(message);
+			out.newLine();
+			out.flush();
+		} catch (IOException e) {
+			shutdown();
+		}
+	}
+	
+	/**
+	 * Ontvangt berichten van de server en stuurt ze door naar verwerk(message) om de berichten te verwerken. Leest per regel.
+	 * @require in != null
+	 */
+	public void run() {
+		try {
+			while(true) {
+				String message = in.readLine();
+				if(message != null) {
+					verwerk(message);
+				}
+			}
+		} catch (IOException e) {
+			shutdown();
+		}
+	}
+	
+	public void verwerk(String message) {
+		Scanner sc = new Scanner(message);
+		String commando = null;
+		if(sc.hasNext()) {
+			commando = sc.next();
+		}
+		switch(commando) {
+		case Protocol.WELCOME:
+			
+		}
+	}
+	
+	/**
+	 * De socket wordt afgesloten.
+	 */
+	public void shutdown() {
+		try {
+			if(sock != null) {
+				sock.close();
+			}
+		} catch (IOException e) {
+			System.out.println("Fout bij socket sluiten.");
+		}
 	}
 	
 	public String getUsername(){
 		System.out.println("What's your name?");
-		return in.nextLine();
+		return scan.nextLine();
 	}
 	
 	public void displayHand(Tile[] hand){
@@ -74,9 +155,7 @@ public class TUI {
 	
 	
 	public static void main(String[] args) {
-		TUI tui = new TUI("", 6666);
-		
-		
+		new TUI();
 	}
 	
 	
