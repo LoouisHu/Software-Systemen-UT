@@ -2,9 +2,9 @@ package player;
 
 import java.util.List;
 
-import Controller.Game;
-import Qwirkle.Board;
-import Qwirkle.Tile;
+import controller.Game;
+import model.Board;
+import model.Tile;
 
 public class ComputerPlayer extends Player {
 	

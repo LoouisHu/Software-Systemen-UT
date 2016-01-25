@@ -1,11 +1,11 @@
-package Controller;
+package controller;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.Observable;
 
-import Qwirkle.*;
+import model.*;
 import player.*;
 import view.*;
 

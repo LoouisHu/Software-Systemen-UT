@@ -1,11 +1,11 @@
-package Controller;
+package controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import Qwirkle.Board;
+import model.Board;
 
 public class PlayerHandler implements Runnable{
 	private Socket soc;

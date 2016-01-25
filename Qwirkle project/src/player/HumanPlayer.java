@@ -3,8 +3,8 @@ package player;
 import java.util.List;
 import java.util.Set;
 
-import Qwirkle.Board;
-import Qwirkle.Tile;
+import model.Board;
+import model.Tile;
 
 public class HumanPlayer extends Player {
 

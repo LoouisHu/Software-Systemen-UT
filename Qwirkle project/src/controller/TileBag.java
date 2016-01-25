@@ -1,11 +1,11 @@
-package Controller;
+package controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import Qwirkle.Tile;
+import model.Tile;
 
 //TODO gebruiken voor de server;
 public class TileBag {

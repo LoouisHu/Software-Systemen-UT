@@ -1,12 +1,12 @@
-package Controller;
+package controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import Qwirkle.Board;
-import Qwirkle.Tile;
+import model.Board;
+import model.Tile;
 import player.Player;
 
 public class Game {

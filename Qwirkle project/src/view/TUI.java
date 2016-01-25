@@ -11,9 +11,9 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Scanner;
 
-import Controller.Protocol;
-import Qwirkle.Board;
-import Qwirkle.Tile;
+import controller.Protocol;
+import model.Board;
+import model.Tile;
 
 
 public class TUI extends Observable implements Runnable {

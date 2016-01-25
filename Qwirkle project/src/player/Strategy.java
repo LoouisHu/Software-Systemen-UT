@@ -2,8 +2,8 @@ package player;
 
 import java.util.List;
 
-import Controller.Game;
-import Qwirkle.*;
+import controller.Game;
+import model.*;
 
 public interface Strategy {
 	

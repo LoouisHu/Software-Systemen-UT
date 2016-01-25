@@ -1,4 +1,4 @@
-package Qwirkle;
+package model;
 
 public class Move {
 

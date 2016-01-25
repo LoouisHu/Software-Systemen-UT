@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import Controller.Game;
-import Qwirkle.Board;
-import Qwirkle.Coord;
-import Qwirkle.Move;
-import Qwirkle.Tile;
+import controller.Game;
+import model.Board;
+import model.Coord;
+import model.Move;
+import model.Tile;
 
 public abstract class Player {
 	

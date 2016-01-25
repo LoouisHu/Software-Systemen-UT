@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 public interface Protocol {
 	public static final String HELLO = "HELLO";
