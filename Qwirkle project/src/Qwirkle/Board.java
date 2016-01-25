@@ -14,8 +14,8 @@ public class Board {
 	public static final int DIM = 183;
 	public static final int powerMoveLength = 6;
 
-	//@public invariant boardSpaces.length == DIM;
-	
+	// @public invariant boardSpaces.length == DIM;
+
 	//
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
@@ -26,7 +26,7 @@ public class Board {
 	}
 
 	/*
-	 * @ 
+	 * @
 	 */
 	public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);
@@ -68,12 +68,11 @@ public class Board {
 
 		return answer;
 	}
-/*
- * @ requires
- * check of de eerste naast m klopt met de regels, maar de volgende daar naast niet
- */
-	
-	
+	/*
+	 * @ requires check of de eerste naast m klopt met de regels, maar de
+	 * volgende daar naast niet
+	 */
+
 	public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
@@ -115,7 +114,7 @@ public class Board {
 		return answer;
 	}
 
-	public boolean inLineH(/*@ non_null */Move m) {
+	public boolean inLineH(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -158,32 +157,37 @@ public class Board {
 
 	/**
 	 * laat zien of een veld leeg is.
+	 * 
 	 * @param x
-	 * 			de x-coördinaat
+	 *            de x-coördinaat
 	 * @param y
-	 * 			de y-coördinaat
+	 *            de y-coördinaat
 	 * @return true als het veld leeg is
 	 */
-	/*@ requires isField(x, y);
-	  @ ensures \result == (getField(x, y) == null);
+	/*
+	 * @ requires isField(x, y);
+	 * 
+	 * @ ensures \result == (getField(x, y) == null);
 	 */
-	/*@pure*/
+	/* @pure */
 	public Boolean isEmptyField(int x, int y) {
 		return getField(x, y) == null;
 	}
 
-	
 	/**
 	 * geeft true als een rij helemaal leeg is.
+	 * 
 	 * @param x
-	 * 			geeft aan welke rij je bekijkt.
+	 *            geeft aan welke rij je bekijkt.
 	 * @return true als een rij helemaal leeg is.
 	 */
-	/*@ requires 0 <= x & x <= DIM;
-	  @ ensures (\forall int y; 0 <= y & y < DIM; 
-	   					this.getBlock()[x][y] == null ==> \result == true);
+	/*
+	 * @ requires 0 <= x & x <= DIM;
+	 * 
+	 * @ ensures (\forall int y; 0 <= y & y < DIM; this.getBlock()[x][y] == null
+	 * ==> \result == true);
 	 */
-	/*@pure*/
+	/* @pure */
 	public boolean emptyXRow(int x) {
 		boolean empty = true;
 		for (int i = 0; i < DIM; i++) {
@@ -197,26 +201,33 @@ public class Board {
 
 	/**
 	 * geeft true als een kolom helemaal leeg is.
+	 * 
 	 * @param y
-	 * 			geeft aan welke rij je bekijkt.
+	 *            geeft aan welke rij je bekijkt.
 	 * @return true als een rij helemaal leeg is.
 	 */
-	/*@ requires 0 <= y & y <= DIM;
-	  @ ensures (\forall int x; 0 <= x & x < DIM; 
-	   					this.getTile()[x][y] == null ==> \result == true);
+	/*
+	 * @ requires 0 <= y & y <= DIM;
+	 * 
+	 * @ ensures (\forall int x; 0 <= x & x < DIM; this.getTile()[x][y] == null
+	 * ==> \result == true);
 	 */
-	/*@pure*/
+	/* @pure */
 	public boolean emptyYRow(int y) {
 		boolean empty = true;
 		for (int i = 0; i < DIM; i++) {
-			if (!isEmptyField(i, y)) { 
+			if (!isEmptyField(i, y)) {
 				empty = false;
 				break;
 			}
 		}
 		return empty;
 	}
-	
+
+	public Tile getField(int x, int y) {
+		return boardSpaces[x][y];
+	}
+
 	public void boardAddMove(Move move) {
 		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
 	}
@@ -236,34 +247,78 @@ public class Board {
 		}
 		return result;
 	}
-	
+
+	/* @ ensures \result < DIM; */
+	/* @pure */public int lowestX() {
+		int x = 92;
+		while (!this.emptyXRow(x)) {
+			x--;
+		}
+		return x;
+	}
+
+	/* @ ensures \result < DIM; */
+	/* @pure */public int highestX() {
+		int x = 92;
+		while (!this.emptyXRow(x)) {
+			x++;
+		}
+		return x;
+	}
+
+	/* @ ensures \result < DIM; */
+	/* @pure */public int lowestY() {
+		int y = 92;
+		while (!this.emptyYRow(y)) {
+			y--;
+		}
+		return y;
+	}
+
+	/* @ ensures \result < DIM; */
+	/* @pure */public int highestY() {
+		int y = 92;
+		while (!this.emptyYRow(y)) {
+			y++;
+		}
+		return y;
+	}
 
 	public String toString() {
-		String result = "";
-		String line = "";
-		for(int i = 0; i < DIM*3 + 1; i++) {
-			line += "-";
+		String result = "y\\x";
+		for (int y = lowestY(); y <= highestY(); y++) {
+			result = result.concat(String.format("|%03d", y));
 		}
-		result += line + "\n";
-		for(int y = 0; y < DIM; y++) {
-			result += "|";
-			for(int x = 0; x < DIM; x++) {
+		result = result.concat("|\n---");
+
+		for (int y = lowestY(); y <= highestY(); y++) {
+			result = result.concat("+---");
+		}
+		result = result.concat("+\n");
+
+		for (int x = lowestX(); x <= highestX(); x++) {
+			result = result.concat(String.format("%03d", x));
+			for (int y = lowestY(); y <= highestY(); y++) {
 				Tile t = boardSpaces[x][y];
-				if(t != null) {
-					result += t.getColor().c;
-					result += t.getShape().c + "|";
+				if (t != null) {
+					result = result.concat("| " + t.toString());
 				} else {
-					result += "  |";
+					result = result.concat("|   ");
 				}
 			}
-			result += "\n" + line + "\n";
+			result = result.concat("|\n---");
+			for (int y = lowestY(); y <= highestY(); y++) {
+				result = result.concat("+---");
+			}
+			result = result.concat("+\n");
 		}
 		return result;
 	}
-	
+
 	public static void main(String args[]) {
 		Board b = new Board();
-		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.STAR), new Coord(0,0)));
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.STAR), new Coord(92, 92)));
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.STAR), new Coord(92, 93)));
 		System.out.println(b.toString());
 	}
 }

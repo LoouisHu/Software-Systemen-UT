@@ -168,7 +168,7 @@ public class Server extends Thread {
 	 * wordt het spel in de spellijst gezet en de spelers van dat spel
 	 * in de kamerlijst. Ook worden ze verwijderd uit de lobby. De 
 	 * spelers krijgen allemaal een Protocol.START met alle spelernamen.
-	 * De eerste speler krijgt daarna nog een Protocol.YOUR_TURN 
+	 * De eerste speler krijgt daarna nog een Protocol.TURN 
 	 * toegestuurd.
 	 * 
 	 * @require spelers.length >= 2 && spelers.length <= 4

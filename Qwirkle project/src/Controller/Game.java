@@ -47,7 +47,7 @@ public class Game {
 		boolean answer = false;
 		return answer;
 	}
-	
+	/*@ pure*/
 	public Board getBoard() {
 		return board;
 	}
