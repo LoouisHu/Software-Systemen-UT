@@ -31,18 +31,18 @@ public class TUI extends Observable implements Runnable {
 		int portnr = 0;
 		
 		scan = new Scanner(System.in);
+		System.out.print("IP: ");
 		if(scan.hasNext()) {
-			ip = getIP();
+			ip = scan.next();
 		}
-		System.out.println(ip);
+		System.out.print("Port: ");
 		if(scan.hasNext()) {
-			port = getPort();
+			port = scan.next();
 		}
-		System.out.println(port);
+		System.out.print("Name: ");
 		if(scan.hasNext()) {
-			name = getUsername();
+			name = scan.next();
 		}
-		System.out.println(name);
 		
 		try {
 			inet = InetAddress.getByName(ip);
@@ -73,7 +73,6 @@ public class TUI extends Observable implements Runnable {
 			}
 		
 			sendHello(name);
-			
 			new Thread(this).start();
 		}
 	}
@@ -140,21 +139,6 @@ public class TUI extends Observable implements Runnable {
 		} catch (IOException e) {
 			System.out.println("Fout bij socket sluiten.");
 		}
-	}
-	
-	public String getIP(){
-		System.out.print("IP: ");
-		return scan.nextLine();
-	}
-	
-	public String getPort(){
-		System.out.print("Port: ");
-		return scan.nextLine();
-	}
-	
-	public String getUsername(){
-		System.out.print("What's your name?: ");
-		return scan.nextLine();
 	}
 	
 	public void displayHand(Tile[] hand){
