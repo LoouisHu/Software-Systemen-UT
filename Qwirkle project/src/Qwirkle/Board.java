@@ -21,7 +21,7 @@ public class Board {
 		boardSpaces = new Tile[DIM][DIM];
 	}
 
-	public boolean validMove(/*@ non_null */Move move) {
+	public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
 
@@ -156,6 +156,67 @@ public class Board {
 		return answer;
 	}
 
+	/**
+	 * laat zien of een veld leeg is.
+	 * @param x
+	 * 			de x-coördinaat
+	 * @param y
+	 * 			de y-coördinaat
+	 * @return true als het veld leeg is
+	 */
+	/*@ requires isField(x, y);
+	  @ ensures \result == (getField(x, y) == null);
+	 */
+	/*@pure*/
+	public Boolean isEmptyField(int x, int y) {
+		return getField(x, y) == null;
+	}
+
+	
+	/**
+	 * geeft true als een rij helemaal leeg is.
+	 * @param x
+	 * 			geeft aan welke rij je bekijkt.
+	 * @return true als een rij helemaal leeg is.
+	 */
+	/*@ requires 0 <= x & x <= DIM;
+	  @ ensures (\forall int y; 0 <= y & y < DIM; 
+	   					this.getBlock()[x][y] == null ==> \result == true);
+	 */
+	/*@pure*/
+	public boolean emptyXRow(int x) {
+		boolean empty = true;
+		for (int i = 0; i < DIM; i++) {
+			if (!isEmptyField(x, i)) {
+				empty = false;
+				break;
+			}
+		}
+		return empty;
+	}
+
+	/**
+	 * geeft true als een kolom helemaal leeg is.
+	 * @param y
+	 * 			geeft aan welke rij je bekijkt.
+	 * @return true als een rij helemaal leeg is.
+	 */
+	/*@ requires 0 <= y & y <= DIM;
+	  @ ensures (\forall int x; 0 <= x & x < DIM; 
+	   					this.getTile()[x][y] == null ==> \result == true);
+	 */
+	/*@pure*/
+	public boolean emptyYRow(int y) {
+		boolean empty = true;
+		for (int i = 0; i < DIM; i++) {
+			if (!isEmptyField(i, y)) { 
+				empty = false;
+				break;
+			}
+		}
+		return empty;
+	}
+	
 	public void boardAddMove(Move move) {
 		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
 	}

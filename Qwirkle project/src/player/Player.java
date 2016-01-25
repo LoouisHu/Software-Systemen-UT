@@ -29,7 +29,7 @@ public abstract class Player {
 	 
 	 //-----Constructor------
 	 
-	 public Player(String name, List<Tile> hand, Board board, Game game){
+	 public Player(String name, List<Tile> hand){
 		 this.name = name;
 		 this.hand = hand;
 		 this.board = board;

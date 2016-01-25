@@ -3,33 +3,51 @@ package Qwirkle;
 public class Tile {
 
 	public static enum Color {
-		RED('R'), ORANGE('O'), BLUE('B'), YELLOW('Y'), GREEN('G'), PURPLE('P');
-		public final char c;
-
-		Color(char ch) {
-			this.c = ch;
-		}
+		RED, ORANGE, BLUE, YELLOW, GREEN, PURPLE;
 	}
 
 	public static enum Shape {
-		CIRCLE('o', '\u262f'), DIAMOND('d', '\u2615'), SQUARE('s', '\u25A0'), CLOVER('c','\u269C'), CROSS('x', '\u2693'), STAR('*', '\u2605');
-		public final char c;
-		public final char u;
-		
-		Shape(char c, char u){
-			this.c = c;
-			this.u = u;
-		}
+		CIRCLE, DIAMOND, SQUARE, CLOVER, CROSS, STAR;
 	}
 	
-	private final Shape shape;
-	private final Color color;
+	private Shape shape;
+	private Color color;
 	
 	public Tile(Color color, Shape shape){
 		this.shape = shape;
 		this.color = color;
 	}
-	
+
+	public Tile(char color, char shape){
+		switch (color) {
+		case 'R': this.color = Color.RED;
+			break;
+		case 'O': this.color = Color.ORANGE;
+			break;
+		case 'B': this.color = Color.BLUE;
+			break;
+		case 'Y': this.color = Color.YELLOW;
+			break;
+		case 'G': this.color = Color.GREEN;
+			break;
+		case 'P': this.color = Color.PURPLE;
+			break;
+		}
+		
+		switch(shape) {
+		case 'o': this.shape = Shape.CIRCLE;
+			break;
+		case 'd': this.shape = Shape.DIAMOND;
+			break;
+		case 's': this.shape = Shape.SQUARE;
+			break;
+		case 'c': this.shape = Shape.CLOVER;
+			break;
+		case 'x': this.shape = Shape.CROSS;
+			break;
+		case '*': this.shape = Shape.STAR;
+		}
+	}
 
 	public Color getColor(){
 		 return color;
@@ -41,16 +59,39 @@ public class Tile {
 	
 	public String toString(){
 		String result = "";
-		result += color.c;
-		result += shape.c;
-		return String.valueOf(result);
+		switch (this.getColor()) {
+		case RED: result = result.concat("R");
+			break;
+		case ORANGE: result = result.concat("O");
+			break;
+		case BLUE: result = result.concat("B");
+			break;
+		case YELLOW: result = result.concat("Y");
+			break;
+		case GREEN: result = result.concat("G");
+			break;
+		case PURPLE: result = result.concat("P");
+			break;
+		default: result.concat("@");
+		}
+		
+		switch (this.getShape()) {
+		case CIRCLE: result = result.concat("o");
+			break;
+		case DIAMOND: result = result.concat("d");
+			break;
+		case SQUARE: result = result.concat("s");
+			break;
+		case CLOVER: result = result.concat("c");
+			break;
+		case CROSS: result = result.concat("x");
+			break;
+		case STAR: result = result.concat("*");
+			break;
+		default: result.concat("@");
+		}
+		
+		return result;
 	}
-	
-//	public static void main(String[] args){
-//		Shape s = Shape.CIRCLE;
-//		Color c = Color.RED;
-//		Tile t = new Tile(c, s);
-//		System.out.println(t.toString());
-//	}
 	
 }
