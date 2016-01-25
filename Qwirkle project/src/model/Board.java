@@ -42,6 +42,7 @@ public class Board {
 	 * @param movesMade
 	 * @return
 	 */
+	//TODO jml
 	/*@pure*/
 	public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);
@@ -89,7 +90,8 @@ public class Board {
 	 * 			de move die je maakt.
 	 * @return true als de zet mogelijk is.
 	 */
-
+	
+	//TODO JML
 	/*@pure*/
 	public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
@@ -138,6 +140,7 @@ public class Board {
 	 * 			de move die je maakt.
 	 * @return true als de zet mogelijk is.
 	 */
+	//TODO jml
 	/*@pure*/
 	public boolean inLineH(Move m) {
 		Coord c = m.getCoord();
@@ -271,10 +274,10 @@ public class Board {
 	public void boardRemove(Coord coord) {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
-/**
- * Keert een lijst terug van boardSpaces waar een zet is op gedaan.
- * @return
- */
+	/**
+	 * Keert een lijst terug van boardSpaces waar een zet is op gedaan.
+	 * @return
+	 */
 	
 	/*@pure*/public List<Move> getUsedSpaces() {
 		List<Move> result = new ArrayList<Move>();
@@ -327,10 +330,10 @@ public class Board {
 		}
 		return y;
 	}
-/**
- * Maakt een Textual Interface van een board. Aan de boven- en linkerrand staan de coördinaten van de rij en kolom.
- * Als er in een rij of kolom geen enkele tile is gezet, dan wordt die rij niet geprint. Het board is dynamisch.
- */
+	/**
+	 * Maakt een Textual Interface van een board. Aan de boven- en linkerrand staan de coördinaten van de rij en kolom.
+	 * Als er in een rij of kolom geen enkele tile is gezet, dan wordt die rij niet geprint. Het board is dynamisch.
+	 */
 	/*@pure*/
 	public String toString() {
 		String result = "y\\x";

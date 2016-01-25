@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +28,7 @@ public class BoardTest {
 	}
 	
 	@Test
-	public void TestMove(){
+	public void testMove(){
 		Tile t = new Tile(Color.BLUE, Shape.DIAMOND);
 		Coord c = new Coord(2, 5);
 		Move m = new Move(t, c);

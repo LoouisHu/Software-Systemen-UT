@@ -30,7 +30,7 @@ public class Game {
 	public void nextTurn(){
 		turn++;
 	}
-	
+	/*@ pure*/
 	public int getTurn(){
 		return turn;
 	}
@@ -51,7 +51,7 @@ public class Game {
 	public Board getBoard() {
 		return board;
 	}
-	
+	/*@ pure*/
 	public TileBag getTileBag() {
 		return tilebag;
 	}
