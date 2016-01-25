@@ -9,19 +9,22 @@ public class Move {
 		this.tile = tile;
 		this.coord = coord;
 	}
-	
+	/*@pure*/
 	public Tile getTile() {
 		return tile;
 	}
-
+	/*@pure*/
 	public void setTile(Tile tile) {
 		this.tile = tile;
 	}
-
+	/*@pure*/
 	public Coord getCoord() {
 		return coord;
 	}
-
+	/* 
+	 * @requires coord != null;	
+	 * @ensures getCoord() == coord;
+	 */
 	public void setCoord(Coord coord) {
 		this.coord = coord;
 	}

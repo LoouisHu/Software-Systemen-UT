@@ -17,7 +17,10 @@ public class Board {
 	/**
 	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met DIM als lengte.
 	 */
-	// @public invariant boardSpaces.length == DIM;
+	/*
+	 * @public invariant boardSpaces.length == DIM;
+	 * @ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) == null);
+	 */
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
 	}	
@@ -28,7 +31,8 @@ public class Board {
 	 * @return true als de andere validMove true is;
 	 */
 	
-	/*@pure*/public boolean validMove(Move move) {
+	/*@pure*/
+	public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
 
@@ -38,7 +42,8 @@ public class Board {
 	 * @param movesMade
 	 * @return
 	 */
-	/*@pure*/public boolean validMove(Move theMove, List<Move> movesMade) {
+	/*@pure*/
+	public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);
 		boolean answer = true;
 		boolean oldY = true;
@@ -78,12 +83,15 @@ public class Board {
 
 		return answer;
 	}
-	/*
-	 * @ requires check of de eerste naast m klopt met de regels, maar de
-	 * volgende daar naast niet
+	/**
+	 * Checkt op de verticale as of de move geldig is bij één tile.
+	 * @param m 
+	 * 			de move die je maakt.
+	 * @return true als de zet mogelijk is.
 	 */
 
-	/*@pure*/public boolean inLineV(Move m) {
+	/*@pure*/
+	public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -123,8 +131,15 @@ public class Board {
 		}
 		return answer;
 	}
-
-	/*@pure*/public boolean inLineH(Move m) {
+	
+	/**
+	 * Checkt op de horizontale as of de move geldig is bij één tile.
+	 * @param m 
+	 * 			de move die je maakt.
+	 * @return true als de zet mogelijk is.
+	 */
+	/*@pure*/
+	public boolean inLineH(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -166,7 +181,7 @@ public class Board {
 	}
 
 	/**
-	 * laat zien of een veld leeg is.
+	 * Laat zien of een veld leeg is.
 	 * 
 	 * @param x
 	 *            de x-coördinaat
@@ -185,7 +200,7 @@ public class Board {
 	}
 
 	/**
-	 * geeft true als een rij helemaal leeg is.
+	 * Geeft true als een rij helemaal leeg is.
 	 * 
 	 * @param x
 	 *            geeft aan welke rij je bekijkt.
@@ -210,7 +225,7 @@ public class Board {
 	}
 
 	/**
-	 * geeft true als een kolom helemaal leeg is.
+	 * Geeft true als een kolom helemaal leeg is.
 	 * 
 	 * @param y
 	 *            geeft aan welke rij je bekijkt.
@@ -233,11 +248,22 @@ public class Board {
 		}
 		return empty;
 	}
-
+	/* @requires 0 <= x & x <= DIM;
+	 * @requires 0 <= y & y<= DIM;
+	 */
 	/*@pure*/public Tile getField(int x, int y) {
 		return boardSpaces[x][y];
 	}
-
+	
+	/**
+	 * Voegt een Tile toe op de x en y coördinaat van boardSpaces.
+	 * @param move
+	 */
+	/* @requires move.getCoord().getX() < DIM;
+	 * @requires move.getCoord().getX() < DIM;
+	 * @ensures \result == move.getTile();
+	 * 
+	 */
 	public void boardAddMove(Move move) {
 		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
 	}
@@ -245,7 +271,11 @@ public class Board {
 	public void boardRemove(Coord coord) {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
-
+/**
+ * Keert een lijst terug van boardSpaces waar een zet is op gedaan.
+ * @return
+ */
+	
 	/*@pure*/public List<Move> getUsedSpaces() {
 		List<Move> result = new ArrayList<Move>();
 		for (int i = 0; i < DIM; i++) {
@@ -259,7 +289,8 @@ public class Board {
 	}
 
 	/* @ ensures \result < DIM; */
-	/* @pure */public int lowestX() {
+	/* @pure */
+	public int lowestX() {
 		int x = 92;
 		while (!this.emptyXRow(x)) {
 			x--;
@@ -268,7 +299,8 @@ public class Board {
 	}
 
 	/* @ ensures \result < DIM; */
-	/* @pure */public int highestX() {
+	/* @pure */
+	public int highestX() {
 		int x = 92;
 		while (!this.emptyXRow(x)) {
 			x++;
@@ -277,7 +309,8 @@ public class Board {
 	}
 
 	/* @ ensures \result < DIM; */
-	/* @pure */public int lowestY() {
+	/* @pure */
+	public int lowestY() {
 		int y = 92;
 		while (!this.emptyYRow(y)) {
 			y--;
@@ -286,15 +319,20 @@ public class Board {
 	}
 
 	/* @ ensures \result < DIM; */
-	/* @pure */public int highestY() {
+	/* @pure */
+	public int highestY() {
 		int y = 92;
 		while (!this.emptyYRow(y)) {
 			y++;
 		}
 		return y;
 	}
-
-	/*@pure*/public String toString() {
+/**
+ * Maakt een Textual Interface van een board. Aan de boven- en linkerrand staan de coördinaten van de rij en kolom.
+ * Als er in een rij of kolom geen enkele tile is gezet, dan wordt die rij niet geprint. Het board is dynamisch.
+ */
+	/*@pure*/
+	public String toString() {
 		String result = "y\\x";
 		for (int y = lowestY(); y <= highestY(); y++) {
 			result = result.concat(String.format("|%03d", y));
