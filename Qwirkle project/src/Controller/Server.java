@@ -14,23 +14,23 @@ public class Server extends Thread {
 	private int playerNumber;
 	public static final int MAXPLAYERS = 4;
 
-	/**
+	/*
 	 * @invariant port > 0 && port < 65536
 	 */
 	private int port;
 	private ServerSocket ss;
 	
-	/**
+	/*
 	 * @invariant games != null
 	 */
 	private ArrayList<Game> games;
 	
-	/**
+	/*
 	 * @invariant kamers != null
 	 */
 	private ArrayList<ClientHandler[]> rooms;
 
-	/**
+	/*
 	 * @invariant lobby != null
 	 */
 	private ArrayList<ClientHandler> lobby;
@@ -71,8 +71,9 @@ public class Server extends Thread {
 	 * Deze methode controleert of de naam die wordt meegegeven al wordt
 	 * gebruikt door een andere speler op deze Server.
 	 * 
-	 * @require naam != null && ch != null
 	 */
+	
+	/*@require naam != null && ch != null*/
 	public boolean contains(String naam, ClientHandler ch){
 		boolean contains = false;
 		for(ClientHandler ch1: lobby){
@@ -95,8 +96,8 @@ public class Server extends Thread {
 	/**
 	 * Controleert of de meegegeven ClientHandler zich in de lobby bevindt.
 	 * 
-	 * @require ch!=null
 	 */
+	/*@require ch!=null*/
 	public boolean containsCH(ClientHandler ch){
 		return lobby.contains(ch);
 	}

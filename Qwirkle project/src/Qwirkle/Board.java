@@ -19,16 +19,16 @@ public class Board {
 	//
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
-	}
+	}	
 
-	public boolean validMove(Move move) {
+	/*@pure*/public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
 
 	/*
 	 * @
 	 */
-	public boolean validMove(Move theMove, List<Move> movesMade) {
+	/*@pure*/public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);
 		boolean answer = true;
 		boolean oldY = true;
@@ -73,7 +73,7 @@ public class Board {
 	 * volgende daar naast niet
 	 */
 
-	public boolean inLineV(Move m) {
+	/*@pure*/public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -114,7 +114,7 @@ public class Board {
 		return answer;
 	}
 
-	public boolean inLineH(Move m) {
+	/*@pure*/public boolean inLineH(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
 		ArrayList<Tile> tiles = new ArrayList<Tile>();
@@ -224,7 +224,7 @@ public class Board {
 		return empty;
 	}
 
-	public Tile getField(int x, int y) {
+	/*@pure*/public Tile getField(int x, int y) {
 		return boardSpaces[x][y];
 	}
 
@@ -236,7 +236,7 @@ public class Board {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
 
-	public List<Move> getUsedSpaces() {
+	/*@pure*/public List<Move> getUsedSpaces() {
 		List<Move> result = new ArrayList<Move>();
 		for (int i = 0; i < DIM; i++) {
 			for (int j = 0; j < DIM; j++) {
@@ -284,7 +284,7 @@ public class Board {
 		return y;
 	}
 
-	public String toString() {
+	/*@pure*/public String toString() {
 		String result = "y\\x";
 		for (int y = lowestY(); y <= highestY(); y++) {
 			result = result.concat(String.format("|%03d", y));
