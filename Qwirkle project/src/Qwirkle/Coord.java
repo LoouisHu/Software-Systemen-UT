@@ -10,12 +10,19 @@ public class Coord {
 		horizontal = x;
 		vertical = y;
 }
+	/*@pure*/
 	public int getX(){
 		return horizontal;
 	}
+	/*@pure*/
 	public int getY(){
 		return vertical;
 	}
+	/**
+	 * Als er een zet wordt gemaakt op het bord, dan kan deze methode de aanliggende vier 
+	 * coördinaten bekijken.
+	 * @return
+	 */
 	public Coord[] getAdjacentCoords(){
 		Coord[] coords = new Coord[4];
 		if(horizontal != DIM){

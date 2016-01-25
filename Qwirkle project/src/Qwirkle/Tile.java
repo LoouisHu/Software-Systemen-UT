@@ -48,11 +48,11 @@ public class Tile {
 		case '*': this.shape = Shape.STAR;
 		}
 	}
-
+	/*pure*/
 	public Color getColor(){
 		 return color;
 	}
-	
+	/*pure*/
 	public Shape getShape(){
 		return shape;
 	}
