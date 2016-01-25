@@ -11,7 +11,7 @@ import model.Tile;
 public class RetardedStrategy implements Strategy {
 
 	@Override
-	public Move determineMove(Board board, List<Tile> hand, Game game) {
+	public Move determineMove(Board board, List<Tile> hand) {
 		// TODO Auto-generated method stub
 		Move result = null;
 		boolean isFound = false;

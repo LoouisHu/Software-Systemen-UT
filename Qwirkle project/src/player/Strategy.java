@@ -7,6 +7,6 @@ import model.*;
 
 public interface Strategy {
 	
-	public Move determineMove(Board board, List<Tile> hand, Game game);
+	public Move determineMove(Board board, List<Tile> hand);
 
 }

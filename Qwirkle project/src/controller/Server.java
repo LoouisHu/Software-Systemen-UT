@@ -229,15 +229,6 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * Geeft de draai door aan Spel.
-	 * 
-	 * @require kamer >= 0 && kamer < games.size() && blok >= 0 && blok <= 8 && (draairichting == 1 || draairichting == -1)
-	 */
-	public void draaiBlok(int kamer, int blok, int draairichting){
-		games.get(kamer).draaiBlok(blok, draairichting);
-	}
-	
-	/**
 	 * Checkt op het Bord of het wel een geldige zet is.
 	 * 
 	 * @require kamer >= 0 && kamer < games.size() && x >= 0 && x <= 8 && y >= 0 && y <= 8
@@ -351,7 +342,7 @@ public class Server extends Thread {
 	public void shutdown() {
 		try {
 			for(ClientHandler lobbygast: lobby) {
-				lobbygast.sendMessage(Protocol.QUIT_SERVER);
+				lobbygast.sendMessage(Protocol.KICK + " Server shutdown");
 				lobbygast.shutdown();
 			}
 		} catch(ConcurrentModificationException c) {
@@ -360,7 +351,7 @@ public class Server extends Thread {
 		try{
 			for(ClientHandler[] kamer: rooms) {
 				for(ClientHandler speler: kamer) {
-					speler.sendMessage(Protocol.QUIT_SERVER);
+					speler.sendMessage(Protocol.KICK + " Server shutdown");
 					speler.shutdown();
 				}
 			}

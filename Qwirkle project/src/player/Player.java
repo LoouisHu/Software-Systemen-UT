@@ -22,18 +22,14 @@ public abstract class Player {
 	 
 	 private Board board;
 	 
-	 private Game game;
-	 
 	 private List<Move> currentMoves;
 
 	 
 	 //-----Constructor------
 	 
-	 public Player(String name, List<Tile> hand){
+	 public Player(String name, Board board){
 		 this.name = name;
-		 this.hand = hand;
 		 this.board = board;
-		 this.game = game;
 		 currentMoves = new ArrayList<Move>();
 	 }
 	 //------Queries-------
@@ -84,6 +80,5 @@ public abstract class Player {
 	public Board getBoard(){
 		return board;
 	}
-	
 }
 

@@ -14,6 +14,8 @@ import java.util.Scanner;
 import controller.Protocol;
 import model.Board;
 import model.Tile;
+import player.HumanPlayer;
+import player.Player;
 
 
 public class TUI extends Observable implements Runnable {
@@ -22,13 +24,17 @@ public class TUI extends Observable implements Runnable {
 	private BufferedReader in;
 	private BufferedWriter out;
 	private Scanner scan;
+	private String name;
+	private Board board;
+	private Player player;
 	
 	public TUI() {
 		String ip = "";
 		String port = "";
-		String name = "";
+		name = "";
 		InetAddress inet = null;
 		int portnr = 0;
+		board = new Board();
 		
 		scan = new Scanner(System.in);
 		System.out.print("IP: ");
@@ -124,7 +130,30 @@ public class TUI extends Observable implements Runnable {
 		}
 		switch(commando) {
 		case Protocol.WELCOME:
-			
+			if(sc.hasNext()) {
+				name = sc.next();
+				player = new HumanPlayer(name, board);
+			}
+			if(sc.hasNext()) {
+				playerNumber = Integer.parseInt(sc.next());
+			}
+			break;
+		case Protocol.WINNER:
+			if(sc.hasNext()) {
+				System.out.println("The winner: " + sc.next());
+			}
+			break;
+		case Protocol.NEXT:
+			if(sc.hasNext()) {
+				String player = sc.next();
+				if(playerNumber == Integer.parseInt(player)) {
+					System.out.println("Your turn");
+					player.
+				} else {
+					System.out.println("Next player: " + player);
+				}
+			}
+			break;
 		}
 	}
 	
@@ -157,6 +186,4 @@ public class TUI extends Observable implements Runnable {
 	public static void main(String[] args) {
 		new TUI();
 	}
-	
-	
 }
