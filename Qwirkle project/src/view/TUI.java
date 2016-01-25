@@ -145,10 +145,10 @@ public class TUI extends Observable implements Runnable {
 			break;
 		case Protocol.NEXT:
 			if(sc.hasNext()) {
-				String player = sc.next();
-				if(playerNumber == Integer.parseInt(player)) {
+				String number = sc.next();
+				if(playerNumber == Integer.parseInt(number)) {
 					System.out.println("Your turn");
-					player.
+					player.makeMove();
 				} else {
 					System.out.println("Next player: " + player);
 				}

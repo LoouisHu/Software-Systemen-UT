@@ -49,7 +49,7 @@ public abstract class Player {
 	
 	 //----Methods-----
 	 
-	public void makeMove(Tile tile, Coord coord){
+	public Move makeMove(Tile tile, Coord coord){
 		Move movie = new Move(tile, coord);
 		if(currentMoves.size() == 0){
 			deepCopy = board;
@@ -59,10 +59,11 @@ public abstract class Player {
 			currentMoves.add(movie);
 			hand.remove(movie.getTile());
 		}
+		return movie;
 	}
 	
-	public void makeMove(Move move){
-		makeMove(move.getTile(), move.getCoord());
+	public Move makeMove(Move move){
+		return makeMove(move.getTile(), move.getCoord());
 	}
 	
 	public void undoMove(){

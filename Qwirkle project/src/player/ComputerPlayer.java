@@ -5,6 +5,7 @@ import java.util.List;
 import controller.Game;
 import model.Board;
 import model.Coord;
+import model.Move;
 import model.Tile;
 
 public class ComputerPlayer extends Player {
@@ -16,7 +17,7 @@ public class ComputerPlayer extends Player {
 		this.strat = new RetardedStrategy();
 	}
 	
-	public void makeMove(Tile tile, Coord coord){
-		strat.determineMove(super.getBoard(), super.getHand(), );
+	public Move makeMove(Tile tile, Coord coord){
+		return strat.determineMove(super.getBoard(), super.getHand());
 	}
 }

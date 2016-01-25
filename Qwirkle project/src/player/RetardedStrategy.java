@@ -31,9 +31,7 @@ public class RetardedStrategy implements Strategy {
 			}
 		}
 		if (result == null){
-			for (int l = 0; l < hand.size(); l++){
-				game.swap(hand);
-			}
+			result = xxxxxx;
 		}
 		return result;
 	}
