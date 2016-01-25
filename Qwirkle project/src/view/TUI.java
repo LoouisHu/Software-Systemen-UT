@@ -32,11 +32,17 @@ public class TUI extends Observable implements Runnable {
 		
 		scan = new Scanner(System.in);
 		if(scan.hasNext()) {
-			ip = scan.next();
+			ip = getIP();
 		}
 		System.out.println(ip);
-		ip = getUsername();
-		System.out.println(ip);
+		if(scan.hasNext()) {
+			port = getPort();
+		}
+		System.out.println(port);
+		if(scan.hasNext()) {
+			name = getUsername();
+		}
+		System.out.println(name);
 		
 		try {
 			inet = InetAddress.getByName(ip);
@@ -136,8 +142,18 @@ public class TUI extends Observable implements Runnable {
 		}
 	}
 	
+	public String getIP(){
+		System.out.print("IP: ");
+		return scan.nextLine();
+	}
+	
+	public String getPort(){
+		System.out.print("Port: ");
+		return scan.nextLine();
+	}
+	
 	public String getUsername(){
-		System.out.println("What's your name?");
+		System.out.print("What's your name?: ");
 		return scan.nextLine();
 	}
 	
