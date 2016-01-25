@@ -52,6 +52,10 @@ public class Game {
 		return board;
 	}
 	
+	public TileBag getTileBag() {
+		return tilebag;
+	}
+	
 	public List<Tile> swap(List<Tile> tiles) {
 		List<Tile> result = new ArrayList<Tile>();
 		for(int i = 0; i < tiles.size(); i++) {
