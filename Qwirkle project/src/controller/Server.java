@@ -383,6 +383,6 @@ public class Server extends Thread {
 	}
 	
 	public int remainingTiles() {
-		return game.getTileBag().remainingTiles();
+		return game.getTileBag().getTileBagSize();
 	}
 }

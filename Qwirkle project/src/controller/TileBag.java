@@ -3,12 +3,15 @@ package controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import model.Tile;
 
 //TODO gebruiken voor de server;
 public class TileBag {
+	
+	//@ private invariant tiles != null;
 	
 	// Aantal stenen
 	public static final int SIZE = 108;
@@ -19,7 +22,9 @@ public class TileBag {
 	//Tiles dat in de bag zitten
 	private ArrayList<Tile> tiles;
 	
-	//Creates a bag with 108 tiles in it :)
+	/**
+	 * Maakt een nieuwe bag en vult het met de 108 tiles.
+	 */
 	public TileBag() {
 		this.tiles = new ArrayList<>(SIZE);
 		
@@ -31,17 +36,19 @@ public class TileBag {
 			}
 		}
 	}
-	
-	// Draw the first tile from the bag and delete it
-	public Tile drawTile(){
-		return this.tiles.remove(0);
-	}
-	
-	//Draw first round 6 tiles;
-	public Set<Tile> drawSix(){
-		Set<Tile> hand = new HashSet<>();
-		for (int i = 0; i < SIZE_HAND; i++){
-			hand.add(this.drawTile());
+	/**
+	 * Returns a list of random tiles.
+	 * @param amount Amount of tiles to return
+	 */
+	//@ requires amount > 0 && amount <= Player.SIZE_HAND;
+	//@ ensures \result != null;
+	//@ ensures \result.size() == amount;
+	//@ ensures getSize() == (amount >= getSize() ? \old(getSize()) - amount : 0);
+	public List<Tile> getTiles(int amount){
+		List<Tile> hand = new ArrayList<Tile>();
+		for (int i = 0; i < amount && getTileBagSize() > 0; i++){
+			hand.add(tiles.get(0));
+			tiles.remove(0);
 		}
 		return hand;
 	}
@@ -51,17 +58,26 @@ public class TileBag {
 		Collections.shuffle(this.tiles);
 	}
 	
-	//return amount of tiles
-	public int remainingTiles(){
+	
+	public int getTileBagSize(){
 		return this.tiles.size();
 	}
 	
-	//checks whether the tilebag is empty
+	/**
+	 * Kijkt of de bag leeg is.
+	 * @return
+	 */
 	public boolean isEmpty(){
 		return this.tiles.isEmpty();
 	}
-	
-	public void returnTile(Tile t) {
-		tiles.add(t);
+	/**
+	 * Keert de tiles weer terug in de stapel en schudt ze.
+	 * @param tiles de tiles die je in je hand had oid.
+	 */
+	//@ requires tiles != null;
+	//@ ensures getSize() == \old(getSize()) + tiles.size();
+	public void returnTiles(List<Tile> t) {
+		tiles.addAll(t);
+		shuffle();
 	}
 }

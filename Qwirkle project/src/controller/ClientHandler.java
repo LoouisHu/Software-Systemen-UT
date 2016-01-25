@@ -14,7 +14,8 @@ import Qwirkle.Tile;
 import Qwirkle.Tile.Color;
 
 /**
- * Klasse ClientHandler is de communicatie tussen Client en Server. Ook verwerkt het de berichten van Client volgens het Protocol.
+ * Klasse ClientHandler is de communicatie tussen Client en Server. 
+ * Ook verwerkt het de berichten van Client volgens het Protocol.
  */
 public class ClientHandler extends Thread{
 	
