@@ -49,14 +49,14 @@ public class Board {
 			if (boardSpaces[theMove.getCoord().getX()][theMove.getCoord().getY()] != null) {
 				answer = false;
 			}
-			int adjecends = 0;
+			int adjacent = 0;
 			for (int i = 0; i < 4; i++) {
 				Coord c = theMove.getCoord().getAdjacentCoords()[i];
 				if (boardSpaces[c.getX()][c.getY()] != null) {
-					adjecends++;
+					adjacent++;
 				}
 			}
-			if (adjecends == 0) {
+			if (adjacent == 0) {
 				answer = false;
 			}
 			if (!(inLineV(theMove) && inLineH(theMove))) {
