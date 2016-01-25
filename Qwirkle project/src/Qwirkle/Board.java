@@ -14,19 +14,29 @@ public class Board {
 	public static final int DIM = 183;
 	public static final int powerMoveLength = 6;
 
+	/**
+	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met DIM als lengte.
+	 */
 	// @public invariant boardSpaces.length == DIM;
-
-	//
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
 	}	
 
+	/**
+	 * Kijkt of een zet geldig is volgens de regels van Qwirkle.
+	 * @param move
+	 * @return true als de andere validMove true is;
+	 */
+	
 	/*@pure*/public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
 
-	/*
-	 * @
+	/**
+	 * Kijkt of een zet geldig is volgens de regels van Qwirkle.
+	 * @param theMove
+	 * @param movesMade
+	 * @return
 	 */
 	/*@pure*/public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);

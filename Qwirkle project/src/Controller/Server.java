@@ -320,7 +320,7 @@ public class Server extends Thread {
 	
 	/**
 	 * Verwijdert de ClientHandler ch uit de lobby als deze zich in 
-	 * de lobby bevind. Anders zit ch in een kamer en wordt de kamer
+	 * de lobby bevindt. Anders zit ch in een kamer en wordt de kamer
 	 * met het bijbehorende Spel verwijdert uit de kamerlijst en 
 	 * spellijst.
 	 * 
