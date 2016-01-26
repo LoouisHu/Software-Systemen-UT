@@ -77,7 +77,7 @@ public class Server extends Thread {
 	 * 
 	 */
 	
-	/*@require naam != null && ch != null*/
+	/*@requires naam != null && ch != null*/
 	public boolean contains(String naam, ClientHandler ch){
 		boolean contains = false;
 		for(ClientHandler ch1: lobby){
@@ -101,7 +101,7 @@ public class Server extends Thread {
 	 * Controleert of de meegegeven ClientHandler zich in de lobby bevindt.
 	 * 
 	 */
-	/*@require ch!=null*/
+	/*@requires ch!=null*/
 	public boolean containsCH(ClientHandler ch){
 		return lobby.contains(ch);
 	}
@@ -284,8 +284,8 @@ public class Server extends Thread {
 	public int zoekCH(ClientHandler ch){
 		int kamer = -1;
 		boolean found = false;
-		/**
-		 * @invariant for all int i > 0: !kamers.get(i-1).contains(ch)
+		/*
+		 * @invariant (\forall int i > 0: !kamers.get(i-1).contains(ch))
 		 */
 		for(int i = 0; i<rooms.size() && !found; i++){
 			for(ClientHandler ch1: rooms.get(i)){
