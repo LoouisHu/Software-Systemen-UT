@@ -335,10 +335,10 @@ public class Board {
 		return y;
 	}
 	/**
-	 * Maakt een Textual Interface van een board.
+	 * Maakt een Textual Interface van een board. 
 	 * Aan de boven- en linkerrand staan de coördinaten van de rij en kolom.
-	 * Als er in een rij of kolom geen enkele tile is gezet, 
-	 * dan wordt die rij niet geprint. Het board is dynamisch.
+	 * Als er in een rij of kolom geen enkele tile is gezet, dan wordt die rij niet geprint. 
+	 * Het board is dynamisch.
 	 */
 	/*@pure*/
 	public String toString() {
@@ -372,4 +372,10 @@ public class Board {
 		return result;
 	}
 
+	public static void main(String args[]) {
+		Board b = new Board();
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.STAR), new Coord(92, 92)));
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.STAR), new Coord(92, 93)));
+		System.out.println(b.toString());
+	}
 }

@@ -18,7 +18,7 @@ public class BagTest {
 	int amount;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		bag = new TileBag();
 		amount = Tile.Color.values().length * Tile.Shape.values().length * 3;
 	}

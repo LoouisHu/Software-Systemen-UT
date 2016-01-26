@@ -14,6 +14,7 @@ import java.util.Scanner;
 import controller.Protocol;
 import model.Board;
 import model.Tile;
+import player.ComputerPlayer;
 import player.HumanPlayer;
 import player.Player;
 
@@ -117,7 +118,7 @@ public class TUI extends Observable implements Runnable {
 			while (true) {
 				String message = in.readLine();
 				if (message != null) {
-					verwerk(message);
+					process(message);
 				}
 			}
 		} catch (IOException e) {
@@ -125,7 +126,7 @@ public class TUI extends Observable implements Runnable {
 		}
 	}
 
-	public void verwerk(String message) {
+	public void process(String message) {
 		Scanner sc = new Scanner(message);
 		String commando = null;
 		if (sc.hasNext()) {
@@ -151,7 +152,12 @@ public class TUI extends Observable implements Runnable {
 					String number = sc.next();
 					if (playerNumber == Integer.parseInt(number)) {
 						System.out.println("Your turn");
-						player.makeMove();
+						if (player instanceof ComputerPlayer){
+							player.makeMove(null, null);
+						} else {
+							player.makeMove(move)
+						}
+						
 					} else {
 						System.out.println("Next player: " + player);
 					}

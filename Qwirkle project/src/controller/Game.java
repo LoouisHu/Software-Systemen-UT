@@ -12,33 +12,34 @@ import player.Player;
 public class Game {
 
 	private Set<Tile> tiles;
-	
+
 	private Map<Player, Integer> scores;
-	
+
 	private int turn;
-	
+
 	private TileBag tilebag;
-	
+
 	private Player player;
-	
+
 	private Board board;
-	
+
 	public Game(int aantalspelers) {
 		tilebag = new TileBag();
 	}
-	
-	public void nextTurn(){
+
+	public void nextTurn() {
 		turn++;
 	}
-	/*@ pure*/
-	public int getTurn(){
+
+	/* @ pure */
+	public int getTurn() {
 		return turn;
 	}
-	
-	public Map<Player, Integer> getScores(){
+
+	public Map<Player, Integer> getScores() {
 		return scores;
 	}
-	
+
 	public boolean gameOver() {
 		return false;
 	}
@@ -47,22 +48,25 @@ public class Game {
 		boolean answer = false;
 		return answer;
 	}
-	/*@ pure*/
+
+	/* @ pure */
 	public Board getBoard() {
 		return board;
 	}
-	/*@ pure*/
+
+	/* @ pure */
 	public TileBag getTileBag() {
 		return tilebag;
 	}
-	
-	public List<Tile> swap(List<Tile> tiles) {
+
+	public List<Tile> swap(List<Tile> tilesSwap) {
 		List<Tile> result = new ArrayList<Tile>();
-		for(int i = 0; i < tiles.size(); i++) {
-			result.add(tilebag.drawTile());
+		for (int i = 0; i < tiles.size(); i++) {
+			 //result.(tilebag.returnTiles(tilesSwap)));
+			return result;
 		}
-		for(Tile t: tiles) {
-			tilebag.returnTile(t);
+		for (Tile t : tilesSwap) {
+			// tilebag.returnTile(t);
 		}
 		tilebag.shuffle();
 		return result;

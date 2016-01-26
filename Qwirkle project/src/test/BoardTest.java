@@ -45,10 +45,23 @@ public class BoardTest {
 		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(91, 92)));
 		b.boardAddMove(new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(91, 93)));
 		b.boardAddMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(91, 94)));
-		assertEquals(t1.getColor(), b.getField(92, 93).getColor());
-		assertEquals(t2.getShape(), b.getField(92, 94).getShape());
+		assertEquals(t1.getColor(), b.getField(91, 92).getColor());
+		assertEquals(t2.getShape(), b.getField(91, 93).getShape());
 		assertFalse(b.validMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(91, 94))));
 	}
-	
-	
-}	
+
+	@Test
+	public void longerThanSix() {
+		
+	}
+
+	@Test
+	public void testEmptyRow() {
+		assertTrue(b.emptyXRow(42));
+		assertTrue(b.emptyYRow(90));
+		b.boardAddMove(new Move(new Tile(Color.PURPLE, Shape.SQUARE), new Coord(50, 46)));
+		assertFalse(b.emptyXRow(50));
+		assertFalse(b.emptyYRow(46));
+	}
+
+}
