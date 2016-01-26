@@ -1,4 +1,4 @@
-package ss.week7.challenge.chatbox;
+package week7.challenge.chatbox;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

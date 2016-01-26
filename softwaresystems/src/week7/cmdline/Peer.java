@@ -45,13 +45,15 @@ public class Peer implements Runnable {
      * writes the characters to the default output.
      */
     public void run() {
-    	String theLine;
+    while(true) {
     	try{
-    	while((theLine = in.readLine()) != null){
+    		String theLine;
+    		while((theLine = in.readLine()) != null){
     		System.out.println(theLine);}
     	} catch (IOException e){
     		System.out.print(e);
     	}
+    }
     	
     }
 

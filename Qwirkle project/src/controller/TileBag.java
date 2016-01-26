@@ -27,7 +27,7 @@ public class TileBag {
 	 */
 
 	public TileBag() {
-		this.tiles = new ArrayList<>(SIZE);
+		this.tiles = new ArrayList<Tile>();
 		for (Tile.Color c : Tile.Color.values()) {
 			for (Tile.Shape s : Tile.Shape.values()) {
 				for (int i = 0; i < 3; i++) {

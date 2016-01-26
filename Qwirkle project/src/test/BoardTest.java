@@ -41,13 +41,13 @@ public class BoardTest {
 	public void testMultipleMoves() {
 		Tile t1 = new Tile(Color.GREEN, Shape.CIRCLE);
 		Tile t2 = new Tile(Color.ORANGE, Shape.CIRCLE);
-		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.CIRCLE), new Coord(92, 92)));
-		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 93)));
-		b.boardAddMove(new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(92, 94)));
-		b.boardAddMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(92, 95)));
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.CIRCLE), new Coord(91, 91)));
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(91, 92)));
+		b.boardAddMove(new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(91, 93)));
+		b.boardAddMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(91, 94)));
 		assertEquals(t1.getColor(), b.getField(92, 93).getColor());
 		assertEquals(t2.getShape(), b.getField(92, 94).getShape());
-		assertFalse(b.validMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(92, 95))));
+		assertFalse(b.validMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(91, 94))));
 	}
 	
 	

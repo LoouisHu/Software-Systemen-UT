@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import Qwirkle.Tile;
-import Qwirkle.Tile.Color;
+import model.Tile;
+import model.Tile.Color;
 
 /**
  * Klasse ClientHandler is de communicatie tussen Client en Server. 

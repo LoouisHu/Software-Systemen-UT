@@ -87,8 +87,8 @@ public class TUI extends Observable implements Runnable {
 	 * 
 	 * @require message != null
 	 */
-	public void sendHello(String name) {
-		sendMessage(Protocol.HELLO + " " + name);
+	public void sendHello(String nameArg) {
+		sendMessage(Protocol.HELLO + " " + nameArg);
 	}
 
 	/**
@@ -181,9 +181,8 @@ public class TUI extends Observable implements Runnable {
 		System.out.println(handString);
 	}
 
-	public String displayBoard(String board) {
-		board = board.toString();
-		return board;
+	public String displayBoard() {
+		return this.board.toString();
 	}
 
 	public static void main(String[] args) {

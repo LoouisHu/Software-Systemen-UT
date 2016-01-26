@@ -3,6 +3,7 @@ package week7.cmdchat;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -32,7 +33,8 @@ public class Server {
     private List<ClientHandler> threads;
     /** Constructs a new Server object */
     public Server(int portArg) {
-        // TODO insert body
+    	port = portArg;
+    	threads = new ArrayList<ClientHandler>();
     }
     
     /**
@@ -42,7 +44,22 @@ public class Server {
      * communication with the Client.
      */
     public void run() {
-        // TODO insert body
+    	ServerSocket serverSocket = null;
+    	try  {
+    		Socket sock = serverSocket.accept();
+    		ClientHandler ch = new ClientHandler(this, sock);
+    		ch.start();
+    		addHandler(ch);
+    		ch.announce();
+    	} catch (IOException e){
+    		System.out.println(e.getMessage());
+    	} finally {
+    		try {
+    			serverSocket.close();
+    		} catch (IOException e) {
+    			System.out.println(e.getMessage());
+    		}
+    	}
     }
     
     public void print(String message){
@@ -55,7 +72,9 @@ public class Server {
      * @param msg message that is send
      */
     public void broadcast(String msg) {
-        // TODO insert body
+    	for (ClientHandler ch : threads) {
+    		ch.sendMessage(msg);
+    	}
     }
     
     /**
@@ -63,7 +82,7 @@ public class Server {
      * @param handler ClientHandler that will be added
      */
     public void addHandler(ClientHandler handler) {
-        // TODO insert body
+    	threads.add(handler);
     }
     
     /**
@@ -71,6 +90,6 @@ public class Server {
      * @param handler ClientHandler that will be removed
      */
     public void removeHandler(ClientHandler handler) {
-        // TODO insert body
+    	threads.remove(handler);
     }
 }
