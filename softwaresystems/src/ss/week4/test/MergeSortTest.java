@@ -40,10 +40,13 @@ public class MergeSortTest {
     public void testMergesortUnsortedList() {
         List<Integer> sequence = new ArrayList<>(Arrays.asList(3, 2, 1, 5, 4));
         MergeSort.mergesort(sequence);
-        assertEquals(sequence, Arrays.asList(1, 2, 3, 4, 5));
+        System.out.println(sequence);
+        System.out.println(MergeSort.mergesort(sequence));
+        assertEquals(MergeSort.mergesort(sequence), Arrays.asList(1, 2, 3, 4, 5));
+      
 
         sequence = new ArrayList<>(Arrays.asList(3, 2, 1, 6, 5, 4));
         MergeSort.mergesort(sequence);
-        assertEquals(sequence, Arrays.asList(1, 2, 3, 4, 5, 6));
+        assertEquals(MergeSort.mergesort(sequence), Arrays.asList(1, 2, 3, 4, 5, 6));
     }
 }

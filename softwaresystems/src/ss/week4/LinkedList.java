@@ -40,12 +40,11 @@ public class LinkedList<Element> {
     			//De first (null) wordt toegekend aan de eerste node.
     			first = getNode(1);
     		// Als de p.next wel bestaat en de p.next.next ook:
-    		}else if(p.next != null && p.next.next != null ){
+    		}else if(p.next != null ){
     			//Dan sla je een node van de verwijderde element over, want de p.next.next is de volgende element.
     			p.next = p.next.next;
-    		}else{
-    			p.next = null;
     		}
+    		
     		
     	}
     	

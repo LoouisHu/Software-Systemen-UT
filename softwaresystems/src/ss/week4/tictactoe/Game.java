@@ -137,18 +137,4 @@ public class Game {
     /*@
        requires this.board.gameOver();
      */
-
-    /**
-     * Prints the result of the last game. <br>
-     */
-    private void printResult() {
-        if (board.hasWinner()) {
-            Player winner = board.isWinner(players[0].getMark()) ? players[0]
-                    : players[1];
-            System.out.println("Speler " + winner.getName() + " ("
-                    + winner.getMark().toString() + ") has won!");
-        } else {
-            System.out.println("Draw. There is no winner!");
-        }
-    }
 }
