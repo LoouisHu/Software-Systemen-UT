@@ -11,7 +11,7 @@ import player.Player;
 
 public class Game {
 
-	private Set<Tile> tiles;
+	private List<Tile> tiles;
 
 	private Map<Player, Integer> scores;
 
