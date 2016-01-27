@@ -355,9 +355,15 @@ public class Board {
 
 	public int decideScore(List<Move> moves) {
 		int result = 0;
+		int x = 0;
+		int y = 0;
+		if(moves.size()!=0){
+			x = moves.get(0).getCoord().getX();
+			y = moves.get(0).getCoord().getY();
+		}
 		for (int i = 0; i < moves.size(); i++) {
-			int x = moves.get(i).getCoord().getX();
-			int y = moves.get(i).getCoord().getY();
+			int currentX = moves.get(i).getCoord().getX();
+			int currentY = moves.get(i).getCoord().getY();
 			boolean north = true;
 			boolean south = true;
 			boolean west = true;
@@ -366,22 +372,22 @@ public class Board {
 			int vertical = 1;
 			for (int j = 1; j < powerMoveLength; j++) {
 				
-				if (boardSpaces[x - j][y] != null && west) {
+				if (boardSpaces[currentX - j][currentY] != null && west) {
 					horizontal++;
 				} else {
 					west = false;
 				}
-				if (boardSpaces[x + j][y] != null && east) {
+				if (boardSpaces[currentX + j][currentY] != null && east) {
 					horizontal++;
 				} else {
 					east = false;
 				}
-				if (boardSpaces[x][y - j] != null && south) {
+				if (boardSpaces[currentX][currentY - j] != null && south) {
 					vertical++;
 				} else {
 					south = false;
 				}
-				if (boardSpaces[x][y + j] != null && north) {
+				if (boardSpaces[currentX][currentY + j] != null && north) {
 					vertical++;
 				} else {
 					north = false;
@@ -389,14 +395,21 @@ public class Board {
 			}
 			if (horizontal == 1 && vertical == 1) {
 				result = 1;
-			} else if (horizontal > 1 && vertical > 1) {
-				result = result + horizontal + vertical;
-			} else if (horizontal > 1 && vertical == 1) {
-				result = result + horizontal;
-			} else if (horizontal == 1 && vertical > 1) {
-				result = result + vertical;
+			} else if (vertical > 1) {
+				if(i == 0 || x != currentX){
+					result = result + vertical;
+				}
+			} else if (horizontal > 1 ) {
+				if(i == 0 || y != currentY){
+					result = result + horizontal;
+				}
 			}
-			if (horizontal == 6)
+			if (horizontal == 6 && (i == 0 || y != currentY)) {
+				result += 6;
+			}
+			if (vertical == 6 && (i == 0 || x != currentX)) {
+				result += 6;
+			}
 			
 		}
 		return result;
