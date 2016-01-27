@@ -15,35 +15,40 @@ public class Board {
 	public static final int powerMoveLength = 6;
 
 	/**
-	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met DIM als lengte.
+	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met
+	 * DIM als lengte.
 	 */
 	/*
 	 * @public invariant boardSpaces.length == DIM;
-	 * @ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) == null);
+	 * 
+	 * @ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) ==
+	 * null);
 	 */
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
-	}	
+	}
 
 	/**
 	 * Kijkt of een zet geldig is volgens de regels van Qwirkle.
+	 * 
 	 * @param move
 	 * @return true als de andere validMove true is;
 	 */
-	
-	/*@pure*/
+
+	/* @pure */
 	public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
 
 	/**
 	 * Kijkt of een zet geldig is volgens de regels van Qwirkle.
+	 * 
 	 * @param theMove
 	 * @param movesMade
 	 * @return
 	 */
-	//TODO jml
-	/*@pure*/
+	// TODO jml
+	/* @pure */
 	public boolean validMove(Move theMove, List<Move> movesMade) {
 		boolean firstMove = (boardSpaces[91][91] == null);
 		boolean answer = true;
@@ -84,15 +89,17 @@ public class Board {
 
 		return answer;
 	}
+
 	/**
 	 * Checkt op de verticale as of de move geldig is bij één tile.
-	 * @param m 
-	 * 			de move die je maakt.
+	 * 
+	 * @param m
+	 *            de move die je maakt.
 	 * @return true als de zet mogelijk is.
 	 */
-	
-	//TODO JML
-	/*@pure*/
+
+	// TODO JML
+	/* @pure */
 	public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
@@ -133,15 +140,16 @@ public class Board {
 		}
 		return answer;
 	}
-	
+
 	/**
 	 * Checkt op de horizontale as of de move geldig is bij één tile.
-	 * @param m 
-	 * 			de move die je maakt.
+	 * 
+	 * @param m
+	 *            de move die je maakt.
 	 * @return true als de zet mogelijk is.
 	 */
-	//TODO jml
-	/*@pure*/
+	// TODO jml
+	/* @pure */
 	public boolean inLineH(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
@@ -251,19 +259,26 @@ public class Board {
 		}
 		return empty;
 	}
-	/* @requires 0 <= x & x <= DIM;
+
+	/*
+	 * @requires 0 <= x & x <= DIM;
+	 * 
 	 * @requires 0 <= y & y<= DIM;
 	 */
-	/*@pure*/public Tile getField(int x, int y) {
+	/* @pure */public Tile getField(int x, int y) {
 		return boardSpaces[x][y];
 	}
-	
+
 	/**
 	 * Voegt een Tile toe op de x en y coördinaat van boardSpaces.
+	 * 
 	 * @param move
 	 */
-	/* @requires move.getCoord().getX() < DIM;
+	/*
 	 * @requires move.getCoord().getX() < DIM;
+	 * 
+	 * @requires move.getCoord().getX() < DIM;
+	 * 
 	 * @ensures \result == move.getTile();
 	 * 
 	 */
@@ -273,17 +288,20 @@ public class Board {
 
 	/**
 	 * Verwijdert e en Tile van de x en y coördinaat van boardSpaces.
+	 * 
 	 * @param coord
 	 */
 	public void boardRemove(Coord coord) {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
+
 	/**
 	 * Keert een lijst terug van boardSpaces waar een zet is op gedaan.
+	 * 
 	 * @return
 	 */
-	
-	/*@pure*/public List<Move> getUsedSpaces() {
+
+	/* @pure */public List<Move> getUsedSpaces() {
 		List<Move> result = new ArrayList<Move>();
 		for (int i = 0; i < DIM; i++) {
 			for (int j = 0; j < DIM; j++) {
@@ -334,13 +352,63 @@ public class Board {
 		}
 		return y;
 	}
+
+	public int decideScore(List<Move> moves) {
+		int result = 0;
+		for (int i = 0; i < moves.size(); i++) {
+			int x = moves.get(i).getCoord().getX();
+			int y = moves.get(i).getCoord().getY();
+			boolean north = true;
+			boolean south = true;
+			boolean west = true;
+			boolean east = true;
+			int horizontal = 1;
+			int vertical = 1;
+			for (int j = 1; j < powerMoveLength; j++) {
+				
+				if (boardSpaces[x - j][y] != null && west) {
+					horizontal++;
+				} else {
+					west = false;
+				}
+				if (boardSpaces[x + j][y] != null && east) {
+					horizontal++;
+				} else {
+					east = false;
+				}
+				if (boardSpaces[x][y - j] != null && south) {
+					vertical++;
+				} else {
+					south = false;
+				}
+				if (boardSpaces[x][y + j] != null && north) {
+					vertical++;
+				} else {
+					north = false;
+				}
+			}
+			if (horizontal == 1 && vertical == 1) {
+				result = 1;
+			} else if (horizontal > 1 && vertical > 1) {
+				result = result + horizontal + vertical;
+			} else if (horizontal > 1 && vertical == 1) {
+				result = result + horizontal;
+			} else if (horizontal == 1 && vertical > 1) {
+				result = result + vertical;
+			}
+			if (horizontal == 6)
+			
+		}
+		return result;
+	}
+
 	/**
-	 * Maakt een Textual Interface van een board. 
-	 * Aan de boven- en linkerrand staan de coördinaten van de rij en kolom.
-	 * Als er in een rij of kolom geen enkele tile is gezet, dan wordt die rij niet geprint. 
-	 * Het board is dynamisch.
+	 * Maakt een Textual Interface van een board. Aan de boven- en linkerrand
+	 * staan de coördinaten van de rij en kolom. Als er in een rij of kolom geen
+	 * enkele tile is gezet, dan wordt die rij niet geprint. Het board is
+	 * dynamisch.
 	 */
-	/*@pure*/
+	/* @pure */
 	public String toString() {
 		String result = "y\\x";
 		for (int y = lowestY(); y <= highestY(); y++) {

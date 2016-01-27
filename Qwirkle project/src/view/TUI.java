@@ -155,7 +155,7 @@ public class TUI extends Observable implements Runnable {
 						if (player instanceof ComputerPlayer){
 							player.makeMove(null, null);
 						} else {
-							player.makeMove(move)
+							player.makeMove(move);
 						}
 						
 					} else {
