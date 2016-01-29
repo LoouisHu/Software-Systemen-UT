@@ -105,35 +105,20 @@ public class ClientHandler extends Thread{
 	}
 	
 	/**
-	 * Deze methode plaatst eerst de message die is binnengekomen
-	 * op de JTextArea van de ServerGUI. Daarna wordt het eerste 
-	 * woord opgeslagen als String 'commando' en vergeleken of het 
-	 * van de vorm is zoals in het Protocol is afgesproken. 
+	 * Het eerste woord wordt opgeslagen als String 'commando' en wordt
+	 * vergeleken of het van de vorm is zoals in het Protocol is 
+	 * afgesproken. 
 	 * 
-	 * Als commando Protocol.JOIN is, dan wordt het tweede woord 
-	 * bekeken. Dat woord hoort de naam van de Client te zijn.
-	 * Het wordt dan gecontroleerd of de naam al bestaat en anders
-	 * krijgt het een oplopend nummer achter de originele naam. 
-	 * Vervolgens wordt het derde woord bekeken dat het aantal 
-	 * spelers hoort te zijn. Als het tussen 1 en 4 ligt, wordt
-	 * er een bericht gestuurd naar de Client dat hij geconnect is
-	 * en mogelijk nog een spelerlijst als er niet genoeg mensen
-	 * zijn om meteen een spel te starten. Als het aantal spelers 0 
-	 * wordt er een Protocol.NO_CHALLENGE verstuurd omdat deze niet
-	 * geimplementeerd is.
+	 * Als het commando Protocol.HELLO is, dan wordt het eerste woord na
+	 * de commando doorgegeven aan de server bij aanmelding. Dit wordt
+	 * de player's naam. De naam mag alleen het alfabet gebruiken met 
+	 * hoofdletters en kleine letters, mag maar een lengte van 16
+	 * bevatten en er mogen geen duplicaten namen komen.
 	 * 
-	 * Als commando Protocol.SET_TILE is, dan wordt er eerst 
-	 * gecheckt of deze Client aan de beurt is en of er een SET_TILE 
-	 * wordt verwacht en niet een TURN_BLOCK. Daarna worden de 
-	 * volgende twee woorden bekeken. Deze twee woorden stellen het
-	 * blok en het cijfer voor. Eerst wordt er gecheckt of ze wel 
-	 * in het goede formaat gestuurd zijn en dan wordt het verandert naar 
-	 * de formaat die bij ons Bord en wordt er gecheckt of het een 
-	 * geldige zet is. Als dat het geval is, wordt de zet gedaan en
-	 * gebroadcast naar alle spelers in hetzelfde spel. Vervolgens
-	 * wordt er gecheckt of het spel is afgelopen.
+	 * Als het commando Protocol.SWAP is, dan wordt er één of meerdere
+	 * Tiles omgewisseld met de pot van de server.
 	 * 
-	 * Als commando Protocol.TURN_BLOCK is, dan wordt er eerst 
+	 * Als het commando Protocol.TURN_BLOCK is, dan wordt er eerst 
 	 * gecheckt of deze Client aan de beurt is en of er een TURN_BLOCK 
 	 * wordt verwacht en niet een SET_TILE. Daarna worden de 
 	 * volgende twee woorden bekeken. Deze twee woorden stellen het
@@ -144,10 +129,10 @@ public class ClientHandler extends Thread{
 	 * wordt er gecheckt of het spel is afgelopen. Als dat niet zo is, 
 	 * dan is de volgende speler aan de beurt.
 	 * 
-	 * Als commando Protocol.QUIT is, dan wordt disconnected() aangeroepen 
+	 * Als het commando Protocol.QUIT is, dan wordt disconnected() aangeroepen 
 	 * die het verder afhandelt.
 	 * 
-	 * Als commando Protocol.CHAT is, dan wordt er gecontroleerd of deze
+	 * Als het commando Protocol.CHAT is, dan wordt er gecontroleerd of deze
 	 * Client zich in de lobby bevind of in een gestarte spel en wordt 
 	 * het bericht op de goede plek gebroadcast.
 	 * 
@@ -175,13 +160,13 @@ public class ClientHandler extends Thread{
 					break;
 				case Protocol.SWAP:
 					List<Tile> tiles = new ArrayList<Tile>();
-					while(sc.hasNext()) {
+					while (sc.hasNext()) {
 						tiles.add(convertTextToTile(sc.next()));
 					}
-					if(tiles.size() <= server.remainingTiles()) {
+					if (tiles.size() <= server.remainingTiles()) {
 						List<Tile> swapped = server.getGame(this).swap(tiles);
 						String swapcommand = Protocol.NEW;
-						for(Tile t:swapped) {
+						for (Tile t : swapped) {
 							swapcommand += " " + t.toString();
 						}
 						sendMessage(swapcommand);
@@ -189,6 +174,7 @@ public class ClientHandler extends Thread{
 						kick("Swapping tiles amount larger than tiles left in the bag");
 					}
 					break;
+				case Protocol.MOVE: break;
 			}
 		}
 		
