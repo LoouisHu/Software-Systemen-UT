@@ -14,7 +14,7 @@ import model.Coord;
 import model.Move;
 import model.Tile;
 import model.Tile.Color;
-import player.PlayerScore;
+import player.SocketPlayer;
 
 /**
  * Klasse ClientHandler is de communicatie tussen Client en Server. Ook verwerkt
@@ -22,22 +22,22 @@ import player.PlayerScore;
  */
 public class ClientHandler extends Thread {
 
-	private PlayerScore playerscore;
 	private Server server;
 	private Socket socket;
 	private BufferedReader in;
 	private BufferedWriter out;
-	private NetworkPlayer player;
+	private SocketPlayer player;
 	private boolean isRunning = true;
 	private Client client;
 	private Socket sock;
+	private String name;
 
 	/**
 	 * Construeert een ClientHandler object. Initialiseert de beide Data
 	 * streams.
 	 * 
 	 */
-	public ClientHandler(Server server, Socket socket, NetworkPlayer player) {
+	public ClientHandler(Server server, Socket socket, SocketPlayer player) {
 		this.server = server;
 		this.socket = socket;
 		this.player = player;
@@ -135,13 +135,13 @@ public class ClientHandler extends Thread {
 				case Protocol.HELLO:
 					if (server.containsCH(this) && sc.hasNext()) {
 						String tempnaam = sc.next();
-						if (server.contains(tempnaam, this) && tempnaam.length() < 1 
-							   && tempnaam.length() > 16 
-							   && !tempnaam.matches("[a-zA-Z]*")) {
+						if (server.contains(tempnaam, this) || tempnaam.length() < 1 
+							   || tempnaam.length() > 16 
+							   || !tempnaam.matches("[a-zA-Z]*")) {
 							kick("name already exists or name too long or use only letters");
 						} else {
-							naam = tempnaam;
-							sendMessage(Protocol.WELCOME + " " + naam + " " + server.getNumber());
+							name = tempnaam;
+							sendMessage(Protocol.WELCOME + " " + name + " " + server.getNumber());
 						}
 					}
 					break;
@@ -228,8 +228,8 @@ public class ClientHandler extends Thread {
 	/**
 	 * Levert de naam op van de Client van deze ClientHandler
 	 */
-	public String getNaam(){
-		return naam;
+	public String getName_(){
+		return name;
 	}
 
 	public static Tile convertTextToTile(String s) {
