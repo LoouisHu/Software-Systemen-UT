@@ -137,10 +137,10 @@ public class Server extends Thread {
 		int aantal = 0;
 		ClientHandler[] spelers = new ClientHandler[aantalSpelers];
 		for (ClientHandler ch : lobby) {
-//			if (ch.getAantalSpelers() == aantalSpelers) {
-//				spelers[aantal] = ch;
-//				aantal++;
-//			}
+			// if (ch.getAantalSpelers() == aantalSpelers) {
+			// spelers[aantal] = ch;
+			// aantal++;
+			// }
 		}
 		if (aantal == aantalSpelers) {
 			check = true;
@@ -178,23 +178,27 @@ public class Server extends Thread {
 	public void startNewGame(ClientHandler[] players) {
 		Game game;
 		String spelernamen;
-//		if (players.length == 2) {
-//			game = new Game(players[0].getNaam(), players[1].getNaam());
-//			spelernamen = players[0].getNaam() + " " + players[1].getNaam();
-//		} else if (players.length == 3) {
-//			game = new Game(players[0].getNaam(), players[1].getNaam(), players[2].getNaam());
-//			spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " " + players[2].getNaam();
-//		} else {
-//			game = new Game(players[0].getNaam(), players[1].getNaam(), players[2].getNaam(), players[3].getNaam());
-//			spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " " + players[2].getNaam() + " "
-//					+ players[3].getNaam();
-//		}
-//		games.add(game);
-//		rooms.add(players);
-//		for (ClientHandler ch : players) {
-//			lobby.remove(ch);
-//		}
-//		players[0].sendMessage(Protocol.YOUR_TURN);
+		// if (players.length == 2) {
+		// game = new Game(players[0].getNaam(), players[1].getNaam());
+		// spelernamen = players[0].getNaam() + " " + players[1].getNaam();
+		// } else if (players.length == 3) {
+		// game = new Game(players[0].getNaam(), players[1].getNaam(),
+		// players[2].getNaam());
+		// spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " "
+		// + players[2].getNaam();
+		// } else {
+		// game = new Game(players[0].getNaam(), players[1].getNaam(),
+		// players[2].getNaam(), players[3].getNaam());
+		// spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " "
+		// + players[2].getNaam() + " "
+		// + players[3].getNaam();
+		// }
+		// games.add(game);
+		// rooms.add(players);
+		// for (ClientHandler ch : players) {
+		// lobby.remove(ch);
+		// }
+		// players[0].sendMessage(Protocol.YOUR_TURN);
 	}
 
 	/**
@@ -202,18 +206,18 @@ public class Server extends Thread {
 	 * 
 	 * @require ch != null
 	 */
-//	public boolean checkBeurt(ClientHandler ch) {
-//		return games.get(zoekCH(ch)).getBeurt().equals(ch.getNaam());
-//	}
+	// public boolean checkBeurt(ClientHandler ch) {
+	// return games.get(zoekCH(ch)).getBeurt().equals(ch.getNaam());
+	// }
 
 	/**
 	 * Checkt of er een zet moet worden gedaan of een blok moet worden gedraaid.
 	 * 
 	 * @require ch != null
 	 */
-//	public boolean checkTile(ClientHandler ch) {
-//		return games.get(zoekCH(ch)).tile();
-//	}
+	// public boolean checkTile(ClientHandler ch) {
+	// return games.get(zoekCH(ch)).tile();
+	// }
 
 	/**
 	 * Geeft de zet door aan Spel.
@@ -221,9 +225,9 @@ public class Server extends Thread {
 	 * @require kamer >= 0 && kamer < games.size() && x >= 0 && x <= 8 && y >= 0
 	 *          && y <= 8
 	 */
-//	public void doeZet(int kamer, int x, int y) {
-//		games.get(kamer).doeZet(x, y);
-//	}
+	// public void doeZet(int kamer, int x, int y) {
+	// games.get(kamer).doeZet(x, y);
+	// }
 
 	/**
 	 * Checkt op het Bord of het wel een geldige zet is.
@@ -231,48 +235,48 @@ public class Server extends Thread {
 	 * @require kamer >= 0 && kamer < games.size() && x >= 0 && x <= 8 && y >= 0
 	 *          && y <= 8
 	 */
-//	public boolean geldigeZet(int kamer, int x, int y) {
-//		return games.get(kamer).getBord().geldigVakje(x, y);
-//	}
+	// public boolean geldigeZet(int kamer, int x, int y) {
+	// return games.get(kamer).getBord().geldigVakje(x, y);
+	// }
 
 	/**
 	 * Checkt of het Spel is afgelopen.
 	 * 
 	 * @require ch != null
 	 */
-//	public boolean checkAfgelopen(ClientHandler ch) {
-//		boolean afgelopen = false;
-//		int zoek = zoekCH(ch);
-//		if (zoek >= 0) {
-//			afgelopen = games.get(zoek).getBord().isAfgelopen();
-//		}
-//		return afgelopen;
-//	}
+	// public boolean checkAfgelopen(ClientHandler ch) {
+	// boolean afgelopen = false;
+	// int zoek = zoekCH(ch);
+	// if (zoek >= 0) {
+	// afgelopen = games.get(zoek).getBord().isAfgelopen();
+	// }
+	// return afgelopen;
+	// }
 
 	/**
 	 * Geeft de beurt aan de volgende speler.
 	 * 
 	 * @require ch != null
 	 */
-//	public void nextPlayer(ClientHandler ch) {
-//		int zoek = zoekCH(ch);
-//		if (zoek >= 0) {
-//			for (ClientHandler ch1 : rooms.get(zoek)) {
-//				if (games.get(zoek).getBeurt().equals(ch1.getNaam())) {
-//					ch1.sendMessage(Protocol.YOUR_TURN);
-//				}
-//			}
-//		}
-//	}
+	// public void nextPlayer(ClientHandler ch) {
+	// int zoek = zoekCH(ch);
+	// if (zoek >= 0) {
+	// for (ClientHandler ch1 : rooms.get(zoek)) {
+	// if (games.get(zoek).getBeurt().equals(ch1.getNaam())) {
+	// ch1.sendMessage(Protocol.YOUR_TURN);
+	// }
+	// }
+	// }
+	// }
 
 	/**
 	 * Geeft het resultaat van het afgelopen Spel in een String.
 	 * 
 	 * @require ch != null
 	 */
-//	public String result(ClientHandler ch) {
-//		return games.get(zoekCH(ch)).getWinnaar();
-//	}
+	// public String result(ClientHandler ch) {
+	// return games.get(zoekCH(ch)).getWinnaar();
+	// }
 
 	/**
 	 * Zoekt de kamernummer van ClientHandler ch op.

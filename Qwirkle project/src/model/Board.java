@@ -50,7 +50,7 @@ public class Board {
 	// TODO jml
 	/* @pure */
 	public boolean validMove(Move theMove, List<Move> movesMade) {
-		boolean firstMove = (boardSpaces[91][91] == null);
+		boolean firstMove = boardSpaces[91][91] == null;
 		boolean answer = true;
 		boolean oldY = true;
 		boolean oldX = true;
