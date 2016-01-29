@@ -14,6 +14,7 @@ import model.Coord;
 import model.Move;
 import model.Tile;
 import model.Tile.Color;
+import player.PlayerScore;
 
 /**
  * Klasse ClientHandler is de communicatie tussen Client en Server. Ook verwerkt
@@ -21,6 +22,8 @@ import model.Tile.Color;
  */
 public class ClientHandler extends Thread {
 
+	private PlayerScore playerscore;
+	
 	/**
 	 * @invariant server != null
 	 */
@@ -40,11 +43,6 @@ public class ClientHandler extends Thread {
 	 * @invariant out != null
 	 */
 	private BufferedWriter out;
-
-	/**
-	 * @invariant naam != null
-	 */
-	private String naam;
 
 	/**
 	 * Construeert een ClientHandler object. Initialiseert de beide Data
@@ -239,12 +237,6 @@ public class ClientHandler extends Thread {
 		}
 	}
 
-	/**
-	 * Levert de naam op van de Client van deze ClientHandler
-	 */
-	public String getNaam() {
-		return naam;
-	}
 
 	public static Tile convertTextToTile(String s) {
 		Tile t;
@@ -253,4 +245,5 @@ public class ClientHandler extends Thread {
 		t = new Tile(color, shape);
 		return t;
 	}
+	
 }
