@@ -3,16 +3,16 @@ package controller;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import player.NetworkPlayer;
-import view.TUIView;
+import player.SocketPlayer;
+import view.TUI;
 
 public class Connect extends Thread {
 	
 	private int port;
 	private Server server;
-	private TUIView view;
+	private TUI view;
 	
-	public Connect(Server serverArg, int portArg, TUIView view) {
+	public Connect(Server serverArg, int portArg, TUI view) {
 		server = serverArg;
 		port = portArg;
 		this.view = view;
@@ -33,7 +33,7 @@ public class Connect extends Thread {
 				}	
 				Socket clientsocket = serversocket.accept();
 				ClientHandler clienthandler = 
-						  new ClientHandler(server, clientsocket, new NetworkPlayer());
+						  new ClientHandler(server, clientsocket, new SocketPlayer());
 				view.showMessage("New player connected!");
 				server.addClient(clienthandler);
 			} 

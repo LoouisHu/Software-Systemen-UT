@@ -32,7 +32,7 @@ public class Server extends Thread {
 	 * @param thinktime
 	 * @param ui
 	 */
-	public Server(ServerController controller, int thinktime, TUIView ui) {
+	public Server(ServerController controller, int thinktime, TUI ui) {
 		this.view = ui;
 		aithinktime = thinktime;
 		this.controller = controller;
@@ -53,28 +53,6 @@ public class Server extends Thread {
 		determineWinner();
 		shutDown();
 	}
-	
-	/**
-	 * This message handles all commands and redirects them to the corresponding methods.
-	 * @param ch
-	 * @param msg
-	 */
-	public void handleMessage(ClientHandler ch, String msg) {
-		view.showMessage("[TO SERVER] : " + msg);
-		Scanner reader = new Scanner(msg);
-		String command = reader.next();
-		if (command.equals("HELLO") && reader.hasNext()) {
-			handleHello(reader.next(), ch);
-		} else if (command.equals("MOVE") && reader.hasNext()) {
-			handleMove(reader.nextLine(), ch);
-		} else if (command.equals("SWAP") && reader.hasNext()) {
-			handleSwap(reader.nextLine(), ch);
-		} else if (command.equals("START")) {
-			this.start();
-		}
-		
-		reader.close();
-	}
 		
 	/**
 	 * Returns the number of players.
@@ -92,7 +70,7 @@ public class Server extends Thread {
 	 */
 	/*@ requires playerno < 4;
 	    ensures \result == getThreads().get(playerno).getPlayer();*/
-	public NetworkPlayer getPlayer(int playerno) {
+	public SocketPlayer getPlayer(int playerno) {
 		return threads.get(playerno).getPlayer();
 	}
 	
@@ -201,207 +179,6 @@ public class Server extends Thread {
 		System.out.println("[FROM SERVER] : " + msg);
 		for (ClientHandler ch: threads) {
 			ch.sendMessage(msg);
-		}
-	}
-	
-	/**
-	 * Checks if a valid name was entered, adds the name to the connected networkplayer
-	 * gives this player a number sends the welcome message to the player 
-	 * kicks if the name is not valid
-	 * @param message
-	 * @param ch
-	 */
-	/*@ signals (Exception e) e instanceof InValidNameException <==> !validName(message);
-	*/
-	//needs to have a message and a clienthandler
-	public void handleHello(String message, ClientHandler ch) {
-		try {
-			if (validName(message)) {
-				ch.getPlayer().setName(message);
-				ch.getPlayer().setNumber(playernumber);
-				playernumber += 1;
-				String response = "WELCOME " + ch.getPlayer().getName() + 
-						  " " + ch.getPlayer().getNumber();
-				System.out.println("[FROM SERVER TO " + ch.getPlayer().getName() 
-						  + "] : " + response);
-				ch.sendMessage(response);
-			}
-		} catch (InValidNameException e) {
-			kickPlayer(ch, "This name was not valid");
-		}
-	}
-	
-	/**
-	 * Handles a move command. Checks if it was the player's turn and if there is a message
-	 * Creates a list of moves from the message
-	 * checks if a complete move was processed and if the player has all 
-	 * the cards he tried to play
-	 * @param message
-	 * @param ch
-	 */
-	/*@ requires this.getThreads().contains(ch);
-	 */
-	public void handleMove(String message, ClientHandler ch) {
-		Scanner reader = new Scanner(message);
-		boolean completeMoveProcessed = false;
-		// Checks if it is the players turn and if there are commands
-		if (ch.getPlayer().getNumber() == playerturn && reader.hasNext()) {
-			try { 
-				List<Place> moves = new ArrayList<Place>();
-				while (reader.hasNext()) {
-					completeMoveProcessed = false;
-					String cardstring = reader.next();
-					char[] cardchars = cardstring.toCharArray();
-					// If there are not enough charachters, stop.
-					if (cardchars.length != 2) {
-						break;
-					}
-					try {
-						Card card = new Card(cardchars[0], cardchars[1]);
-						
-						// If there is nothing after the card stop.
-						if (!reader.hasNext()) {
-							break;
-						}
-						String y = reader.next();
-						int ycoor = Integer.parseInt(y);
-						
-						// If there is no x coordinate stop.
-						if (!reader.hasNext()) {
-							break;
-						}
-						String x = reader.next();
-						int xcoor = Integer.parseInt(x);
-						
-						//If everything is correct make a new card add it to the list en 
-						Place place = new Place(card, ycoor, xcoor);
-						moves.add(place);
-						completeMoveProcessed = true;
-					} catch (InvalidCharacterException e) {
-						kickPlayer(ch, e.getMessage());
-					}
-				}
-				// If there was atleast one correct formatted move do this
-				if (completeMoveProcessed && !moves.isEmpty()) {
-					try {
-						if (hasAllCardsMove(ch, moves) && board.isValidMoveList(moves)) {
-							// Cards need to be placed for score
-							for (Place p: moves) {
-								board.placeCard(p);
-							}
-								/*
-								 * updates the score of this player
-								 * draws new cards from the stack
-								 * removes the cards he played from his hand, 
-								 * sends him a message with the new cards
-								 * broadcasts a message to all players with the turn
-								 */
-							ch.getPlayer().updateScore(board.movePoints(moves));
-							// Score removes cards place them.
-							for (Place p: moves) {
-								board.placeCard(p);
-							}
-							
-							if (stack.stackAmount() > 0) {
-								List<Card> newcards = stack.drawCards(moves.size());
-								ch.getPlayer().placeCards(moves, newcards);
-								System.out.println("[FROM SERVER TO " + ch.getPlayer().getName() 
-										  + "] : " + giveCardsString(newcards));
-								ch.sendMessage(giveCardsString(newcards));
-								String turnstring = "TURN " + ch.getPlayer().getNumber();
-								for (Place p: moves) {
-									turnstring = turnstring + p.toString();
-								}
-								broadcast(turnstring);
-							} else {
-								ch.getPlayer().removeFromHandPlaces(moves);
-								System.out.println("[FROM SERVER TO " + ch.getPlayer().getName() 
-										  + "] : NEW empty");
-								ch.sendMessage("NEW empty");
-								String turnstring = "TURN " + ch.getPlayer().getNumber();
-								for (Place p: moves) {
-									turnstring = turnstring + p.toString();
-								}
-								broadcast(turnstring);
-								
-							}
-						}
-					} catch (NotEnoughTilesException e) {
-						ch.getPlayer().removeFromHandPlaces(moves);
-						ch.sendMessage("NEW empty");
-					}
-				}
-			} catch (LoneSpotException | NoEmptySpotException | NoValidCombinationException
-					| LineTooLongException e) {
-				kickPlayer(ch, "This was not a valid move");
-				e.printStackTrace();
-			} catch (NumberFormatException e) {
-				kickPlayer(ch, "Not a valid move command");
-			} finally {
-				nextTurn();
-				reader.close();
-			}
-		}
-	}
-	
-	/**
-	 * Handles a swap command.
-	 * checks if it was his turn and if there is a message
-	 * Creates a list of moves from the message
-	 * @param message
-	 * @param ch
-	 */
-	public void handleSwap(String message, ClientHandler ch) {
-		Scanner reader = new Scanner(message);
-		if (ch.getPlayer().getNumber() == playerturn && reader.hasNext()) {
-			try {
-				List<Move> moves = new ArrayList<Move>();	
-				while (reader.hasNext()) {
-					String cardstring = reader.next();
-					char[] cardchars = cardstring.toCharArray();
-					if (cardchars.length != 2) {
-						kickPlayer(ch, "Nice try, but a card only has 2 chars");
-						break;
-					}
-					try {
-						Card card = new Card(cardchars[0], cardchars[1]);
-						moves.add(new Switch(card));
-						// catches an invalid card
-					} catch (InvalidCharacterException e) {
-						e.printStackTrace();
-						kickPlayer(ch, "One of the characters was not valid");
-					}
-					if (!reader.hasNext()) {
-						break;
-					}
-				}
-				// If the player tried to swap to an empty stack, kick him
-				if (stack.stackAmount() < moves.size()) {
-					kickPlayer(ch, "U should have checked the stack before");
-				} else if (hasAllCardsSwap(ch, moves)) {
-					try {
-						/*
-						 * Draws new cards from the stack
-						 * swaps these cards with the hand of the player
-						 * sends him a message with the new cards
-						 * broadcasts the turn
-						 */
-						List<Card> newcards = stack.swapToStack(moves);
-						ch.getPlayer().swapHand(moves, newcards);
-						ch.sendMessage(giveCardsString(newcards));
-						broadcast("TURN" + " " + ch.getPlayer().getNumber() + " empty");
-					} catch (NotEnoughTilesException e) {
-						kickPlayer(ch, "Nice try, but the stack was empty");
-					}
-				} else {
-					kickPlayer(ch, "U did not have these cards");
-				}
-			} finally {
-				reader.close();
-				nextTurn();
-			}
-		} else {
-			kickPlayer(ch, "That was not a valid swap");
 		}
 	}
 	

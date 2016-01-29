@@ -24,7 +24,7 @@ public class Client extends Observable {
 	private Board board;
 	private HumanPlayer thisplayer;
 	private TUI view;
-	private int stackSize;
+	private int tileBag;
 	private ClientHandler clienthandler;
 	private int aithinktime;
 	private boolean completemoveprocessed = false;
@@ -225,20 +225,20 @@ public class Client extends Observable {
 								} else {
 									// If not try again.
 									view.showMessage("Try again");
-									handleNext(arguments);
+									handleNext(command);
 								}
 								view.showMessage(e.getMessage());
-								handleNext(arguments);
+								handleNext(command);
 							}
 						} else {
 							view.showMessage("Try again");
-							handleNext(arguments);
+							handleNext(command);
 						}
 					} else if (command.equals("SWAP")) {
 						List<Move> moves = stringToSwitchList(readmessage.nextLine());
 						if (stackSize < moves.size() || !hasAllCardsSwap(moves)) {
 							view.showMessage("Try again, stack size: " + stackSize);
-							handleNext(arguments);
+							handleNext(command);
 						} else {
 							thisplayer.removeFromHandSwitch(moves);
 							clienthandler.sendMessage(message);
@@ -246,7 +246,7 @@ public class Client extends Observable {
 							readmessage.close();
 						}
 					} else {
-						handleNext(arguments);
+						handleNext(command);
 					}
 				}
 			}
@@ -267,15 +267,11 @@ public class Client extends Observable {
 	private void handleNew(String arguments) {
 		Scanner reader = new Scanner(arguments);
 		while (reader.hasNext()) {
-			String cardstring = reader.next();
-			if (!cardstring.equals("empty")) {
-				char[] cardchars = cardstring.toCharArray();
+			String tilestring = reader.next();
+			if (!tilestring.equals("empty")) {
+				char[] tilechars = tilestring.toCharArray();
 				synchronized (thisplayer) {
-					try {
-						thisplayer.getHand().add(new Card(cardchars[0], cardchars[1]));
-					} catch (InvalidCharacterException e) {
-
-					}
+						thisplayer.getHand().add(new Tile(tilechars[0], tilechars[1]));
 				}
 			} else {
 				view.showMessage("No new cards available");
@@ -286,10 +282,8 @@ public class Client extends Observable {
 
 	/**
 	 * Deze methode wordt aangeroepen als de message begint met een TURN.
-	 * 
-	 * 
+	 *
 	 * @param arguments
-	 *            String to be decoded
 	 */
 	/*
 	 * @ ensures arguments.length() == 10 ==> this.getBoard() ==
@@ -301,7 +295,7 @@ public class Client extends Observable {
 		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
 		String word = reader.next();
 		if (word.equals("empty")) {
-			view.showMessage("Er is geruild");
+			view.showMessage("Tiles have been swapped.");
 		} else {
 			List<Move> moves = stringToPlaceList(word + " " + reader.nextLine());
 			if (stackSize > moves.size()) {
@@ -322,12 +316,9 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Gets called by the method handleMessage() if it starts with WINNER. This
-	 * method handles the output of the server that sends the winner of the
-	 * game.
+	 * De server geeft door dat er iemand gewonnen heeft.
 	 * 
 	 * @param arguments
-	 *            String to be decoded
 	 */
 	/* @ ensures this.getGameEnd() == true; */
 	private void handleWinner(String arguments) {
@@ -344,9 +335,8 @@ public class Client extends Observable {
 	 * method get everything sorted out when a player is kicked.
 	 * 
 	 * @param arguments
-	 *            String to be decoded
 	 */
-	/* @ ensures stackSize > \old(stackSize); */
+	/* @ ensures tileBag > \old(stackSize); */
 	private void handleKick(String arguments) {
 		Scanner reader = new Scanner(arguments);
 		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
@@ -355,7 +345,7 @@ public class Client extends Observable {
 		String reason = reader.nextLine();
 		if (player.equals(thisplayer)) {
 			view.showKick(player, reason);
-			view.showMessage("You got kicked!" + reason);
+			view.showMessage("You have been kicked: " + reason);
 			reader.close();
 			shutDown();
 		}
@@ -366,7 +356,6 @@ public class Client extends Observable {
 	 * Checks if the players has all cards he wants to play.
 	 * 
 	 * @param moves
-	 *            List to be checked
 	 */
 	/*
 	 * @ ensures (\forall int i; 0 <= i & i <
@@ -403,7 +392,6 @@ public class Client extends Observable {
 	 * Checks if the players has all cards he wants to swap.
 	 * 
 	 * @param moves
-	 *            List to be checked
 	 */
 	/*
 	 * @ ensures (\forall int i; 0 <= i & i <
