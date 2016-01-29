@@ -22,6 +22,7 @@ public class Move {
 	public void setTile(Tile tile) {
 		this.tile = tile;
 	}
+	
 	/*@pure*/
 	public Coord getCoord() {
 		return coord;

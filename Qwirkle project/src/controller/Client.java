@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 import view.TUI;
 import model.Board;
-import model.Tile.
+import model.Tile;
 import player.HumanPlayer;
 import player.SocketPlayer;
 import model.Move;
@@ -83,7 +83,7 @@ public class Client extends Observable {
 			this.thisplayer = new HumanPlayer(name, this);
 			break;
 		case "AI":
-			this.thisplayer = new StupidAI(name, this, 2000);
+			this.thisplayer = new StupidAI(name, this, 2000); //de AIThinkTime is gehardcoded, moet nog van server krijgen.
 			break;
 		}
 		clienthandler = new ClientHandler(this, sockarg);
@@ -235,7 +235,7 @@ public class Client extends Observable {
 							handleNext(arguments);
 						}
 					} else if (command.equals("SWAP")) {
-						List<Switch> moves = stringToSwitchList(readmessage.nextLine());
+						List<Move> moves = stringToSwitchList(readmessage.nextLine());
 						if (stackSize < moves.size() || !hasAllCardsSwap(moves)) {
 							view.showMessage("Try again, stack size: " + stackSize);
 							handleNext(arguments);
@@ -303,15 +303,15 @@ public class Client extends Observable {
 		if (word.equals("empty")) {
 			view.showMessage("Er is geruild");
 		} else {
-			List<Place> moves = stringToPlaceList(word + " " + reader.nextLine());
+			List<Move> moves = stringToPlaceList(word + " " + reader.nextLine());
 			if (stackSize > moves.size()) {
 				stackSize -= moves.size();
 			} else if (stackSize < moves.size()) {
 				stackSize = 0;
 			}
-			player.updateScore(board.movePoints(moves));
-			for (Place p : moves) {
-				board.placeCard(p);
+			player.updateScore(board.decideScore(moves));
+			for (Move p : moves) {
+				board.boardAddMove(p);
 			}
 
 		}
@@ -526,12 +526,12 @@ public class Client extends Observable {
 	 * @param playernumber
 	 * @return
 	 */
-	/* @pure */public Player getPlayer(int playernumber) {
-		Player result = null;
+	/* @pure */public RealPlayer getPlayer(int playernumber) {
+		RealPlayer result = null;
 		if (getThisPlayer().getNumber() == playernumber) {
 			result = thisplayer;
 		} else {
-			for (Player player : players) {
+			for (RealPlayer player : players) {
 				if (player.getNumber() == playernumber) {
 					result = player;
 				}
@@ -540,7 +540,7 @@ public class Client extends Observable {
 		return result;
 	}
 
-	/* @pure */public List<Player> getPlayers() {
+	/* @pure */public List<RealPlayer> getPlayers() {
 		return players;
 	}
 
