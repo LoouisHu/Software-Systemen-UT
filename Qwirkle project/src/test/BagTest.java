@@ -8,8 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import controller.TileBag;
 import model.Tile;
+import model.TileBag;
 import model.Tile.*;
 
 public class BagTest {

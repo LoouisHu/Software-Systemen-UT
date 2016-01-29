@@ -7,31 +7,34 @@ import java.util.Set;
 
 import model.Board;
 import model.Tile;
+import model.TileBag;
 import player.Player;
+import player.PlayerScore;
 
 public class Game {
 
 	private List<Tile> tiles;
 
-	private Map<Player, Integer> scores;
+	private List<PlayerScore> playerScores;
 
 	private int turn;
 
 	private TileBag tilebag;
 
-	private Player player;
-
 	private Board board;
 	
-	private int aantalspelers;
+	private int amountOfPlayers;
 
-	public Game(int aantalspelers) {
+	public Game(int aantalSpelers) {
+		this.amountOfPlayers = aantalSpelers;
 		tilebag = new TileBag();
-		this.aantalspelers = aantalspelers;
+		board = new Board();
+		turn = 0;
+		playerScores = new ArrayList<PlayerScore>(aantalSpelers);
 	}
 
 	public void nextTurn() {
-		turn = turn%aantalspelers;
+		turn++;
 	}
 
 	/* @ pure */
@@ -39,13 +42,12 @@ public class Game {
 		return turn;
 	}
 
-	public Map<Player, Integer> getScores() {
-		return scores;
+	public List<PlayerScore> getPlayerScores() {
+		return playerScores;
 	}
 
 	public boolean gameOver() {
-		for
-		return tilebag.isEmpty()&& 1 vd handen is leeg;
+		return false;
 	}
 
 	public boolean hasWinner() {
@@ -74,5 +76,16 @@ public class Game {
 		}
 		tilebag.shuffle();
 		return result;
+	}
+	
+	public int remainingTiles() {
+		return getTileBag().getTileBagSize();
+	}
+	
+	public void addPlayers(){
+		for (PlayerScore p: playerScores) {
+			Player p2 = new HumanPlayer();
+			p = new PlayerScore();
+		}
 	}
 }
