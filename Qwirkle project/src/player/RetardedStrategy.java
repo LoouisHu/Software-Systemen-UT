@@ -12,7 +12,6 @@ public class RetardedStrategy implements Strategy {
 
 	@Override
 	public Move determineMove(Board board, List<Tile> hand) {
-		// TODO Auto-generated method stub
 		Move result = null;
 		boolean isFound = false;
 		for (int i = 0; i < board.getUsedSpaces().size() && !isFound; i++) {
@@ -30,8 +29,8 @@ public class RetardedStrategy implements Strategy {
 				}
 			}
 		}
-		if (result == null){
-			result = xxxxxx;
+		if (result == null) {
+			
 		}
 		return result;
 	}

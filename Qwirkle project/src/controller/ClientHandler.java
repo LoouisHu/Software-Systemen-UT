@@ -79,7 +79,7 @@ public class ClientHandler extends Thread{
 				}
 			}
 		} catch (IOException e) {
-			server.remove(this);
+	//		server.remove(this);
 			shutdown();
 		}
 	}
@@ -189,7 +189,6 @@ public class ClientHandler extends Thread{
 						kick("Swapping tiles amount larger than tiles left in the bag");
 					}
 					break;
-				case Protocol.
 			}
 		}
 		
@@ -203,10 +202,10 @@ public class ClientHandler extends Thread{
 	 * bevind. Vervolgens krijgt elke zo'n speler ook een 
 	 * Protocol.QUIT.
 	 */
-	public void winnaar(){
-		server.broadcastIG(this, Protocol.END_GAME + " " + 1 + " " + server.result(this));
-		server.endGame(this);
-	}
+//	public void winnaar(){
+//		server.broadcastIG(this, Protocol.END_GAME + " " + 1 + " " + server.result(this));
+//		server.endGame(this);
+//	}
 
 	/**
 	 * Stuurt de Client van deze ClientHandler een Protocol.QUIT

@@ -357,7 +357,7 @@ public class Board {
 		int result = 0;
 		int x = 0;
 		int y = 0;
-		if(moves.size()!=0){
+		if (moves.size() != 0) {
 			x = moves.get(0).getCoord().getX();
 			y = moves.get(0).getCoord().getY();
 		}
@@ -371,7 +371,7 @@ public class Board {
 			int horizontal = 1;
 			int vertical = 1;
 			for (int j = 1; j < powerMoveLength; j++) {
-				
+
 				if (boardSpaces[currentX - j][currentY] != null && west) {
 					horizontal++;
 				} else {
@@ -396,11 +396,11 @@ public class Board {
 			if (horizontal == 1 && vertical == 1) {
 				result = 1;
 			} else if (vertical > 1) {
-				if(i == 0 || x != currentX){
+				if (i == 0 || x != currentX) {
 					result = result + vertical;
 				}
-			} else if (horizontal > 1 ) {
-				if(i == 0 || y != currentY){
+			} else if (horizontal > 1) {
+				if (i == 0 || y != currentY) {
 					result = result + horizontal;
 				}
 			}
@@ -410,7 +410,7 @@ public class Board {
 			if (vertical == 6 && (i == 0 || x != currentX)) {
 				result += 6;
 			}
-			
+
 		}
 		return result;
 	}
