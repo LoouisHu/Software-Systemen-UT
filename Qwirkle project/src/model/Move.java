@@ -9,6 +9,11 @@ public class Move {
 		this.tile = tile;
 		this.coord = coord;
 	}
+	
+	public Move(Tile t) {
+		this.tile = t;
+	}
+	
 	/*@pure*/
 	public Tile getTile() {
 		return tile;

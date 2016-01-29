@@ -23,36 +23,24 @@ import player.PlayerScore;
 public class ClientHandler extends Thread {
 
 	private PlayerScore playerscore;
-	
-	/**
-	 * @invariant server != null
-	 */
 	private Server server;
-
-	/**
-	 * @invariant socket != null
-	 */
 	private Socket socket;
-
-	/**
-	 * @invariant in != null
-	 */
 	private BufferedReader in;
-
-	/**
-	 * @invariant out != null
-	 */
 	private BufferedWriter out;
+	private NetworkPlayer player;
+	private boolean isRunning = true;
+	private Client client;
+	private Socket sock;
 
 	/**
 	 * Construeert een ClientHandler object. Initialiseert de beide Data
 	 * streams.
 	 * 
-	 * @require server != null && socket != null
 	 */
-	public ClientHandler(Server server, Socket socket) {
+	public ClientHandler(Server server, Socket socket, NetworkPlayer player) {
 		this.server = server;
 		this.socket = socket;
+		this.player = player;
 		try {
 			in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));

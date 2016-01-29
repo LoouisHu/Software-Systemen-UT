@@ -1,57 +1,55 @@
 package controller;
 
-
-import view.TUIView;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.*;
-import exceptions.*;
-import model.Board;
-import model.Card;
-import model.LocalPlayer;
-import model.NetworkPlayer;
-import model.Move;
-import player.Player;
-import player.;
-import model.Switch;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Scanner;
 
-import java.io.IOException;
+import view.TUI;
+import model.Board;
+import model.Tile.
+import player.HumanPlayer;
+import player.SocketPlayer;
+import model.Move;
+import player.RealPlayer;
 
 public class Client extends Observable {
 
-	private List<Player> players;
+	private List<RealPlayer> players;
 	private boolean gameend = false;
 	private Board board;
-	private LocalPlayer thisplayer;
-	private TUIView view;
+	private HumanPlayer thisplayer;
+	private TUI view;
 	private int stackSize;
 	private ClientHandler clienthandler;
 	private int aithinktime;
 	private boolean completemoveprocessed = false;
-	public static final String USAGE =
-			  "usage: " + Client.class.getName() + "<port>" + "<Host> "  + "<Name>";
-	
+	public static final String USAGE = "usage: " + Client.class.getName() + "<port>" + "<Host> " + "<Name>";
+
 	public static void main(String[] args) {
 		if (args.length != 4) {
 			System.out.println(USAGE);
 			System.exit(0);
 		}
-		
+
 		InetAddress host = null;
 		int port = 0;
 
 		try {
 			host = InetAddress.getByName(args[1]);
 		} catch (UnknownHostException e) {
-			System.out.println("ERROR: no valid hostname!");
+			System.out.println("Error host address");
 			System.exit(0);
 		}
 
 		try {
 			port = Integer.parseInt(args[0]);
 		} catch (NumberFormatException e) {
-			System.out.println("ERROR: no valid portnummer!");
+			System.out.println("Not a valid port number");
 			System.exit(0);
 		}
 
@@ -62,73 +60,92 @@ public class Client extends Observable {
 			System.exit(0);
 		}
 	}
-	
+
 	/**
-	 * Creates a new client connecting to the given socket constructing a new player of type
-	 * playertype with the name name. The arguments come from the arguments list in the main
-	 * method.
+	 * Creates a new client connecting to the given socket constructing a new
+	 * player of type playertype with the name name. The arguments come from the
+	 * arguments list in the main method.
+	 * 
 	 * @param sockarg
 	 * @param name
 	 * @param playertype
 	 */
-	/*@ ensures this.getClientHandler().getSocket() == sockarg; 
-	 	ensures this.getThisPlayer().getName() == name;*/
+	/*
+	 * @ ensures this.getClientHandler().getSocket() == sockarg; ensures
+	 * this.getThisPlayer().getName() == name;
+	 */
 	public Client(Socket sockarg, String name, String playertype) {
 		this.board = new Board();
-		this.view = new TUIView(this);
-		this.players = new ArrayList<Player>();
+		this.view = new TUI(this);
+		this.players = new ArrayList<RealPlayer>();
 		switch (playertype) {
-			case "HUMAN" : this.thisplayer = new LocalPlayer(name, this);
-						break;
-			case "AI" 	 : this.thisplayer = new StupidAI(name, this, 2000);
-						break;
+		case "HUMAN":
+			this.thisplayer = new HumanPlayer(name, this);
+			break;
+		case "AI":
+			this.thisplayer = new StupidAI(name, this, 2000);
+			break;
 		}
 		clienthandler = new ClientHandler(this, sockarg);
 		this.addObserver(view);
 		clienthandler.sendMessage("HELLO " + getThisPlayer().getName());
 	}
-	
+
 	/**
-	 * Handles all in coming messages from the server and redirects them too appropriate methods.
+	 * Handles all in coming messages from the server and redirects them too
+	 * appropriate methods.
+	 * 
 	 * @param message
 	 */
-	/*@ requires message == "WELCOME" 	|| 
- 				 message ==	"NAMES"		||
- 				 message ==	"NEW"		||
- 				 message ==	"TURN" 		||
- 				 message ==	"WINNER"	||
- 				 message ==	"KICK";*/
-	public void handleMessage(String message) {
-		Scanner reader = new Scanner(message);
-		String command = reader.next();
-		String arguments = reader.nextLine();
-		if (command.equals("WELCOME")) {
-			handleWelcome(arguments);
-		} else if (command.equals("NAMES")) {
-			handleNames(arguments);
-		} else if (command.equals("NEXT")) {
-			handleNext(arguments);
-		} else if (command.equals("NEW")) {
-			handleNew(arguments);
-		} else if (command.equals("TURN")) {
-			handleTurn(arguments);
-		} else if (command.equals("WINNER")) {
-			handleWinner(arguments);
-		} else if (command.equals("KICK")) {
-			handleKick(arguments);
-		}
-		reader.close();
-	}
-	
-	/**
-	 * Get's called by the method handleMessage() if it starts with HELLO.
-	 * Set the given playernumber
-	 * @param arguments String to be decoded
+	/*
+	 * @ requires message == "WELCOME" || message == "NAMES" || message == "NEW"
+	 * || message == "TURN" || message == "WINNER" || message == "KICK";
 	 */
-	/*@ ensures this.getThisPlayer().getNumber() == 0 ||
-	  			this.getThisPlayer().getNumber() == 1 ||
-	  			this.getThisPlayer().getNumber() == 2 ||
-	  			this.getThisPlayer().getNumber() == 3;*/
+	public void handleMessage(String message) {
+		Scanner sc = new Scanner(message);
+		String command = null;
+		if (sc.hasNext()) {
+			command = sc.next();
+		}
+		switch (command) {
+		case Protocol.WELCOME:
+			handleWelcome(message);
+			break;
+		case Protocol.NAMES:
+			handleNames(message);
+			break;
+		case Protocol.NEXT:
+			handleNext(message);
+			break;
+		case Protocol.NEW:
+			handleNew(message);
+			break;
+		case Protocol.TURN:
+			handleTurn(message);
+			break;
+		case Protocol.KICK:
+			handleKick(message);
+			break;
+		case Protocol.WINNER:
+			handleWinner(message);
+			break;
+		}
+
+		sc.close();
+	}
+
+	/**
+	 * Deze methode wordt opgeroepen als de client een WELCOME
+	 * terugkrijgt. Server geeft playername en number terug als 
+	 * alles in orde is.
+	 * 
+	 * @param arguments
+	 */
+	/*
+	 * @ ensures this.getThisPlayer().getNumber() == 0 ||
+	 * this.getThisPlayer().getNumber() == 1 || this.getThisPlayer().getNumber()
+	 * == 2 || this.getThisPlayer().getNumber() == 3;
+	 */
 	private void handleWelcome(String arguments) {
 		Scanner reader = new Scanner(arguments);
 		reader.next();
@@ -136,13 +153,18 @@ public class Client extends Observable {
 		getThisPlayer().setNumber(playernumber);
 		reader.close();
 	}
-	
+
 	/**
-	 * Get's called by the method handleMessage() if it starts with NAME.
-	 * @param arguments String to be decoded
+	 * Deze methode wordt opgeroepen als de server een NAMES
+	 * terugstuurt naar de client. Server geeft alle playernames
+	 * met de AITime terug als het spel begint. 
+	 * 
+	 * @param arguments
 	 */
-	/*@ ensures this.getAIThinkTime() != \old(this.getAIThinkTime());
-		ensures this.getPlayers().size() >= \old(this.getPlayers().size()); */
+	/*
+	 * @ ensures this.getAIThinkTime() != \old(this.getAIThinkTime()); ensures
+	 * this.getPlayers().size() >= \old(this.getPlayers().size());
+	 */
 	private void handleNames(String arguments) {
 		Scanner reader = new Scanner(arguments);
 		while (reader.hasNext()) {
@@ -156,42 +178,44 @@ public class Client extends Observable {
 				players.add(new NetworkPlayer(playername, playernumber));
 			}
 		}
-		view.showBoard(board); 
+		view.showBoard(board);
 		stackSize = 108 - (6 * (players.size() + 1));
 		reader.close();
 	}
-	
+
 	/**
-	 * Get's called by the method handleMessage() if it starts with NEXT.
-	 * This method handles the input of the player and in turn sends it to the server.
-	 * @param arguments String to be decoded
+	 * Deze methode wordt opgeroepen als de server een NEXT
+	 * terugstuurt. Server geeft aan wie er aan de beurt is.
+	 * 
+	 * @param arguments
 	 */
-	/*@ ensures this.getThisPlayer().getHand() != \old(this.getThisPlayer().getHand());*/
-	private void handleNext(String arguments) {
+	/*
+	 * @ ensures this.getThisPlayer().getHand() !=
+	 * \old(this.getThisPlayer().getHand());
+	 */
+	private void handleNext(String message) {
 		Scanner reader = new Scanner(arguments);
-		//If it the players turn
 		if (getThisPlayer() == getPlayer(Integer.parseInt(reader.next()))) {
 			String message = "0";
 			message = thisplayer.determineMove(board, thisplayer.getHand());
 			view.showMessage("Stack size : " + stackSize);
-			
-			//If there is an actual move put in continue 
+
+			// If there is an actual move put in continue
 			if (!message.equals("0")) {
 				Scanner readmessage = new Scanner(message);
 				String command = readmessage.next();
 				if (readmessage.hasNext()) {
-					
-					//Handle the move.
+
+					// Handle the move.
 					if (command.equals("MOVE")) {
 						List<Place> moves = stringToPlaceList(readmessage.nextLine());
-						
-						//Only if it is not empty
+
+						// Only if it is not empty
 						if (!moves.isEmpty()) {
-							try {
-								//If it has all cards and the moves are valid
+								// If it has all cards and the moves are valid
 								if (hasAllCardsMove(moves) && board.isValidMoveList(moves)) {
-									//Place the, on the board
-									for (Place p: moves) {
+									// Place the, on the board
+									for (Place p : moves) {
 										board.placeCard(p);
 										thisplayer.removePlaceFromHand(p);
 									}
@@ -199,13 +223,10 @@ public class Client extends Observable {
 									reader.close();
 									readmessage.close();
 								} else {
-									//If not try again.
+									// If not try again.
 									view.showMessage("Try again");
 									handleNext(arguments);
 								}
-							} catch (LoneSpotException | NoEmptySpotException | 
-									  NoValidCombinationException
-									| LineTooLongException e) {
 								view.showMessage(e.getMessage());
 								handleNext(arguments);
 							}
@@ -228,16 +249,21 @@ public class Client extends Observable {
 						handleNext(arguments);
 					}
 				}
-			} 
+			}
 		}
 	}
-	
+
 	/**
-	 * Get's called by the method handleMessage() if it starts with NEW.
-	 * This method handles the new tiles given by the server.
-	 * @param arguments String to be decoded
+	 * Deze methode wordt door de handleMessage() opgeroepen
+	 * als het protocol NEW is. De server geeft dan aan
+	 * wie er aan de beurt is.
+	 * 
+	 * @param arguments
 	 */
-	/*@ ensures this.getThisPlayer().getHand() != \old(this.getThisPlayer().getHand());*/
+	/*
+	 * @ ensures this.getThisPlayer().getHand() !=
+	 * \old(this.getThisPlayer().getHand());
+	 */
 	private void handleNew(String arguments) {
 		Scanner reader = new Scanner(arguments);
 		while (reader.hasNext()) {
@@ -248,7 +274,7 @@ public class Client extends Observable {
 					try {
 						thisplayer.getHand().add(new Card(cardchars[0], cardchars[1]));
 					} catch (InvalidCharacterException e) {
-						
+
 					}
 				}
 			} else {
@@ -257,18 +283,22 @@ public class Client extends Observable {
 		}
 		reader.close();
 	}
-	
+
 	/**
-	 * Get's called by the method handleMessage() if it starts with TURN.
-	 * This method handles the output of the server that sends the turn of
-	 * other players.
-	 * @param arguments String to be decoded
-	 */ 
-	/*@ ensures arguments.length() == 10 ==> this.getBoard() == \old(this.getBoard());
-	 	ensures arguments.length() != 10 ==> this.getBoard() != \old(this.getBoard());*/
+	 * Deze methode wordt aangeroepen als de message begint met een TURN.
+	 * 
+	 * 
+	 * @param arguments
+	 *            String to be decoded
+	 */
+	/*
+	 * @ ensures arguments.length() == 10 ==> this.getBoard() ==
+	 * \old(this.getBoard()); ensures arguments.length() != 10 ==>
+	 * this.getBoard() != \old(this.getBoard());
+	 */
 	private void handleTurn(String arguments) {
 		Scanner reader = new Scanner(arguments);
-		Player player = getPlayer(Integer.parseInt(reader.next()));
+		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
 		String word = reader.next();
 		if (word.equals("empty")) {
 			view.showMessage("Er is geruild");
@@ -280,24 +310,26 @@ public class Client extends Observable {
 				stackSize = 0;
 			}
 			player.updateScore(board.movePoints(moves));
-			for (Place p: moves) {
+			for (Place p : moves) {
 				board.placeCard(p);
 			}
-			
+
 		}
 		setChanged();
 		notifyObservers();
 		view.showScore(player);
 		reader.close();
 	}
-	
+
 	/**
-	 * Get's called by the method handleMessage() if it starts with WINNER.
-	 * This method handles the output of the server that sends the winner 
-	 * of the game.
-	 * @param arguments String to be decoded
-	 */ 
-	/*@ ensures this.getGameEnd() == true;*/
+	 * Gets called by the method handleMessage() if it starts with WINNER. This
+	 * method handles the output of the server that sends the winner of the
+	 * game.
+	 * 
+	 * @param arguments
+	 *            String to be decoded
+	 */
+	/* @ ensures this.getGameEnd() == true; */
 	private void handleWinner(String arguments) {
 		Scanner reader = new Scanner(arguments);
 		int winner = Integer.parseInt(reader.next());
@@ -306,16 +338,18 @@ public class Client extends Observable {
 		gameend = true;
 		shutDown();
 	}
-	
+
 	/**
-	 * Get's called by the method handleMessage() if it starts with KICK.
-	 * This method get everything sorted out when a player is kicked.
-	 * @param arguments String to be decoded
-	 */ 
-	/*@ ensures stackSize > \old(stackSize);*/
+	 * Get's called by the method handleMessage() if it starts with KICK. This
+	 * method get everything sorted out when a player is kicked.
+	 * 
+	 * @param arguments
+	 *            String to be decoded
+	 */
+	/* @ ensures stackSize > \old(stackSize); */
 	private void handleKick(String arguments) {
 		Scanner reader = new Scanner(arguments);
-		Player player = getPlayer(Integer.parseInt(reader.next()));
+		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
 		int tilesBack = Integer.parseInt(reader.next());
 		stackSize += tilesBack;
 		String reason = reader.nextLine();
@@ -327,31 +361,33 @@ public class Client extends Observable {
 		}
 		reader.close();
 	}
-	
+
 	/**
 	 * Checks if the players has all cards he wants to play.
-	 * @param moves List to be checked
-	 */ 
-	/*@ ensures (\forall int i; 0 <= i & i < this.getThisPlayer().getHand().size(); 
-	 				(\forall int j; 0 <= j & j < moves.size();
-	 				this.getThisPlayer().getHand().get(i).getColor() == 
-	 						moves.get(j).getCard().getColor() &&
-	 				this.getThisPlayer().getHand().get(i).getFigure() == 
-	 						moves.get(j).getCard().getFigure()) 
-	 				==> \result == true);*/
+	 * 
+	 * @param moves
+	 *            List to be checked
+	 */
+	/*
+	 * @ ensures (\forall int i; 0 <= i & i <
+	 * this.getThisPlayer().getHand().size(); (\forall int j; 0 <= j & j <
+	 * moves.size(); this.getThisPlayer().getHand().get(i).getColor() ==
+	 * moves.get(j).getCard().getColor() &&
+	 * this.getThisPlayer().getHand().get(i).getFigure() ==
+	 * moves.get(j).getCard().getFigure()) ==> \result == true);
+	 */
 	public Boolean hasAllCardsMove(List<Place> moves) {
 		boolean result = true;
 		List<Card> playedcards = new ArrayList<Card>();
 		int i = 0;
-		for (Place p: moves) {
+		for (Place p : moves) {
 			Card c = p.getCard();
 			playedcards.add(c);
 		}
-	
-		outer : for (Card c: playedcards) {
-			for (Card chand: thisplayer.getHand()) {
-				if (c.getColor().equals(chand.getColor()) && 
-						  c.getFigure().equals(chand.getFigure())) {
+
+		outer: for (Card c : playedcards) {
+			for (Card chand : thisplayer.getHand()) {
+				if (c.getColor().equals(chand.getColor()) && c.getFigure().equals(chand.getFigure())) {
 					i++;
 					continue outer;
 				}
@@ -362,31 +398,33 @@ public class Client extends Observable {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Checks if the players has all cards he wants to swap.
-	 * @param moves List to be checked
-	 */ 
-	/*@ ensures (\forall int i; 0 <= i & i < this.getThisPlayer().getHand().size(); 
-	 				(\forall int j; 0 <= j & j < moves.size();
-	 				this.getThisPlayer().getHand().get(i).getColor() == 
-	 						moves.get(j).getCard().getColor() &&
-	 				this.getThisPlayer().getHand().get(i).getFigure() == 
-	 						moves.get(j).getCard().getFigure()) 
-	 				==> \result == true);*/
+	 * 
+	 * @param moves
+	 *            List to be checked
+	 */
+	/*
+	 * @ ensures (\forall int i; 0 <= i & i <
+	 * this.getThisPlayer().getHand().size(); (\forall int j; 0 <= j & j <
+	 * moves.size(); this.getThisPlayer().getHand().get(i).getColor() ==
+	 * moves.get(j).getCard().getColor() &&
+	 * this.getThisPlayer().getHand().get(i).getFigure() ==
+	 * moves.get(j).getCard().getFigure()) ==> \result == true);
+	 */
 	public Boolean hasAllCardsSwap(List<Switch> moves) {
 		boolean result = true;
 		List<Card> playedcards = new ArrayList<Card>();
 		int i = 0;
-		for (Switch s: moves) {
+		for (Switch s : moves) {
 			Card c = s.getCard();
 			playedcards.add(c);
 		}
-	
-		outer : for (Card c: playedcards) {
-			for (Card chand: thisplayer.getHand()) {
-				if (c.getColor().equals(chand.getColor()) && 
-						  c.getFigure().equals(chand.getFigure())) {
+
+		outer: for (Card c : playedcards) {
+			for (Card chand : thisplayer.getHand()) {
+				if (c.getColor().equals(chand.getColor()) && c.getFigure().equals(chand.getFigure())) {
 					i++;
 					continue outer;
 				}
@@ -397,11 +435,12 @@ public class Client extends Observable {
 		}
 		return result;
 	}
-		
+
 	/**
-	 * This methods converts a string with correctly formatted Place.
-	 * to a List<Place>
-	 * JML is including Spacebar and requires there to not be a space at the end.
+	 * This methods converts a string with correctly formatted Place. to a List
+	 * <Place> JML is including Spacebar and requires there to not be a space at
+	 * the end.
+	 * 
 	 * @param movestring
 	 * @return List<Place>
 	 */
@@ -427,13 +466,13 @@ public class Client extends Observable {
 					}
 					String y = reader.next();
 					int ycoor = Integer.parseInt(y);
-					
+
 					if (!reader.hasNext()) {
 						break;
 					}
 					String x = reader.next();
 					int xcoor = Integer.parseInt(x);
-					
+
 					Place place = new Place(card, ycoor, xcoor);
 					moves.add(place);
 				} catch (InvalidCharacterException e) {
@@ -447,18 +486,19 @@ public class Client extends Observable {
 		reader.close();
 		return moves;
 	}
-	
+
 	/**
-	 * This methods converts a string with correctly formatted Switch.
-	 * to a List<Switch>
-	 * JML is including Spacebar and requires there to not be a space at the end.
+	 * This methods converts a string with correctly formatted Switch. to a List
+	 * <Switch> JML is including Spacebar and requires there to not be a space
+	 * at the end.
+	 * 
 	 * @param movestring
 	 * @return List<Swtich>
 	 */
-	/*@ requires (movestring.length() - 6) % 3 == 0;*/
+	/* @ requires (movestring.length() - 6) % 3 == 0; */
 	public List<Switch> stringToSwitchList(String movestring) {
 		Scanner reader = new Scanner(movestring);
-		List<Switch> moves = new ArrayList<Switch>();	
+		List<Switch> moves = new ArrayList<Switch>();
 		while (reader.hasNext()) {
 			String cardstring = reader.next();
 			char[] cardchars = cardstring.toCharArray();
@@ -479,18 +519,19 @@ public class Client extends Observable {
 		reader.close();
 		return moves;
 	}
-	
+
 	/**
 	 * Returns the player of which the playernumber is given.
+	 * 
 	 * @param playernumber
 	 * @return
 	 */
-	/*@pure*/public Player getPlayer(int playernumber) {
+	/* @pure */public Player getPlayer(int playernumber) {
 		Player result = null;
 		if (getThisPlayer().getNumber() == playernumber) {
 			result = thisplayer;
 		} else {
-			for (Player player: players) {
+			for (Player player : players) {
 				if (player.getNumber() == playernumber) {
 					result = player;
 				}
@@ -498,47 +539,47 @@ public class Client extends Observable {
 		}
 		return result;
 	}
-	
-	/*@pure*/public List<Player> getPlayers() {
+
+	/* @pure */public List<Player> getPlayers() {
 		return players;
 	}
-	
-	/*@pure*/public LocalPlayer getThisPlayer() {
+
+	/* @pure */public HumanPlayer getThisPlayer() {
 		return thisplayer;
 	}
-	
-	/*@pure*/public ClientHandler getClientHandler() {
+
+	/* @pure */public ClientHandler getClientHandler() {
 		return clienthandler;
 	}
-	
-	/*@pure*/public int getAIThinkTime() {
+
+	/* @pure */public int getAIThinkTime() {
 		return aithinktime;
 	}
-	
-	/*@pure*/boolean completeMoveProcessed() {
+
+	/* @pure */boolean completeMoveProcessed() {
 		return completemoveprocessed;
 	}
-	
-	/*@pure*/public int getPlayerNumber() {
+
+	/* @pure */public int getPlayerNumber() {
 		return thisplayer.getNumber();
 	}
-	
-	/*@pure*/public Board getBoard() {
+
+	/* @pure */public Board getBoard() {
 		return this.board;
 	}
-	
-	/*@pure*/public TUIView getView() {
+
+	/* @pure */public TUI getView() {
 		return view;
 	}
-	
-	/*@pure*/public int getStackSize() {
+
+	/* @pure */public int getStackSize() {
 		return stackSize;
 	}
-	
-	/*@pure*/public boolean getGameEnd() {
+
+	/* @pure */public boolean getGameEnd() {
 		return gameend;
 	}
-	
+
 	public void shutDown() {
 		clienthandler.stopConnection();
 		System.exit(0);
