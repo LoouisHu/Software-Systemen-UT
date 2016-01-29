@@ -149,12 +149,15 @@ public class ClientHandler extends Thread{
 					if(server.containsCH(this)){
 						if(sc.hasNext()){
 							String tempnaam = sc.next();
-							if(server.contains(tempnaam, this) && tempnaam.length() < 1 && tempnaam.length() > 16 && !tempnaam.matches("[a-zA-Z]*")) {
+							if(server.contains(tempnaam, this) || tempnaam.length() < 1 || tempnaam.length() > 16 || !tempnaam.matches("[a-zA-Z]*")) {
 								kick("name already exists or name too long or use only letters");
 							} else {
 								naam = tempnaam;
 								sendMessage(Protocol.WELCOME + " " + naam + " " + server.getNumber());
 							}
+//							if(sc.hasNext()){ // voor als er nog iets achter de naam komt misschien?
+//								kick("FORMAT: HELLO PlayerName");
+//							}
 						}
 					}
 					break;
@@ -174,8 +177,9 @@ public class ClientHandler extends Thread{
 						kick("Swapping tiles amount larger than tiles left in the bag");
 					}
 					break;
-				case Protocol.MOVE: break;
-				case Protocol.
+				case Protocol.MOVE: 
+					
+					break;
 			}
 		}
 		

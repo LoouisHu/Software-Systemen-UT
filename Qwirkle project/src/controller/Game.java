@@ -22,13 +22,16 @@ public class Game {
 	private Player player;
 
 	private Board board;
+	
+	private int aantalspelers;
 
 	public Game(int aantalspelers) {
 		tilebag = new TileBag();
+		this.aantalspelers = aantalspelers;
 	}
 
 	public void nextTurn() {
-		turn++;
+		turn = turn%aantalspelers;
 	}
 
 	/* @ pure */
@@ -41,7 +44,8 @@ public class Game {
 	}
 
 	public boolean gameOver() {
-		return false;
+		for
+		return tilebag.isEmpty()&& 1 vd handen is leeg;
 	}
 
 	public boolean hasWinner() {
