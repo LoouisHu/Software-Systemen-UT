@@ -81,4 +81,6 @@ public abstract class Player {
 	public Board getBoard() {
 		return board;
 	}
+	
+	public abstract void yourTurn();
 }

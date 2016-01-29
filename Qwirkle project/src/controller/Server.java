@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
 import model.Board;
+import player.HumanPlayer;
+import player.Player;
 
 public class Server extends Thread {
 
-	private Game game;
 
 	/*
 	 * @invariant 0 <= playerNumber < MAXPLAYERS
@@ -169,7 +170,7 @@ public class Server extends Thread {
 	 * Maakt een nieuwe spel aan met de meegegeven spelers. Vervolgens wordt het
 	 * spel in de spellijst gezet en de spelers van dat spel in de kamerlijst.
 	 * Ook worden ze verwijderd uit de lobby. De spelers krijgen allemaal een
-	 * Protocol.START met alle spelernamen. De eerste speler krijgt daarna nog
+	 * Protocol.WELCOME met alle spelernamen. De eerste speler krijgt daarna nog
 	 * een Protocol.TURN toegestuurd.
 	 * 
 	 * @require spelers.length >= 2 && spelers.length <= 4
@@ -177,24 +178,17 @@ public class Server extends Thread {
 	 */
 	public void startNewGame(ClientHandler[] players) {
 		Game game;
-		String spelernamen;
-		if (players.length == 2) {
-			game = new Game(players[0].getNaam(), players[1].getNaam());
-			spelernamen = players[0].getNaam() + " " + players[1].getNaam();
-		} else if (players.length == 3) {
-			game = new Game(players[0].getNaam(), players[1].getNaam(), players[2].getNaam());
-			spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " " + players[2].getNaam();
-		} else {
-			game = new Game(players[0].getNaam(), players[1].getNaam(), players[2].getNaam(), players[3].getNaam());
-			spelernamen = players[0].getNaam() + " " + players[1].getNaam() + " " + players[2].getNaam() + " "
-					+ players[3].getNaam();
+
+		if (players.length > 1 && players.length <= MAXPLAYERS) {
+			game = new Game(players.length);
+			games.add(game);
+			rooms.add(players);
+			for (ClientHandler ch : players) {
+				lobby.remove(ch);
+				ch.sendMessage(Protocol.WELCOME);
+			}
+			players[0].sendMessage(Protocol.TURN);
 		}
-		games.add(game);
-		rooms.add(players);
-		for (ClientHandler ch : players) {
-			lobby.remove(ch);
-		}
-		players[0].sendMessage(Protocol.YOUR_TURN);
 	}
 
 	/**
@@ -379,7 +373,4 @@ public class Server extends Thread {
 		return games.get(zoekCH(ch));
 	}
 
-	public int remainingTiles() {
-		return game.getTileBag().getTileBagSize();
-	}
 }

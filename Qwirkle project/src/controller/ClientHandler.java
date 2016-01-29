@@ -12,12 +12,15 @@ import java.util.Scanner;
 
 import model.Tile;
 import model.Tile.Color;
+import player.PlayerScore;
 
 /**
  * Klasse ClientHandler is de communicatie tussen Client en Server. 
  * Ook verwerkt het de berichten van Client volgens het Protocol.
  */
-public class ClientHandler extends Thread{
+public class ClientHandler extends Thread {
+
+	private PlayerScore playerscore;
 	
 	/**
 	 * @invariant server != null
@@ -220,12 +223,13 @@ public class ClientHandler extends Thread{
 	public String getNaam(){
 		return naam;
 	}
-	
-	public Tile convertTextToTile(String s) {
+
+	public static Tile convertTextToTile(String s) {
 		Tile t;
 		char color = s.charAt(0);
 		char shape = s.charAt(1);
 		t = new Tile(color, shape);
 		return t;
 	}
+	
 }
