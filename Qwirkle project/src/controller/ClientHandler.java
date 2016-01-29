@@ -103,7 +103,7 @@ public class ClientHandler extends Thread {
 	 * letters, mag maar een lengte van 16 bevatten en er mogen geen duplicaten
 	 * namen komen.
 	 * 
-	 * Als het commando Protocol.SWAP is, dan wordt er één of meerdere Tiles
+	 * Als het commando Protocol.SWAP is, dan wordt er ¨¦¨¦n of meerdere Tiles
 	 * omgewisseld met de pot van de server.
 	 * 
 	 * Als het commando Protocol.TURN_BLOCK is, dan wordt er eerst gecheckt of
