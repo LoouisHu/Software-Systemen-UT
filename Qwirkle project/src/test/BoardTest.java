@@ -1,10 +1,12 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,50 +17,51 @@ import model.Move;
 import model.Tile;
 import model.Tile.Color;
 import model.Tile.Shape;
-import player.HumanPlayer;
-import player.Player;
 
 public class BoardTest {
-	
-	private Board board;
-	
+
+	private Board b;
+
 	@Before
-	public void setUp(){
-		board = new Board();
+	public void setUp() {
+		b = new Board();
 	}
-	
+
 	@Test
-	public void testMove(){
-		Tile t = new Tile(Color.BLUE, Shape.DIAMOND);
-		Coord c = new Coord(2, 5);
+	public void testCorrectFirstMove() {
+		Tile t = new Tile(Color.BLUE, Shape.STAR);
+		Coord c = new Coord(92, 92);
 		Move m = new Move(t, c);
-		board.boardAddMove(m);
-		assertEquals(board.boardSpaces[2][5], t);
-		assertEquals(board.boardSpaces[2][4], null);
+		// System.out.println(m.toString());
+		b.boardAddMove(m);
+		b.toString();
 	}
-	
+
 	@Test
-	public void isValidMove(){
-		Tile t1 = new Tile(Color.BLUE, Shape.CIRCLE);
-		Tile t2 = new Tile(Color.BLUE, Shape.CLOVER);
-		Tile t3 = new Tile(Color.GREEN, Shape.SQUARE);
-		HashSet<Tile> tiless = new HashSet<>();
-		tiless.add(t1);
-		tiless.add(t2);
-		tiless.add(t3);
-		Coord c1 = new Coord(91, 91);
-		Coord c2 = new Coord(92, 91);
-		Coord c3 = new Coord(93, 91);
-		Player louis = new HumanPlayer("louis", tiless);
-		louis.makeMove(t1, c1);
-		louis.makeMove(t2, c2);
-		louis.makeMove(t3, c3);
-		assertTrue(board.boardSpaces[91][91] == t1);
-		System.out.println("Joepie ik kom hier!");
-		System.out.println(t2.toString());
-		System.out.println(board.boardSpaces[92][91].toString());
-		//System.out.println(board.boardSpaces[92][91].getColor() + board.boardSpaces[92][91].getShape());
-		assertTrue(board.boardSpaces[92][91] == t2);
-		assertFalse(board.boardSpaces[93][91] == t3);
+	public void testMultipleMoves() {
+		Tile t1 = new Tile(Color.GREEN, Shape.CIRCLE);
+		Tile t2 = new Tile(Color.ORANGE, Shape.CIRCLE);
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.CIRCLE), new Coord(91, 91)));
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(91, 92)));
+		b.boardAddMove(new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(91, 93)));
+		b.boardAddMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(91, 94)));
+		assertEquals(t1.getColor(), b.getField(91, 92).getColor());
+		assertEquals(t2.getShape(), b.getField(91, 93).getShape());
+		assertFalse(b.validMove(new Move(new Tile(Color.YELLOW, Shape.CROSS), new Coord(91, 94))));
 	}
+
+	@Test
+	public void longerThanSix() {
+		
+	}
+
+	@Test
+	public void testEmptyRow() {
+		assertTrue(b.emptyXRow(42));
+		assertTrue(b.emptyYRow(90));
+		b.boardAddMove(new Move(new Tile(Color.PURPLE, Shape.SQUARE), new Coord(50, 46)));
+		assertFalse(b.emptyXRow(50));
+		assertFalse(b.emptyYRow(46));
+	}
+
 }

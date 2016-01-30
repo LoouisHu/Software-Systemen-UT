@@ -11,15 +11,23 @@ public class ConcatThread extends Thread {
 	private String toe;
 	private static Object monitor = new Object();
 	private final Lock lock = new ReentrantLock();
-	private final 
-	
+	private final Condition isTwo = lock.newCondition();
+
 	public ConcatThread(String toeArg) {
 		this.toe = toeArg;
 	}
 
 	public void run() {
 		synchronized (monitor) {
-				text = text.concat(toe);
+			try {
+				if (toe.equals("") && toe.equals("two;"))
+					monitor.wait();
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			text = text.concat(toe);
+			monitor.notify();
 		}
 
 	}

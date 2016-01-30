@@ -2,16 +2,27 @@ package player;
 
 import java.util.List;
 
-import controller.Game;
+import controller.Client;
 import model.Board;
 import model.Coord;
 import model.Move;
 import model.Tile;
+import view.TUI;
 
-public class RetardedStrategy implements Strategy {
+public class RetardedPlayer extends HumanPlayer {
 
+	private int aithinktime;
+	private int playernumber;
+	private int score;
+	private TUI view;
+	
+	public RetardedPlayer(String name, Client client, int aithinktime) {
+		super(name, client);
+		this.aithinktime = aithinktime;
+	}
+	
 	@Override
-	public Move determineMove(Board board, List<Tile> hand) {
+	public String determineMove(Board board, List<Tile> hand) {
 		Move result = null;
 		boolean isFound = false;
 		for (int i = 0; i < board.getUsedSpaces().size() && !isFound; i++) {
@@ -32,7 +43,7 @@ public class RetardedStrategy implements Strategy {
 		if (result == null) {
 			
 		}
-		return result;
+		return result.toString();
 	}
 
 }

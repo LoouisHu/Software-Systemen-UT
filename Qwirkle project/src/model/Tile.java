@@ -48,15 +48,25 @@ public class Tile {
 		case '*': this.shape = Shape.STAR;
 		}
 	}
+	/**
+	 * Geeft de kleur terug.
+	 * @return
+	 */
 	/*pure*/
 	public Color getColor(){
 		 return color;
 	}
+	/**
+	 * Geeft de vorm terug.
+	 * @return
+	 */
 	/*pure*/
 	public Shape getShape(){
 		return shape;
 	}
-	
+	/**
+	 * Maakt van het Tile object een representatieve String.
+	 */
 	public String toString(){
 		String result = "";
 		switch (this.getColor()) {

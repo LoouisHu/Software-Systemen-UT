@@ -1,9 +1,7 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import model.Tile.Color;
 import model.Tile.Shape;
@@ -15,37 +13,48 @@ public class Board {
 	public static final int powerMoveLength = 6;
 
 	/**
-	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met DIM als lengte.
+	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met
+	 * DIM als lengte.
 	 */
 	/*
 	 * @public invariant boardSpaces.length == DIM;
-	 * @ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) == null);
+	 * 
+	 * @ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) ==
+	 * null);
 	 */
 	public Board() {
 		boardSpaces = new Tile[DIM][DIM];
-	}	
+	}
 
 	/**
 	 * Kijkt of een zet geldig is volgens de regels van Qwirkle.
+	 * 
 	 * @param move
 	 * @return true als de andere validMove true is;
 	 */
-	
-	/*@pure*/
+	/*@ requires move.getXCoor() < DIM;
+		requires move.getYCoor() < DIM;
+ 	ensures this.inLineV(move) && 
+ 			this.inLineX(move) ==> \result == true;*/
+	/* @pure */
 	public boolean validMove(Move move) {
 		return validMove(move, new ArrayList<Move>());
 	}
 
 	/**
 	 * Kijkt of een zet geldig is volgens de regels van Qwirkle.
+	 * 
 	 * @param theMove
 	 * @param movesMade
 	 * @return
 	 */
-	//TODO jml
-	/*@pure*/
+	/*@ requires move.getXCoor() < DIM;
+	requires move.getYCoor() < DIM;
+	ensures this.inLineV(move) && 
+			this.inLineX(move) ==> \result == true;*/
+	/* @pure */
 	public boolean validMove(Move theMove, List<Move> movesMade) {
-		boolean firstMove = (boardSpaces[91][91] == null);
+		boolean firstMove = boardSpaces[91][91] == null;
 		boolean answer = true;
 		boolean oldY = true;
 		boolean oldX = true;
@@ -84,15 +93,32 @@ public class Board {
 
 		return answer;
 	}
+
 	/**
 	 * Checkt op de verticale as of de move geldig is bij één tile.
-	 * @param m 
-	 * 			de move die je maakt.
+	 * 
+	 * @param m
+	 *            de move die je maakt.
 	 * @return true als de zet mogelijk is.
 	 */
-	
-	//TODO JML
-	/*@pure*/
+
+	/*@ requires y < DIM;
+ 	requires x < DIM;
+	ensures ((\forall int i; 
+ 					(\forall int j; 0 <= j & j < i; boardSpaces[y - j][x] != null); 
+ 			(boardSpaces[y - i][x].getColor() == t.getColor() && 
+ 				!(boardSpaces[y - i][x].getShape() == t.getShape())) || 
+ 			(boardSpaces[y - i][x].getShape() == t.getShape() && 
+ 				!(boardSpaces[y - i][x].getColor() == t.getColor())) ||
+ 			i == y) &&
+ 				(\forall int i; 
+ 					(\forall int j; 0 <= j & j < i; boardSpaces[y + i][x] != null); 
+ 			(boardSpaces[y + i][x].getColor() == c.getColor() && 
+ 				!(boardSpaces[y + i][x].getShape() == c.getShape())) || 
+ 			(boardSpaces[y + i][x].getShape() == c.getShape() && 
+ 				!(boardSpaces[y + i][x].getColor() == c.getColor())) ||
+ 			i == y)) ==> \result == true;
+	/* @pure */
 	public boolean inLineV(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
@@ -114,8 +140,8 @@ public class Board {
 			}
 			tiles.add(tit);
 		}
-		boolean shapeRelation = (t.getShape() == tiles.get(0).getShape());
-		boolean colorRelation = (t.getColor() == tiles.get(0).getColor());
+		boolean shapeRelation = t.getShape() == tiles.get(0).getShape();
+		boolean colorRelation = t.getColor() == tiles.get(0).getColor();
 		boolean answer = true;
 		if (!(shapeRelation ^ colorRelation)) {
 			answer = false;
@@ -133,15 +159,31 @@ public class Board {
 		}
 		return answer;
 	}
-	
+
 	/**
 	 * Checkt op de horizontale as of de move geldig is bij één tile.
-	 * @param m 
-	 * 			de move die je maakt.
+	 * 
+	 * @param m
+	 *            de move die je maakt.
 	 * @return true als de zet mogelijk is.
 	 */
-	//TODO jml
-	/*@pure*/
+	/*@ requires y < DIM;
+		requires x < DIM;
+		ensures ((\forall int i; 
+					(\forall int j; 0 <= j & j < i; boardSpaces[y][x - j] != null); 
+			(boardSpaces[y][x - i].getColor() == c.getColor() && 
+				!(boardSpaces[y][x - i].getShape() == c.getShape())) || 
+			(boardSpaces[y][x - i].getShape() == c.getShape() && 
+				!(boardSpaces[y][x - i].getColor() == c.getColor())) ||
+			i == x) &&
+				(\forall int i; 
+					(\forall int j; 0 <= j & j < i; boardSpaces[y][x + j] != null); 
+			(boardSpaces[y][x + i].getColor() == c.getColor() && 
+				!(boardSpaces[y][x + i].getShape() == c.getShape())) || 
+			(boardSpaces[y][x + i].getShape() == c.getShape() && 
+				!(boardSpaces[y][x + i].getColor() == c.getColor())) ||
+			i == x)) ==> \result == true;
+	/* @pure */
 	public boolean inLineH(Move m) {
 		Coord c = m.getCoord();
 		Tile t = m.getTile();
@@ -163,8 +205,8 @@ public class Board {
 			}
 			tiles.add(tit);
 		}
-		boolean shapeRelation = (t.getShape() == tiles.get(0).getShape());
-		boolean colorRelation = (t.getColor() == tiles.get(0).getColor());
+		boolean shapeRelation = t.getShape() == tiles.get(0).getShape();
+		boolean colorRelation = t.getColor() == tiles.get(0).getColor();
 		boolean answer = true;
 		if (!(shapeRelation ^ colorRelation)) {
 			answer = false;
@@ -251,19 +293,26 @@ public class Board {
 		}
 		return empty;
 	}
-	/* @requires 0 <= x & x <= DIM;
+
+	/*
+	 * @requires 0 <= x & x <= DIM;
+	 * 
 	 * @requires 0 <= y & y<= DIM;
 	 */
-	/*@pure*/public Tile getField(int x, int y) {
+	/* @pure */public Tile getField(int x, int y) {
 		return boardSpaces[x][y];
 	}
-	
+
 	/**
 	 * Voegt een Tile toe op de x en y coördinaat van boardSpaces.
+	 * 
 	 * @param move
 	 */
-	/* @requires move.getCoord().getX() < DIM;
+	/*
 	 * @requires move.getCoord().getX() < DIM;
+	 * 
+	 * @requires move.getCoord().getX() < DIM;
+	 * 
 	 * @ensures \result == move.getTile();
 	 * 
 	 */
@@ -271,15 +320,26 @@ public class Board {
 		boardSpaces[move.getCoord().getX()][move.getCoord().getY()] = move.getTile();
 	}
 
+	/**
+	 * Verwijdert e en Tile van de x en y coördinaat van boardSpaces.
+	 * 
+	 * @param coord
+	 */
+	/*
+	 * @requires coord != null;
+	 * @ensures \result == boardSpaces[null][null];
+	 */
 	public void boardRemove(Coord coord) {
 		boardSpaces[coord.getX()][coord.getY()] = null;
 	}
+
 	/**
 	 * Keert een lijst terug van boardSpaces waar een zet is op gedaan.
+	 * 
 	 * @return
 	 */
-	
-	/*@pure*/public List<Move> getUsedSpaces() {
+
+	/* @pure */public List<Move> getUsedSpaces() {
 		List<Move> result = new ArrayList<Move>();
 		for (int i = 0; i < DIM; i++) {
 			for (int j = 0; j < DIM; j++) {
@@ -314,7 +374,7 @@ public class Board {
 	/* @ ensures \result < DIM; */
 	/* @pure */
 	public int lowestY() {
-		int y = 92;
+		int y = 91;
 		while (!this.emptyYRow(y)) {
 			y--;
 		}
@@ -324,17 +384,99 @@ public class Board {
 	/* @ ensures \result < DIM; */
 	/* @pure */
 	public int highestY() {
-		int y = 92;
+		int y = 91;
 		while (!this.emptyYRow(y)) {
 			y++;
 		}
 		return y;
 	}
+
 	/**
-	 * Maakt een Textual Interface van een board. Aan de boven- en linkerrand staan de coördinaten van de rij en kolom.
-	 * Als er in een rij of kolom geen enkele tile is gezet, dan wordt die rij niet geprint. Het board is dynamisch.
+	 * Telkens als je een Tile op het bord zet, krijg je punten bij je
+	 * score opgeteld. Het puntensysteem gaat als volgt: als je een tile 
+	 * in een rij legt van tiles, dan krijg je het aantal punten equivalent aan het 
+	 * aantal tiles in de rij. Als je tile grenst aan nog een rij met
+	 * tiles, dan krijg je het aantal punten equivalent aan de lengte van
+	 * die rij, inclusief de tile die beide rijen kruisen, dus die tile
+	 * telt dan twee keer.
+	 * 
+	 * Als je 6 stenen achter elkaar legt, heb je Qwirkle en krijg je 6
+	 * punten plus 6 extra punten voor het maken van een Qwirkle.
+	 * @param moves
+	 * @return
 	 */
-	/*@pure*/
+	/*@ requires p.getXCoor() < DIM;
+	requires p.getYCoor() < DIM;
+ 	requires isValidMove(p);*/
+	public int decideScore(List<Move> moves) {
+		int result = 0;
+		int x = 0;
+		int y = 0;
+		if (moves.size() != 0) {
+			x = moves.get(0).getCoord().getX();
+			y = moves.get(0).getCoord().getY();
+		}
+		for (int i = 0; i < moves.size(); i++) {
+			int currentX = moves.get(i).getCoord().getX();
+			int currentY = moves.get(i).getCoord().getY();
+			boolean north = true;
+			boolean south = true;
+			boolean west = true;
+			boolean east = true;
+			int horizontal = 1;
+			int vertical = 1;
+			for (int j = 1; j < powerMoveLength; j++) {
+
+				if (boardSpaces[currentX - j][currentY] != null && west) {
+					horizontal++;
+				} else {
+					west = false;
+				}
+				if (boardSpaces[currentX + j][currentY] != null && east) {
+					horizontal++;
+				} else {
+					east = false;
+				}
+				if (boardSpaces[currentX][currentY - j] != null && south) {
+					vertical++;
+				} else {
+					south = false;
+				}
+				if (boardSpaces[currentX][currentY + j] != null && north) {
+					vertical++;
+				} else {
+					north = false;
+				}
+			}
+			if (horizontal == 1 && vertical == 1) {
+				result = 1;
+			} else if (vertical > 1) {
+				if (i == 0 || x != currentX) {
+					result = result + vertical;
+				}
+			} else if (horizontal > 1) {
+				if (i == 0 || y != currentY) {
+					result = result + horizontal;
+				}
+			}
+			if (horizontal == powerMoveLength && (i == 0 || y != currentY)) {
+				result += powerMoveLength;
+			}
+			if (vertical == powerMoveLength && (i == 0 || x != currentX)) {
+				result += powerMoveLength;
+			}
+
+		}
+		return result;
+	}
+
+	/**
+	 * Maakt een Textual Interface van een board. Aan de boven- en linkerrand
+	 * staan de coördinaten van de rij en kolom. Als er in een rij of kolom geen
+	 * enkele tile is gezet, dan wordt die rij niet geprint. Het board is
+	 * dynamisch.
+	 */
+
 	public String toString() {
 		String result = "y\\x";
 		for (int y = lowestY(); y <= highestY(); y++) {
