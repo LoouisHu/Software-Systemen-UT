@@ -1,13 +1,13 @@
 package controller;
 import java.util.*;
 
-import view.TUIView;
+import view.TUI;
 
 public class ServerController extends Thread {
 	
 	Connect connect;
 	List<Server> serverlist;
-	TUIView view;
+	TUI view;
 	int aithinktime;
 	public static final String USAGE = 
 			  "usage: " + Server.class.getName() + "<port>" + " <aithinktime>";
@@ -29,7 +29,7 @@ public class ServerController extends Thread {
 	 */
 	public ServerController(int portArg,  int aiThinkTimearg) {
 		aithinktime = aiThinkTimearg;
-		view = new TUIView(this);
+		view = new TUI(this);
 		serverlist = new ArrayList<Server>();
 		Server server = new Server(this, aithinktime, view);
 		serverlist.add(server);

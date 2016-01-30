@@ -27,12 +27,6 @@ public class HumanPlayer implements RealPlayer {
 		this.client = client;
 		this.tui = client.getView();
 	}
-
-	public HumanPlayer(String name) {
-		this.hand = new ArrayList<Tile>();
-		this.score = 0;
-		this.name = name;
-	}
 	
 	public void setHand(List<Tile> newHand) {
 		hand.addAll(newHand);

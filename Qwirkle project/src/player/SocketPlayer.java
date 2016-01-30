@@ -1,5 +1,6 @@
 package player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Move;
@@ -12,13 +13,12 @@ public class SocketPlayer implements RealPlayer {
 	private int score;
 	private List<Tile> hand;
 	
-	public SocketPlayer() {
-		this.score = 0;
-	}
-	
+
 	public SocketPlayer(String name, int playernumber) {
 		this.name = name;
 		this.playernumber = playernumber;
+		this.score = 0;
+		this.hand = new ArrayList<Tile>();
 	}
 	
 	public void setHand(List<Tile> newhand) {
@@ -81,6 +81,10 @@ public class SocketPlayer implements RealPlayer {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public List<Tile> getHand() {
+		return hand;
 	}
 
 }

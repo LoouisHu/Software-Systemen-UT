@@ -3,6 +3,7 @@ package view;
 import java.util.Scanner;
 
 import controller.Client;
+import controller.Protocol;
 import controller.Server;
 import controller.ServerController;
 import player.RealPlayer;
@@ -11,7 +12,7 @@ import model.Tile;
 import java.util.Observable;
 import java.util.Observer;
 
-public class TUI  implements Observer {
+public class TUI implements Observer {
 	
 	private Server server;
 	private Client client;
@@ -28,7 +29,11 @@ public class TUI  implements Observer {
 	}
 	
 
-
+	/**
+	 * Deze methode wacht op de input MOVE of SWAP. Anders herhaalt hij
+	 * zichzelf en opent weer een scanner.
+	 * @return
+	 */
 	public String waitForMove() {
 		System.out.println(client.getBoard().toString());
 		displayHand(client);
@@ -41,8 +46,7 @@ public class TUI  implements Observer {
 				String message = in.nextLine();
 	 			Scanner reader = new Scanner(message);
 	 			String command = reader.next();
-	 			if (command.equals("MOVE") || 
-	 					  command.equals("SWAP") || command.equals("START")) {
+	 			if (command.equals(Protocol.MOVE) || command.equals(Protocol.SWAP)) {
 	 				result = message;
 	 				doorgaan = false;
 	 			} else {
@@ -54,27 +58,39 @@ public class TUI  implements Observer {
 		return result;
 	}			
 	
+	/**
+	 * Laat de kaarten zien van je hand in de client die het opvraagt.
+	 * @param client
+	 */
 	public void displayHand(Client client) {
-		String handString = "Your hand is:";
+		String handString = "Your hand is:  ";
 		for (Tile t : client.getThisPlayer().getHand()) {
 			handString = handString.concat(" " + t.toString());
 		}
 		System.out.println(handString);
 	}
 
-	public void showMessage(String message) {
+	public void displayMessage(String message) {
 		System.out.println(message);
 	}
 	
-	public void showKick(RealPlayer p, String reason) {
+	public void displayKick(RealPlayer p, String reason) {
 		System.out.println(p.getName() + "has been kicked, reason: " + reason);
 	}
 
-	public void showScore(RealPlayer p) {
+	/**
+	 * Showt je huidige score.
+	 * @param p
+	 */
+	public void displayScore(RealPlayer p) {
 		System.out.println(p.getName() + ": " + p.getScore());
 	}
 
-	public void showBoard(Board board) {
+	/**
+	 * Keert de huidige toestand van het board.
+	 * @param board
+	 */
+	public void displayBoard(Board board) {
 		System.out.println(board.toString());
 		
 	}
@@ -93,7 +109,7 @@ public class TUI  implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		showBoard(client.getBoard());
+		displayBoard(client.getBoard());
 	}
 
 }
