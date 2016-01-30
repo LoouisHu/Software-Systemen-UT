@@ -55,11 +55,13 @@ public class TileBag {
 		return hand;
 	}
 
-	// shuffles the tiles
+	/**
+	 * De TileBag wordt geschud.
+	 */
 	public void shuffle() {
 		Collections.shuffle(this.tiles);
 	}
-
+	/*pure*/
 	public int getTileBagSize() {
 		return this.tiles.size();
 	}
