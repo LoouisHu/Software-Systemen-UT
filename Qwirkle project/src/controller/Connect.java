@@ -34,7 +34,7 @@ public class Connect extends Thread {
 				Socket clientsocket = serversocket.accept();
 				ClientHandler clienthandler = 
 						  new ClientHandler(server, clientsocket, new SocketPlayer());
-				view.showMessage("New player connected!");
+				view.displayMessage("New player connected!");
 				server.addClient(clienthandler);
 			} 
 		} catch (IOException e) {

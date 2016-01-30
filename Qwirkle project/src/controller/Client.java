@@ -16,6 +16,7 @@ import player.HumanPlayer;
 import player.SocketPlayer;
 import model.Move;
 import player.RealPlayer;
+import player.RetardedPlayer;
 
 public class Client extends Observable {
 
@@ -24,7 +25,7 @@ public class Client extends Observable {
 	private Board board;
 	private HumanPlayer thisplayer;
 	private TUI view;
-	private int tileBag;
+	private int tilebag;
 	private ClientHandler clienthandler;
 	private int aithinktime;
 	private boolean completemoveprocessed = false;
@@ -63,8 +64,8 @@ public class Client extends Observable {
 
 	/**
 	 * Creates a new client connecting to the given socket constructing a new
-	 * player of type playertype with the name name. The arguments come from the
-	 * arguments list in the main method.
+	 * player of type playertype with the name name. The args come from the
+	 * args list in the main method.
 	 * 
 	 * @param sockarg
 	 * @param name
@@ -83,7 +84,14 @@ public class Client extends Observable {
 			this.thisplayer = new HumanPlayer(name, this);
 			break;
 		case "AI":
-			this.thisplayer = new StupidAI(name, this, 2000); //de AIThinkTime is gehardcoded, moet nog van server krijgen.
+			this.thisplayer = new RetardedPlayer(name, this, 2000); // de
+																	// AIThinkTime
+																	// is
+																	// gehardcoded,
+																	// moet nog
+																	// van
+																	// server
+																	// krijgen.
 			break;
 		}
 		clienthandler = new ClientHandler(this, sockarg);
@@ -135,19 +143,18 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Deze methode wordt opgeroepen als de client een WELCOME
-	 * terugkrijgt. Server geeft playername en number terug als 
-	 * alles in orde is.
+	 * Deze methode wordt opgeroepen als de client een WELCOME terugkrijgt.
+	 * Server geeft playername en number terug als alles in orde is.
 	 * 
-	 * @param arguments
+	 * @param args
 	 */
 	/*
 	 * @ ensures this.getThisPlayer().getNumber() == 0 ||
 	 * this.getThisPlayer().getNumber() == 1 || this.getThisPlayer().getNumber()
 	 * == 2 || this.getThisPlayer().getNumber() == 3;
 	 */
-	private void handleWelcome(String arguments) {
-		Scanner reader = new Scanner(arguments);
+	private void handleWelcome(String args) {
+		Scanner reader = new Scanner(args);
 		reader.next();
 		int playernumber = Integer.parseInt(reader.next());
 		getThisPlayer().setNumber(playernumber);
@@ -155,18 +162,18 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Deze methode wordt opgeroepen als de server een NAMES
-	 * terugstuurt naar de client. Server geeft alle playernames
-	 * met de AITime terug als het spel begint. 
+	 * Deze methode wordt opgeroepen als de server een NAMES terugstuurt naar de
+	 * client. Server geeft alle playernames met de AITime terug als het spel
+	 * begint.
 	 * 
-	 * @param arguments
+	 * @param args
 	 */
 	/*
 	 * @ ensures this.getAIThinkTime() != \old(this.getAIThinkTime()); ensures
 	 * this.getPlayers().size() >= \old(this.getPlayers().size());
 	 */
-	private void handleNames(String arguments) {
-		Scanner reader = new Scanner(arguments);
+	private void handleNames(String args) {
+		Scanner reader = new Scanner(args);
 		while (reader.hasNext()) {
 			String playername = reader.next();
 			if (!reader.hasNext()) {
@@ -175,103 +182,90 @@ public class Client extends Observable {
 			}
 			int playernumber = Integer.parseInt(reader.next());
 			if (playernumber != getThisPlayer().getNumber()) {
-				players.add(new NetworkPlayer(playername, playernumber));
+				players.add(new SocketPlayer(playername, playernumber));
 			}
 		}
-		view.showBoard(board);
-		stackSize = 108 - (6 * (players.size() + 1));
+		view.displayBoard(board);
+		tilebag = 108 - (6 * (players.size() + 1));
 		reader.close();
 	}
 
 	/**
-	 * Deze methode wordt opgeroepen als de server een NEXT
-	 * terugstuurt. Server geeft aan wie er aan de beurt is.
+	 * Deze methode wordt opgeroepen als de server een NEXT terugstuurt. Server
+	 * geeft aan wie er aan de beurt is.
 	 * 
-	 * @param arguments
+	 * @param args
 	 */
 	/*
 	 * @ ensures this.getThisPlayer().getHand() !=
 	 * \old(this.getThisPlayer().getHand());
 	 */
-	private void handleNext(String message) {
-		Scanner reader = new Scanner(arguments);
+	private void handleNext(String args) {
+		Scanner reader = new Scanner(args);
 		if (getThisPlayer() == getPlayer(Integer.parseInt(reader.next()))) {
-			String message = "0";
+			String message = "-1";
 			message = thisplayer.determineMove(board, thisplayer.getHand());
-			view.showMessage("Stack size : " + stackSize);
-
-			// If there is an actual move put in continue
-			if (!message.equals("0")) {
+			view.displayMessage("Stack size : " + tilebag);
+			if (!message.equals("-1")) {
 				Scanner readmessage = new Scanner(message);
 				String command = readmessage.next();
-				if (readmessage.hasNext()) {
-
-					// Handle the move.
-					if (command.equals("MOVE")) {
-						List<Place> moves = stringToPlaceList(readmessage.nextLine());
-
-						// Only if it is not empty
-						if (!moves.isEmpty()) {
-								// If it has all cards and the moves are valid
-								if (hasAllCardsMove(moves) && board.isValidMoveList(moves)) {
-									// Place the, on the board
-									for (Place p : moves) {
-										board.placeCard(p);
-										thisplayer.removePlaceFromHand(p);
-									}
-									clienthandler.sendMessage(message);
-									reader.close();
-									readmessage.close();
-								} else {
-									// If not try again.
-									view.showMessage("Try again");
-									handleNext(command);
+				if (readmessage.hasNext() && command.equals("MOVE")) {
+						List<Tile> moves = stringToPlaceList(readmessage.nextLine());
+						if (!moves.isEmpty() && hasAllCardsMove(moves) &&
+									board.isValidMoveList(moves)) {
+								for (Move m : moves) {
+									board.placeCard(p);
+									thisplayer.removePlaceFromHand(p);
 								}
-								view.showMessage(e.getMessage());
-								handleNext(command);
+								clienthandler.sendMessage(message);
+								reader.close();
+								readmessage.close();
+						
 							}
-						} else {
-							view.showMessage("Try again");
+							view.showMessage(e.getMessage());
 							handleNext(command);
-						}
-					} else if (command.equals("SWAP")) {
-						List<Move> moves = stringToSwitchList(readmessage.nextLine());
-						if (stackSize < moves.size() || !hasAllCardsSwap(moves)) {
-							view.showMessage("Try again, stack size: " + stackSize);
-							handleNext(command);
-						} else {
-							thisplayer.removeFromHandSwitch(moves);
-							clienthandler.sendMessage(message);
-							reader.close();
-							readmessage.close();
-						}
 					} else {
+						view.showMessage("Try again");
 						handleNext(command);
 					}
+				} else if (command.equals("SWAP")) {
+					List<Move> moves = stringToSwitchList(readmessage.nextLine());
+					if (stackSize < moves.size() || !hasAllCardsSwap(moves)) {
+						view.showMessage("Try again, stack size: " + stackSize);
+						handleNext(command);
+					} else {
+						thisplayer.removeFromHandSwitch(moves);
+						clienthandler.sendMessage(message);
+						reader.close();
+						readmessage.close();
+					}
+				} else {
+					handleNext(command);
 				}
 			}
 		}
 	}
 
+	}
+
 	/**
-	 * Deze methode wordt door de handleMessage() opgeroepen
-	 * als het protocol NEW is. De server geeft dan aan
-	 * wie er aan de beurt is.
+	 * Deze methode wordt door de handleMessage() opgeroepen als het protocol
+	 * NEW is. De server geeft dan aan wie er aan de beurt is.
 	 * 
-	 * @param arguments
+	 * @param args
 	 */
 	/*
 	 * @ ensures this.getThisPlayer().getHand() !=
 	 * \old(this.getThisPlayer().getHand());
 	 */
-	private void handleNew(String arguments) {
-		Scanner reader = new Scanner(arguments);
+	private void handleNew(String args) {
+		Scanner reader = new Scanner(args);
 		while (reader.hasNext()) {
 			String tilestring = reader.next();
 			if (!tilestring.equals("empty")) {
 				char[] tilechars = tilestring.toCharArray();
 				synchronized (thisplayer) {
-						thisplayer.getHand().add(new Tile(tilechars[0], tilechars[1]));
+					thisplayer.getHand().add(new Tile(tilechars[0], tilechars[1]));
 				}
 			} else {
 				view.showMessage("No new cards available");
@@ -283,15 +277,15 @@ public class Client extends Observable {
 	/**
 	 * Deze methode wordt aangeroepen als de message begint met een TURN.
 	 *
-	 * @param arguments
+	 * @param args
 	 */
 	/*
-	 * @ ensures arguments.length() == 10 ==> this.getBoard() ==
-	 * \old(this.getBoard()); ensures arguments.length() != 10 ==>
+	 * @ ensures args.length() == 10 ==> this.getBoard() ==
+	 * \old(this.getBoard()); ensures args.length() != 10 ==>
 	 * this.getBoard() != \old(this.getBoard());
 	 */
-	private void handleTurn(String arguments) {
-		Scanner reader = new Scanner(arguments);
+	private void handleTurn(String args) {
+		Scanner reader = new Scanner(args);
 		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
 		String word = reader.next();
 		if (word.equals("empty")) {
@@ -318,11 +312,11 @@ public class Client extends Observable {
 	/**
 	 * De server geeft door dat er iemand gewonnen heeft.
 	 * 
-	 * @param arguments
+	 * @param args
 	 */
 	/* @ ensures this.getGameEnd() == true; */
-	private void handleWinner(String arguments) {
-		Scanner reader = new Scanner(arguments);
+	private void handleWinner(String args) {
+		Scanner reader = new Scanner(args);
 		int winner = Integer.parseInt(reader.next());
 		view.showMessage("Player: " + getPlayer(winner).getName() + " won the game");
 		reader.close();
@@ -334,18 +328,18 @@ public class Client extends Observable {
 	 * Get's called by the method handleMessage() if it starts with KICK. This
 	 * method get everything sorted out when a player is kicked.
 	 * 
-	 * @param arguments
+	 * @param args
 	 */
 	/* @ ensures tileBag > \old(stackSize); */
-	private void handleKick(String arguments) {
-		Scanner reader = new Scanner(arguments);
+	private void handleKick(String args) {
+		Scanner reader = new Scanner(args);
 		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
 		int tilesBack = Integer.parseInt(reader.next());
-		stackSize += tilesBack;
+		tilebag += tilesBack;
 		String reason = reader.nextLine();
 		if (player.equals(thisplayer)) {
-			view.showKick(player, reason);
-			view.showMessage("You have been kicked: " + reason);
+			view.displayKick(player, reason);
+			view.displayMessage("You have been kicked: " + reason);
 			reader.close();
 			shutDown();
 		}

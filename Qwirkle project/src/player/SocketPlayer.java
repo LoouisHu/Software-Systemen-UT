@@ -21,6 +21,10 @@ public class SocketPlayer implements RealPlayer {
 		this.hand = new ArrayList<Tile>();
 	}
 	
+	public SocketPlayer() {
+		this.score = 0;
+	}
+
 	public void setHand(List<Tile> newhand) {
 		hand = newhand;
 	}

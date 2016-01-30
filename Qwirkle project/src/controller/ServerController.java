@@ -1,6 +1,5 @@
 package controller;
 import java.util.*;
-
 import view.TUI;
 
 public class ServerController extends Thread {
@@ -12,16 +11,13 @@ public class ServerController extends Thread {
 	public static final String USAGE = 
 			  "usage: " + Server.class.getName() + "<port>" + " <aithinktime>";
 	
-	public static void main(String[] args) {
-		if (args.length != 2) {
-			System.out.println(USAGE);
-			System.exit(0);
+	public void run() {
+		while (true) {
+			String command = view.getCommand();
+			handleInput(command);	
 		}
-		
-		new ServerController(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
 	}
-	
-	//---Constructor---
+
 	/**
 	 * Constructs a ServerController with an AIThinkTime and a port.
 	 * @param portArg
@@ -38,7 +34,6 @@ public class ServerController extends Thread {
 			
 	}
 	
-	//---Commands---
 	public void nextGame() {
 		(serverlist.get(serverlist.size() - 1)).start();
 		Server server = new Server(this, aithinktime, view);
@@ -49,15 +44,16 @@ public class ServerController extends Thread {
 		if (command.equals("start")) {
 			nextGame();
 		} else {
-			view.showMessage(command + " could not be resolved to a command");
+			view.displayMessage(command + " This is not a command. Try again.");
 		}
 	}
-	
-	//---Run---	
-	public void run() {
-		while (true) {
-			String command = view.getCommand();
-			handleInput(command);	
+
+	public static void main(String[] args) {
+		if (args.length != 2) {
+			System.out.println(USAGE);
+			System.exit(0);
 		}
+		
+		new ServerController(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
 	}
 }

@@ -32,6 +32,10 @@ public class HumanPlayer implements RealPlayer {
 		hand.addAll(newHand);
 	}
 	
+	public String determineMove(Board b, List<Tile> hand) {
+		return tui.waitForMove();
+	}
+	
 	public void removeFromHandByMove(Move move) {
 		Tile removedTile = null;
 		for (Tile t: hand) {

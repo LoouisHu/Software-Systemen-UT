@@ -94,9 +94,15 @@ public class Server extends Thread {
 	public void addClient(ClientHandler c) {
 		threads.add(c);
 	}
+	
+	public int addPlayer() {
+		int result = playernumber;
+		playernumber = (playernumber + 1) % 4;
+		return result;
+	}
 
 	/**
-	 * Starts the game. Broadcasts all the players + no and as a last integer
+	 * Starts the game. announces all the players + no and as a last integer
 	 * the aithinktime. Sends a complete hand of six Tiles to all players.
 	 * Determines and send the first player to play Tiles, done so by
 	 * dertermineFirstTurn().
@@ -112,7 +118,7 @@ public class Server extends Thread {
 		}
 		command = command + " " + aithinktime;
 
-		broadcast(command);
+		announce(command);
 
 		for (ClientHandler ch : threads) {
 			List<Tile> newtiles = tilebag.getTiles(6);
@@ -121,7 +127,7 @@ public class Server extends Thread {
 		}
 
 		playerturn = determineFirstTurn(threads);
-		broadcast("NEXT " + determineFirstTurn(threads));
+		announce("NEXT " + determineFirstTurn(threads));
 	}
 
 	/**
@@ -135,24 +141,24 @@ public class Server extends Thread {
 	 */
 	public void nextTurn() {
 		System.out.println(board.toString());
-		System.out.println("Bag size:  " + tilebag.getTileBagSize();
+		System.out.println("Tilebag size:  " + tilebag.getTileBagSize());
 		if (threads.size() == 1) {
 			RealPlayer player = threads.get(0).getPlayer();
-			broadcast("WINNER " + player.getNumber());
+			announce("WINNER " + player.getNumber());
 		} else if (threads.size() == 0) {
 			shutDown();
 		} else if (getPlayer(playerturn).getHand().size() == 0 && tilebag.getTileBagSize() == 0) {
 			getPlayer(playerturn).updateScore(6);
 			gameOver();
 		} else if (!noValidMoveAvailable(getClientHandler(getPlayer(playerturn))) && tilebag.getTileBagSize() == 0) {
-			broadcast("NEXT " + getPlayer(playerturn).getNumber());
+			announce("NEXT " + getPlayer(playerturn).getNumber());
 		} else {
 			playerturn = (playerturn + 1) % threads.size();
 			if (getPlayer(playerturn) == null) {
 				nextTurn();
 			}
 		}
-		broadcast("NEXT " + getPlayer(playerturn).getNumber());
+		announce("NEXT " + getPlayer(playerturn).getNumber());
 	}
 
 	/**
@@ -188,7 +194,7 @@ public class Server extends Thread {
 	/*
 	 * @ requires msg != null; requires getThreads().size() > 0;
 	 */
-	public void broadcast(String msg) {
+	public void announce(String msg) {
 		System.out.println("[FROM SERVER] : " + msg);
 		for (ClientHandler ch : threads) {
 			ch.sendMessage(msg);
@@ -226,8 +232,8 @@ public class Server extends Thread {
 		List<Tile> playedTiles = new ArrayList<Tile>();
 		int i = 0;
 		for (Move m : moves) {
-			Tile c = p.getTile();
-			playedTiles.add(c);
+			Tile t = m.getTile();
+			playedTiles.add(t);
 		}
 
 		outer: for (Tile t : playedTiles) {
@@ -261,9 +267,9 @@ public class Server extends Thread {
 			playedTiles.add(c);
 		}
 
-		outer: for (Tile c : playedTiles) {
-			for (Tile chand : ch.getPlayer().getHand()) {
-				if (c.getColor().equals(chand.getColor()) && c.getFigure().equals(chand.getFigure())) {
+		outer: for (Tile t : playedTiles) {
+			for (Tile tilehand : ch.getPlayer().getHand()) {
+				if (t.getColor().equals(tilehand.getColor()) && t.getShape().equals(tilehand.getShape())) {
 					i++;
 					continue outer;
 				}
@@ -394,7 +400,7 @@ public class Server extends Thread {
 				winnernumber = ch.getPlayer().getNumber();
 			}
 		}
-		broadcast("WINNER " + winnernumber);
+		announce("WINNER " + winnernumber);
 		shutDown();
 	}
 
@@ -411,7 +417,7 @@ public class Server extends Thread {
 	 */
 	public void shutDown() {
 		for (int i = 0; i < threads.size(); i++) {
-			threads.get(i).stopConnection();
+			threads.get(i).shutdown();
 		}
 		this.interrupt();
 	}
