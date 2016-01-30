@@ -13,6 +13,7 @@ import java.util.Scanner;
 
 import controller.Protocol;
 import model.Board;
+import model.Move;
 import model.Tile;
 import player.HumanPlayer;
 import player.Player;
@@ -148,7 +149,11 @@ public class TUI extends Observable implements Runnable {
 				String number = sc.next();
 				if(playerNumber == Integer.parseInt(number)) {
 					System.out.println("Your turn");
-					player.makeMove();
+					Move m = player.makeMove();
+					m.getCoord()
+					m.getTile()
+					
+					sendMessage(Protocol.MOVE of Protocol.SWAP);
 				} else {
 					System.out.println("Next player: " + player);
 				}
