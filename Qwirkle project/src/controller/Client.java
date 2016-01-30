@@ -64,9 +64,7 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Creates a new client connecting to the given socket constructing a new
-	 * player of type playertype with the name name. The args come from the args
-	 * list in the main method.
+	 * Maakt een nieuwe client aan, toegewezen aan een socket.
 	 * 
 	 * @param sockarg
 	 * @param name
@@ -88,20 +86,21 @@ public class Client extends Observable {
 				this.thisplayer = new RetardedPlayer(name, this);
 				break;
 		}
-		clienthandler = new ClientHandler(this, sockarg);
+		clienthandler = new ClientHandler(, sockarg);
 		this.addObserver(view);
 		clienthandler.sendMessage(Protocol.HELLO + " " + getThisPlayer().getName());
 	}
 
 	/**
-	 * Handles all in coming messages from the server and redirects them too
-	 * appropriate methods.
+	 * Alle inkomende berichten van de server wordt hier opgevangen en verwerkt door alle
+	 * aparte handle methodes.
 	 * 
 	 * @param message
 	 */
 	/*
-	 * @ requires message == "WELCOME" || message == "NAMES" || message == "NEW"
-	 * || message == "TURN" || message == "WINNER" || message == "KICK";
+	 * @ requires message == Protocol.WELCOME || message == Protocol.NAMES ||
+	 * 			  message == PROTOCOL.NEXT || message == Protocol.TURN || 
+	 * 			  message == Protocol.WINNER || message == "KICK";
 	 */
 	public void handleMessage(String message) {
 		Scanner sc = new Scanner(message);
@@ -320,8 +319,7 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Get's called by the method handleMessage() if it starts with KICK. This
-	 * method get everything sorted out when a player is kicked.
+	 * Als de client een Protocol.KICK ontvangt, dan disconnect hij van de socket.
 	 * 
 	 * @param args
 	 */
@@ -342,7 +340,8 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Checks if the players has all Tiles he wants to play.
+	 * Deze methode controleert of de moves die de player wilt maken
+	 * ook daadwerkelijk in zijn hand zit.
 	 * 
 	 * @param moves
 	 */
@@ -379,9 +378,11 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * This methods converts a string with correctly formatted Move. to a List
-	 * <Move> JML is including space bar and requires there to not be a space at
-	 * the end.
+	 * Deze methode krijgt een String binnen van een aantal moves, zoals
+	 * R*, Go of Bc. De eerste karakter vertaalt hij in een kleur, de 
+	 * tweede vertaalt hij in een vorm. Hiermee maakt hij een nieuwe
+	 * Tile aan, en die stopt hij weer in een lijst van Move objecten,
+	 * gegeven de parameters van Tile.
 	 * 
 	 * @param movestring
 	 * @return List<Swtich>
@@ -398,7 +399,6 @@ public class Client extends Observable {
 			}
 			Tile tile = new Tile(tilechars[0], tilechars[1]);
 			moves.add(new Move(tile));
-			// catches an invalid Tile
 			if (!sc.hasNext()) {
 				break;
 			}
@@ -408,7 +408,8 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Returns the player of which the playernumber is given.
+	 * Als je de playernumber meegeeft, dan zal het de player teruggeven
+	 * die dat nummer heeft aangegeven.
 	 * 
 	 * @param playernumber
 	 * @return

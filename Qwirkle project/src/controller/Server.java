@@ -347,6 +347,25 @@ public class Server extends Thread {
 		}
 		return result;
 	}
+	
+	/**
+	 * Handles a player kick.
+	 * Sends a message to all the client with the amount of cards returned to the stack
+	 * and add the cards to the stack.
+	 * @param ch
+	 * @param reason
+	 */
+	public void kick(ClientHandler ch, String reason) {
+		List<Tile> hand = ch.getPlayer().getHand();
+		if (hand != null) {
+			tilebag.returnTiles(hand);
+		}
+		announce("KICK " + ch.getPlayer().getNumber() + " " + hand.size() + " " + reason);
+		if (playerturn == ch.getPlayer().getNumber()) {
+			nextTurn();
+		}
+		threads.remove(ch);
+	}
 
 	/**
 	 * Checks if a player has all the Tiles he tries to play.
