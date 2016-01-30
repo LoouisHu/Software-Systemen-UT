@@ -97,7 +97,7 @@ public class Client extends Observable {
 		}
 		clienthandler = new ClientHandler(this, sockarg);
 		this.addObserver(view);
-		clienthandler.sendMessage("HELLO " + getThisPlayer().getName());
+		clienthandler.sendMessage(Protocol.HELLO + " " + getThisPlayer().getName());
 	}
 
 	/**
@@ -204,36 +204,37 @@ public class Client extends Observable {
 	private void handleNext(String args) {
 		Scanner reader = new Scanner(args);
 		if (getThisPlayer() == getPlayer(Integer.parseInt(reader.next()))) {
-			String message = "-1";
+			HumanPlayer p = new RetardedPlayer("louis", this);
+			String message = "";
+			view.displayMessage(p.determineMove(board, this.getThisPlayer().getHand()).);
 			message = thisplayer.determineMove(board, thisplayer.getHand());
-			view.displayMessage("Stack size : " + tilebag);
-			if (!message.equals("-1")) {
-				Scanner readmessage = new Scanner(message);
-				String command = readmessage.next();
-				if (readmessage.hasNext() && command.equals(Protocol.MOVE)) {
-					List<Move> moves = stringToListMove(readmessage.nextLine());
-					int ayylmao = 0;
+			view.displayMessage("Tilebag size : " + tilebag);
+			Scanner readmessage = new Scanner(message);
+			String command = readmessage.next();
+			if (readmessage.hasNext() && command.equals(Protocol.MOVE)) {
+				List<Move> moves = stringToMoveList(readmessage.nextLine());
+				int notvalid = 0;
+				for (Move m : moves) {
+					if (!board.validMove(m)) {
+						notvalid++;
+					}
+				}
+				if (!moves.isEmpty() && hasAllTilesMove(moves) && notvalid == 0) {
 					for (Move m : moves) {
-						if (!board.validMove(m)) {
-							ayylmao++;
-						}
+						board.boardAddMove(m);
+						thisplayer.removeFromHandByMove(m);
 					}
-					if (!moves.isEmpty() && hasAllTilesMove(moves) && ayylmao == 0) {
-						for (Move m : moves) {
-							board.boardAddMove(m);
-							thisplayer.removeFromHandByMove(m);
-						}
-						clienthandler.sendMessage(message);
-						reader.close();
-						readmessage.close();
-					}
+					clienthandler.sendMessage(message);
+					reader.close();
+					readmessage.close();
+
 				} else {
 					view.displayMessage("Try again");
 					handleNext(command);
 				}
 			} else if (message.equals(Protocol.SWAP)) {
 				List<Move> moves = stringToMoveList(reader.nextLine());
-				if (tilebag < moves.size() || !hasAllTilesSwap(moves)) {
+				if (tilebag < moves.size() || !hasAllTilesMove(moves)) {
 					view.displayMessage("Try again, stack size: " + tilebag);
 					handleNext(message);
 				} else {
@@ -248,7 +249,6 @@ public class Client extends Observable {
 			}
 		}
 	}
-
 
 	/**
 	 * Deze methode wordt door de handleMessage() opgeroepen als het protocol
@@ -293,7 +293,7 @@ public class Client extends Observable {
 		if (word.equals("empty")) {
 			view.displayMessage("Tiles have been swapped.");
 		} else {
-			List<Move> moves = stringToListMove(word + " " + reader.nextLine());
+			List<Move> moves = stringToMoveList(word + " " + reader.nextLine());
 			if (tilebag > moves.size()) {
 				tilebag -= moves.size();
 			} else if (tilebag < moves.size()) {
@@ -385,89 +385,6 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Checks if the players has all Tiles he wants to swap.
-	 * 
-	 * @param moves
-	 */
-	/*
-	 * @ ensures (\forall int i; 0 <= i & i <
-	 * this.getThisPlayer().getHand().size(); (\forall int j; 0 <= j & j <
-	 * moves.size(); this.getThisPlayer().getHand().get(i).getColor() ==
-	 * moves.get(j).getTile().getColor() &&
-	 * this.getThisPlayer().getHand().get(i).getShape() ==
-	 * moves.get(j).getTile().getShape()) ==> \result == true);
-	 */
-	public Boolean hasAllTilesSwap(List<Move> moves) {
-		boolean result = true;
-		List<Tile> playedtiles = new ArrayList<Tile>();
-		int i = 0;
-		for (Move s : moves) {
-			Tile c = s.getTile();
-			playedtiles.add(c);
-		}
-
-		outer: for (Tile c : playedtiles) {
-			for (Tile chand : thisplayer.getHand()) {
-				if (c.getColor().equals(chand.getColor()) && c.getShape().equals(chand.getShape())) {
-					i++;
-					continue outer;
-				}
-			}
-		}
-		if (i != moves.size()) {
-			result = false;
-		}
-		return result;
-	}
-
-	/**
-	 * This methods converts a string with correctly formatted Place. to a List
-	 * <Place> JML is including Spacebar and requires there to not be a space at
-	 * the end.
-	 * 
-	 * @param movestring
-	 * @return List<Place>
-	 */
-	public List<Move> stringToListMove(String movestring) {
-		Scanner reader = new Scanner(movestring);
-		Scanner countreader = new Scanner(movestring);
-		int i = 0;
-		while (countreader.hasNext() && countreader.next() != null) {
-			i++;
-		}
-		List<Move> result = new ArrayList<Move>();
-		if (i % 3 == 0) {
-			while (reader.hasNext()) {
-				String tilestring = reader.next();
-				char[] tilechars = tilestring.toCharArray();
-				if (tilechars.length != 2) {
-					break;
-				}
-				Tile t = new Tile(tilechars[0], tilechars[1]);
-				if (!reader.hasNext()) {
-					break;
-				}
-				String y = reader.next();
-				int ycoor = Integer.parseInt(y);
-
-				if (!reader.hasNext()) {
-					break;
-				}
-				String x = reader.next();
-				int xcoor = Integer.parseInt(x);
-
-				Move move = new Move(t, new Coord(ycoor, xcoor));
-				result.add(move);
-			}
-		} else {
-			result = null;
-		}
-		countreader.close();
-		reader.close();
-		return result;
-	}
-
-	/**
 	 * This methods converts a string with correctly formatted Move. to a List
 	 * <Move> JML is including Spacebar and requires there to not be a space at
 	 * the end.
@@ -477,10 +394,10 @@ public class Client extends Observable {
 	 */
 	/* @ requires (movestring.length() - 6) % 3 == 0; */
 	public List<Move> stringToMoveList(String movestring) {
-		Scanner reader = new Scanner(movestring);
+		Scanner sc = new Scanner(movestring);
 		List<Move> moves = new ArrayList<Move>();
-		while (reader.hasNext()) {
-			String Tilestring = reader.next();
+		while (sc.hasNext()) {
+			String Tilestring = sc.next();
 			char[] Tilechars = Tilestring.toCharArray();
 			if (Tilechars.length != 2) {
 				break;
@@ -488,11 +405,11 @@ public class Client extends Observable {
 			Tile Tile = new Tile(Tilechars[0], Tilechars[1]);
 			moves.add(new Move(Tile));
 			// catches an invalid Tile
-			if (!reader.hasNext()) {
+			if (!sc.hasNext()) {
 				break;
 			}
 		}
-		reader.close();
+		sc.close();
 		return moves;
 	}
 

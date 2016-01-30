@@ -9,6 +9,7 @@ import model.Coord;
 import player.RealPlayer;
 
 import java.util.*;
+
 import view.TUI;
 
 public class Server extends Thread {
@@ -94,7 +95,7 @@ public class Server extends Thread {
 	public void addClient(ClientHandler c) {
 		threads.add(c);
 	}
-	
+
 	public int addPlayer() {
 		int result = playernumber;
 		playernumber = (playernumber + 1) % 4;
@@ -102,8 +103,8 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Starts the game. announces all the players + no and as a last integer
-	 * the aithinktime. Sends a complete hand of six Tiles to all players.
+	 * Starts the game. announces all the players + no and as a last integer the
+	 * aithinktime. Sends a complete hand of six Tiles to all players.
 	 * Determines and send the first player to play Tiles, done so by
 	 * dertermineFirstTurn().
 	 */
@@ -112,7 +113,7 @@ public class Server extends Thread {
 	 * getThreads().get(i).getPlayer().getHand().size() == 6);
 	 */
 	public void startGame() {
-		String command = "NAMES";
+		String command = Protocol.NAMES;
 		for (ClientHandler ch : threads) {
 			command = command + " " + ch.getPlayer().getName() + " " + ch.getPlayer().getNumber();
 		}
@@ -127,7 +128,7 @@ public class Server extends Thread {
 		}
 
 		playerturn = determineFirstTurn(threads);
-		announce("NEXT " + determineFirstTurn(threads));
+		announce(Protocol.NEXT + determineFirstTurn(threads));
 	}
 
 	/**
@@ -144,33 +145,33 @@ public class Server extends Thread {
 		System.out.println("Tilebag size:  " + tilebag.getTileBagSize());
 		if (threads.size() == 1) {
 			RealPlayer player = threads.get(0).getPlayer();
-			announce("WINNER " + player.getNumber());
+			announce(Protocol.WINNER + " " + player.getNumber());
 		} else if (threads.size() == 0) {
 			shutDown();
 		} else if (getPlayer(playerturn).getHand().size() == 0 && tilebag.getTileBagSize() == 0) {
 			getPlayer(playerturn).updateScore(6);
 			gameOver();
 		} else if (!noValidMoveAvailable(getClientHandler(getPlayer(playerturn))) && tilebag.getTileBagSize() == 0) {
-			announce("NEXT " + getPlayer(playerturn).getNumber());
+			announce(Protocol.NEXT + " " + getPlayer(playerturn).getNumber());
 		} else {
 			playerturn = (playerturn + 1) % threads.size();
 			if (getPlayer(playerturn) == null) {
 				nextTurn();
 			}
 		}
-		announce("NEXT " + getPlayer(playerturn).getNumber());
+		announce(Protocol.NEXT + " " + getPlayer(playerturn).getNumber());
 	}
 
 	/**
-	 * Checks if the game is over, if players is 1, the stack and player hand is
-	 * 0, or there are no valid moves anymore the game is over.
+	 * Checks if the game is over, if players is 1, the tilebag and player hand
+	 * is 0, or there are no valid moves anymore the game is over.
 	 * 
 	 * @param ch
 	 * @return
 	 */
 	/*
 	 * @ ensures getThreads().size() == 1 ==> \result == true; ensures
-	 * this.getStack().stackAmount() == 0 ==> \result == false;
+	 * this.gettilebag().tilebagAmount() == 0 ==> \result == false;
 	 */
 	public boolean gameOver() {
 		boolean result = false;
@@ -200,6 +201,316 @@ public class Server extends Thread {
 			ch.sendMessage(msg);
 		}
 	}
+	/**
+	 * Het eerste woord wordt opgeslagen als String 'commando' en wordt
+	 * vergeleken of het van de vorm is zoals in het Protocol is afgesproken.
+	 * 
+	 * Als het commando Protocol.HELLO is, dan wordt het eerste woord na de
+	 * commando doorgegeven aan de server bij aanmelding. Dit wordt de player's
+	 * naam. De naam mag alleen het alfabet gebruiken met hoofdletters en kleine
+	 * letters, mag maar een lengte van 16.
+	 * 
+	 * Als het commando Protocol.SWAP is, dan wordt er ижижn of meerdere Tiles
+	 * omgewisseld met de pot van de server.
+	 * 
+	 * Als het commando Protocol.MOVE is, dan wordt er eerst gecheckt of
+	 * deze Client aan de beurt is. Daarna worden de volgende twee woorden bekeken. Deze
+	 * twee woorden stellen het blok en de draairichting voor. Eerst wordt er
+	 * gecheckt of ze wel in het goede formaat gestuurd zijn en dan wordt het
+	 * verandert naar de formaat die bij ons Bord en wordt de draai gedaan en
+	 * gebroadcast naar alle spelers in hetzelfde spel. Vervolgens wordt er
+	 * gecheckt of het spel is afgelopen. Als dat niet zo is, dan is de volgende
+	 * speler aan de beurt.
+	 *	
+	 * @author Glorious Louis
+	 * @param
+	 * */
+	public void processMessage(String message, ClientHandler ch) {
+		Scanner sc = new Scanner(message);
+		String commando;
+		if (sc.hasNext()) {
+			commando = sc.next();
+			switch (commando) {
+			case Protocol.HELLO:
+				if (sc.hasNext()) {
+					String tempname = sc.next();
+					if (tempname.length() < 1 || tempname.length() > 16 || !tempname.matches("[a-zA-Z]*")) {
+						kick(ch, "Name too long or no use of a-zA-Z.");
+					} else {
+						ch.getPlayer().setName(tempname);
+						ch.getPlayer().setNumber(this.addPlayer());
+						ch.sendMessage(Protocol.WELCOME + " " + tempname + " " + ch.getPlayer().getNumber());
+					}
+				}
+				break;
+			case Protocol.SWAP:
+				if (sc.hasNext()) {
+					// TODO check turn
+					List<Tile> tiles = new ArrayList<Tile>();
+					while (sc.hasNext()) {
+						tiles.add(ClientHandler.convertTextToTile(sc.next()));
+					}
+					if (tilebag.getTileBagSize() - tiles.size() >= 0) {
+						List<Tile> swapped = tilebag.getTiles(tiles.size());
+						tilebag.returnTiles(tiles);
+						String swapcommand = Protocol.NEW;
+						for (Tile t : swapped) {
+							swapcommand += " " + t.toString();
+						}
+						ch.sendMessage(swapcommand);
+						// TODO Protocol.TURN Protocol.NEW Protocol.NEXT
+
+					} else {
+						kick(ch, "Swapping tiles amount larger than tiles left in the bag.");
+					}
+				} else {
+					kick(ch, "Must swap at least 1 tile");
+				}
+				break;
+			case Protocol.MOVE:
+				// TODO check turn && check message array length
+				if (sc.hasNext() && ch.getPlayer().getNumber() == playerturn) {
+					String[] string = message.split(" ");
+					Tile t = ClientHandler.convertTextToTile(string[1]);
+					try {
+						int x = Integer.parseInt(string[2]);
+						int y = Integer.parseInt(string[3]);
+						Coord c = new Coord(x, y);
+						Move m = new Move(t, c);
+						if (board.validMove(m)) {
+							board.boardAddMove(m);
+							// sendMessage();// TODO Protocol.TURN Protocol.NEW
+							// Protocol.NEXT
+						} else {
+							kick(ch, "Not a valid move.");
+						}
+					} catch (NumberFormatException e) {
+						kick(ch, "Onjuiste [TILE ROW COLUMN]");
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Checks if a valid name was entered, adds the name to the connected
+	 * networkplayer gives this player a number sends the welcome message to the
+	 * player kicks if the name is not valid
+	 * 
+	 * @param message
+	 * @param ch
+	 */
+	/*
+	 * @ signals (Exception e) e instanceof InValidNameException <==>
+	 * !validName(message);
+	 */
+	// needs to have a message and a clienthandler
+	public void handleHello(String message, ClientHandler ch) {
+		try {
+			if (validName(message)) {
+				ch.getPlayer().setName(message);
+				ch.getPlayer().setNumber(playernumber);
+				playernumber += 1;
+				String response = "WELCOME " + ch.getPlayer().getName() + " " + ch.getPlayer().getNumber();
+				ch.sendMessage(response);
+			}
+		} catch (InValidNameException e) {
+			kick(ch, "This name was not valid");
+		}
+	}
+
+	/**
+	 * Handles a move command. Checks if it was the player's turn and if there
+	 * is a message Creates a list of moves from the message checks if a
+	 * complete move was processed and if the player has all the Tiles he tried
+	 * to play
+	 * 
+	 * @param message
+	 * @param ch
+	 */
+	/*
+	 * @ requires this.getThreads().contains(ch);
+	 */
+	public void handleMove(String message, ClientHandler ch) {
+		Scanner reader = new Scanner(message);
+		boolean completeMoveProcessed = false;
+		// Checks if it is the players turn and if there are commands
+		if (ch.getPlayer().getNumber() == playerturn && reader.hasNext()) {
+			try {
+				List<Move> moves = new ArrayList<Move>();
+				while (reader.hasNext()) {
+					completeMoveProcessed = false;
+					String Tilestring = reader.next();
+					char[] Tilechars = Tilestring.toCharArray();
+					// If there are not enough charachters, stop.
+					if (Tilechars.length != 2) {
+						break;
+					}
+					try {
+						Tile Tile = new Tile(Tilechars[0], Tilechars[1]);
+
+						// If there is nothing after the Tile stop.
+						if (!reader.hasNext()) {
+							break;
+						}
+						String y = reader.next();
+						int ycoor = Integer.parseInt(y);
+
+						// If there is no x coordinate stop.
+						if (!reader.hasNext()) {
+							break;
+						}
+						String x = reader.next();
+						int xcoor = Integer.parseInt(x);
+
+						// If everything is correct make a new Tile add it to
+						// the list en
+						Move Move = new Move(Tile, ycoor, xcoor);
+						moves.add(Move);
+						completeMoveProcessed = true;
+					} catch (InvalidCharacterException e) {
+						kick(ch, e.getMessage());
+					}
+				}
+				// If there was atleast one correct formatted move do this
+				if (completeMoveProcessed && !moves.isEmpty()) {
+					try {
+						if (hasAllTilesMove(ch, moves) && board.isValidMoveList(moves)) {
+							// Tiles need to be Moved for score
+							for (Move p : moves) {
+								board.MoveTile(p);
+							}
+							/*
+							 * updates the score of this player draws new Tiles
+							 * from the tilebag removes the Tiles he played from
+							 * his hand, sends him a message with the new Tiles
+							 * announces a message to all players with the turn
+							 */
+							ch.getPlayer().updateScore(board.movePoints(moves));
+							// Score removes Tiles Move them.
+							for (Move p : moves) {
+								board.MoveTile(p);
+							}
+
+							if (tilebag.tilebagAmount() > 0) {
+								List<Tile> newTiles = tilebag.drawTiles(moves.size());
+								ch.getPlayer().MoveTiles(moves, newTiles);
+								System.out.println("[FROM SERVER TO " + ch.getPlayer().getName() + "] : "
+										+ giveTilesString(newTiles));
+								ch.sendMessage(giveTilesString(newTiles));
+								String turnstring = "TURN " + ch.getPlayer().getNumber();
+								for (Move p : moves) {
+									turnstring = turnstring + p.toString();
+								}
+								announce(turnstring);
+							} else {
+								ch.getPlayer().removeFromHandMoves(moves);
+								System.out.println("[FROM SERVER TO " + ch.getPlayer().getName() + "] : NEW empty");
+								ch.sendMessage("NEW empty");
+								String turnstring = "TURN " + ch.getPlayer().getNumber();
+								for (Move p : moves) {
+									turnstring = turnstring + p.toString();
+								}
+								announce(turnstring);
+
+							}
+						}
+					} catch (NotEnoughTilesException e) {
+						ch.getPlayer().removeFromHandMoves(moves);
+						ch.sendMessage("NEW empty");
+					}
+				}
+			} catch (LoneSpotException | NoEmptySpotException | NoValidCombinationException | LineTooLongException e) {
+				kick(ch, "This was not a valid move");
+				e.printtilebagTrace();
+			} catch (NumberFormatException e) {
+				kick(ch, "Not a valid move command");
+			} finally {
+				nextTurn();
+				reader.close();
+			}
+		}
+	}
+
+	/**
+	 * Handles a player kick. Sends a message to all the client with the amount
+	 * of Tiles returned to the tilebag and add the Tiles to the tilebag.
+	 * 
+	 * @param ch
+	 * @param reason
+	 */
+	public void kick(ClientHandler ch, String reason) {
+		List<Tile> hand = ch.getPlayer().getHand();
+		if (hand != null) {
+			tilebag.returnTiles(hand)
+		}
+		announce("KICK " + ch.getPlayer().getNumber() + " " + hand.size() + " " + reason);
+		if (playerturn == ch.getPlayer().getNumber()) {
+			nextTurn();
+		}
+		threads.remove(ch);
+	}
+
+	/**
+	 * Handles a swap command. checks if it was his turn and if there is a
+	 * message Creates a list of moves from the message
+	 * 
+	 * @param message
+	 * @param ch
+	 */
+	public void handleSwap(String message, ClientHandler ch) {
+		Scanner reader = new Scanner(message);
+		if (ch.getPlayer().getNumber() == playerturn && reader.hasNext()) {
+			try {
+				List<Move> moves = new ArrayList<Move>();
+				while (reader.hasNext()) {
+					String Tilestring = reader.next();
+					char[] Tilechars = Tilestring.toCharArray();
+					if (Tilechars.length != 2) {
+						kick(ch, "Nice try, but a Tile only has 2 chars");
+						break;
+					}
+					try {
+						Tile Tile = new Tile(Tilechars[0], Tilechars[1]);
+						moves.add(new Switch(Tile));
+						// catches an invalid Tile
+					} catch (InvalidCharacterException e) {
+						e.printtilebagTrace();
+						kick(ch, "One of the characters was not valid");
+					}
+					if (!reader.hasNext()) {
+						break;
+					}
+				}
+				// If the player tried to swap to an empty tilebag, kick him
+				if (tilebag.tilebagAmount() < moves.size()) {
+					kick(ch, "U should have checked the tilebag before");
+				} else if (hasAllTilesSwap(ch, moves)) {
+					try {
+						/*
+						 * Draws new Tiles from the tilebag swaps these Tiles
+						 * with the hand of the player sends him a message with
+						 * the new Tiles announces the turn
+						 */
+						List<Tile> newTiles = tilebag.swapTotilebag(moves);
+						ch.getPlayer().swapHand(moves, newTiles);
+						ch.sendMessage(giveTilesString(newTiles));
+						announce("TURN" + " " + ch.getPlayer().getNumber() + " empty");
+					} catch (NotEnoughTilesException e) {
+						kick(ch, "Nice try, but the tilebag was empty");
+					}
+				} else {
+					kick(ch, "U did not have these Tiles");
+				}
+			} finally {
+				reader.close();
+				nextTurn();
+			}
+		} else {
+			kick(ch, "That was not a valid swap");
+		}
+	}
 
 	/**
 	 * Maakt een string van de lijst van objecten Tile
@@ -224,7 +535,7 @@ public class Server extends Thread {
 	 * 
 	 * @param ch
 	 * @param moves
-	 *            List <Place>
+	 *            List <Move>
 	 * @return
 	 */
 	public Boolean hasAllTilesMove(ClientHandler ch, List<Move> moves) {
@@ -292,7 +603,7 @@ public class Server extends Thread {
 	/*
 	 * @ ensures (\forall int i, j, k; 0 <= i & i < 183 & 0 <= k & k <= 183 & 0
 	 * <= j & j < ch.getPlayer().getHand().size();
-	 * this.getBoard().isValidMove(new Place(ch.getPlayer().getHand().get(i), i,
+	 * this.getBoard().isValidMove(new Move(ch.getPlayer().getHand().get(i), i,
 	 * k)) ==> \result == true);
 	 */
 	public boolean noValidMoveAvailable(ClientHandler ch) {
@@ -420,21 +731,6 @@ public class Server extends Thread {
 			threads.get(i).shutdown();
 		}
 		this.interrupt();
-	}
-
-	/* @ ensures name.matches("[a-zA-Z]+"); */;
-
-	/* @pure */public static boolean validName(String name) {
-		boolean result = true;
-
-		char[] letters = name.toCharArray();
-
-		for (char l : letters) {
-			if (!Character.isLetter(l)) {
-				System.out.print("Not a valid name");
-			}
-		}
-		return result;
 	}
 
 	public ClientHandler getClientHandler(RealPlayer player) {

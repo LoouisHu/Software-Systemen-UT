@@ -26,8 +26,7 @@ public class ClientHandler extends Thread {
 	private Socket socket;
 	private BufferedReader in;
 	private BufferedWriter out;
-	private SocketPlayer player;
-	private boolean isRunning = true;
+	private SocketPlayer socketplayer;
 	private Client client;
 	private Socket sock;
 
@@ -39,13 +38,18 @@ public class ClientHandler extends Thread {
 	public ClientHandler(Server server, Socket socket, SocketPlayer player) {
 		this.server = server;
 		this.socket = socket;
-		this.player = player;
+		this.socketplayer = player;
 		try {
 			in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
 		} catch (IOException e) {
 			System.out.println("Fout bij aanmaken van BufferedReader en BufferedWriter in ClientHandler");
 		}
+	}
+	
+	public ClientHandler(Client client, Socket socket) {
+		this.client = client;
+		this.sock = socket;
 	}
 
 	/**
@@ -61,15 +65,18 @@ public class ClientHandler extends Thread {
 			while (true) {
 				String message = in.readLine();
 				if (message != null) {
-					verwerk(message);
+					sendToServer(message);
 				} else {
 					throw new IOException();
 				}
 			}
 		} catch (IOException e) {
-			// server.remove(this);
 			shutdown();
 		}
+	}
+
+	private void sendToServer(String message) {
+		server.processMessage(message, this);
 	}
 
 	/**
@@ -79,7 +86,7 @@ public class ClientHandler extends Thread {
 	 * schrijven van het bericht mis gaat, dan concludeert de methode dat de
 	 * socketverbinding verbroken is en roept shutdown() aan.
 	 * 
-	 * @require message != null
+	 * @param message
 	 */
 	public void sendMessage(String message) {
 		try {
@@ -124,102 +131,13 @@ public class ClientHandler extends Thread {
 	 * 
 	 * @require message != null
 	 */
-	public void verwerk(String message) {
-		// server.addMessage(message);
-		Scanner sc = new Scanner(message);
-		String commando;
-		if (sc.hasNext()) {
-			commando = sc.next();
-			switch (commando) {
-			case Protocol.HELLO:
-				if (server.getThreads().contains(this) && sc.hasNext()) {
-					String tempnaam = sc.next();
-					if (tempnaam.length() < 1 // geen zelfde naam check
-							|| tempnaam.length() > 16 || !tempnaam.matches("[a-zA-Z]*")) {
-						kick("name already exists or name too long or use only letters");
-					} else {
-						player.setName(tempnaam);
-						player.setNumber(server.addPlayer());
-						sendMessage(Protocol.WELCOME + " " + tempnaam + " " + player.getNumber());
-						// TODO potential game start
-					}
-				}
-				break;
-			case Protocol.SWAP:
-				if (sc.hasNext()) {
-					// TODO check turn
-					List<Tile> tiles = new ArrayList<Tile>();
-					while (sc.hasNext()) {
-						tiles.add(convertTextToTile(sc.next()));
-					}
-					if (server.getTileBag().getTileBagSize() - tiles.size() >= 0) {
-						List<Tile> swapped = server.getTileBag().getTiles(tiles.size());
-						server.getTileBag().returnTiles(tiles);
-						String swapcommand = Protocol.NEW;
-						for (Tile t : swapped) {
-							swapcommand += " " + t.toString();
-						}
-						sendMessage(swapcommand);
-						// TODO Protocol.TURN Protocol.NEW Protocol.NEXT
-					} else {
-						kick("Swapping tiles amount larger than tiles left in the bag");
-					}
-				} else {
-					kick("Must swap at least 1 tile");
-				}
-				break;
-			case Protocol.MOVE:
-				// TODO check turn && check message array length
-				String[] string = message.split(" ");
-				Tile t = convertTextToTile(string[1]);
-				try {
-					int x = Integer.parseInt(string[2]);
-					int y = Integer.parseInt(string[3]);
-					Coord c = new Coord(x, y);
-					Move m = new Move(t, c);
-					if (server.getBoard().validMove(m)) {
-						server.getBoard().boardAddMove(m);
-						// sendMessage();//TODO Protocol.TURN Protocol.NEW
-						// Protocol.NEXT
-					} else {
-						kick("Not a valid move");
-					}
-				} catch (NumberFormatException e) {
-					kick("Onjuiste [TILE ROW COLUMN]");
-				}
-
-				// MOVE Ro 91 91
-				// MOVE R* 92 91
-				break;
-			}
-		}
-
-	}
-
-//	public static void main(String[] args) {
-//		String message = "Move Ro 91 91";
-//		String[] string = message.split(" ");
-//		Tile t = convertTextToTile(string[1]);
-//		System.out.println(t.toString());
-//	}
-
-	/**
-	 * Broadcast dat het spel is afgelopen en de winnaars naar alle spelers van
-	 * het spel waar deze Client zich in bevind. Vervolgens krijgt elke zo'n
-	 * speler ook een Protocol.QUIT.
-	 */
-	// public void winnaar(){
-	// server.broadcastIG(this, Protocol.END_GAME + " " + 1 + " " +
-	// server.result(this));
-	// server.endGame(this);
-	// }
-
+	
 	/**
 	 * Stuurt de Client van deze ClientHandler een Protocol.KICK.
 	 */
 	public void kick(String reason) {
-		server.getTileBag().returnTiles(player.getHand());
-		sendMessage(Protocol.KICK + player.getHand().size() + reason);
+		server.getTileBag().returnTiles(socketplayer.getHand());
+		sendMessage(Protocol.KICK + socketplayer.getHand().size() + reason);
 		// TODO Protocol.TURN Protocol.NEW Protocol.NEXT en mogelijk nog iets in
 		// server aanpassen door gekickte speler
 		server.getThreads().remove(this);
@@ -239,11 +157,12 @@ public class ClientHandler extends Thread {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public SocketPlayer getPlayer() {
-		return player;
+		return socketplayer;
+	}
+	
+	public void setPlayerName(String name) {
+		getPlayer().setName(name);
 	}
 
 	public static Tile convertTextToTile(String s) {

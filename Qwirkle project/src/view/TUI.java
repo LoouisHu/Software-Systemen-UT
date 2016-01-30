@@ -8,6 +8,7 @@ import controller.Server;
 import controller.ServerController;
 import player.RealPlayer;
 import model.Board;
+import model.Move;
 import model.Tile;
 import java.util.Observable;
 import java.util.Observer;

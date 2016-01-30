@@ -11,19 +11,17 @@ import view.TUI;
 
 public class RetardedPlayer extends HumanPlayer {
 
-	private int aithinktime;
 	private int playernumber;
 	private int score;
 	private TUI view;
-	
-	public RetardedPlayer(String name, Client client, int aithinktime) {
+
+	public RetardedPlayer(String name, Client client) {
 		super(name, client);
-		this.aithinktime = aithinktime;
 	}
-	
+
 	@Override
 	public String determineMove(Board board, List<Tile> hand) {
-		Move result = null;
+		String result = null;
 		boolean isFound = false;
 		for (int i = 0; i < board.getUsedSpaces().size() && !isFound; i++) {
 			Move m = board.getUsedSpaces().get(i);
@@ -34,16 +32,11 @@ public class RetardedPlayer extends HumanPlayer {
 					Move tempmove = new Move(hand.get(k), new Coord(x, y));
 					if (board.validMove(tempmove)) {
 						isFound = true;
-						result = tempmove;
+						result = tempmove.getTile().toString() + " " + tempmove.getCoord().getX() + " " + tempmove.getCoord().getY();
 					}
-
 				}
 			}
 		}
-		if (result == null) {
-			
-		}
-		return result.toString();
+		return result;
 	}
-
 }
