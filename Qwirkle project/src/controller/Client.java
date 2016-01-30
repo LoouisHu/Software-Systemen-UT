@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import view.TUI;
 import model.Board;
+import model.Coord;
 import model.Tile;
 import player.HumanPlayer;
 import player.SocketPlayer;
@@ -64,8 +65,8 @@ public class Client extends Observable {
 
 	/**
 	 * Creates a new client connecting to the given socket constructing a new
-	 * player of type playertype with the name name. The args come from the
-	 * args list in the main method.
+	 * player of type playertype with the name name. The args come from the args
+	 * list in the main method.
 	 * 
 	 * @param sockarg
 	 * @param name
@@ -209,44 +210,45 @@ public class Client extends Observable {
 			if (!message.equals("-1")) {
 				Scanner readmessage = new Scanner(message);
 				String command = readmessage.next();
-				if (readmessage.hasNext() && command.equals("MOVE")) {
-						List<Tile> moves = stringToPlaceList(readmessage.nextLine());
-						if (!moves.isEmpty() && hasAllCardsMove(moves) &&
-									board.isValidMoveList(moves)) {
-								for (Move m : moves) {
-									board.placeCard(p);
-									thisplayer.removePlaceFromHand(p);
-								}
-								clienthandler.sendMessage(message);
-								reader.close();
-								readmessage.close();
-						
-							}
-							view.showMessage(e.getMessage());
-							handleNext(command);
-					} else {
-						view.showMessage("Try again");
-						handleNext(command);
+				if (readmessage.hasNext() && command.equals(Protocol.MOVE)) {
+					List<Move> moves = stringToListMove(readmessage.nextLine());
+					int ayylmao = 0;
+					for (Move m : moves) {
+						if (!board.validMove(m)) {
+							ayylmao++;
+						}
 					}
-				} else if (command.equals("SWAP")) {
-					List<Move> moves = stringToSwitchList(readmessage.nextLine());
-					if (stackSize < moves.size() || !hasAllCardsSwap(moves)) {
-						view.showMessage("Try again, stack size: " + stackSize);
-						handleNext(command);
-					} else {
-						thisplayer.removeFromHandSwitch(moves);
+					if (!moves.isEmpty() && hasAllTilesMove(moves) && ayylmao == 0) {
+						for (Move m : moves) {
+							board.boardAddMove(m);
+							thisplayer.removeFromHandByMove(m);
+						}
 						clienthandler.sendMessage(message);
 						reader.close();
 						readmessage.close();
 					}
 				} else {
+					view.displayMessage("Try again");
 					handleNext(command);
 				}
+			} else if (message.equals(Protocol.SWAP)) {
+				List<Move> moves = stringToMoveList(reader.nextLine());
+				if (tilebag < moves.size() || !hasAllTilesSwap(moves)) {
+					view.displayMessage("Try again, stack size: " + tilebag);
+					handleNext(message);
+				} else {
+					for (Move m : moves) {
+						thisplayer.removeFromHandByMove(m);
+					}
+					clienthandler.sendMessage(message);
+					reader.close();
+				}
+			} else {
+				handleNext(message);
 			}
 		}
 	}
 
-	}
 
 	/**
 	 * Deze methode wordt door de handleMessage() opgeroepen als het protocol
@@ -268,7 +270,7 @@ public class Client extends Observable {
 					thisplayer.getHand().add(new Tile(tilechars[0], tilechars[1]));
 				}
 			} else {
-				view.showMessage("No new cards available");
+				view.displayMessage("No new Tiles available");
 			}
 		}
 		reader.close();
@@ -281,21 +283,21 @@ public class Client extends Observable {
 	 */
 	/*
 	 * @ ensures args.length() == 10 ==> this.getBoard() ==
-	 * \old(this.getBoard()); ensures args.length() != 10 ==>
-	 * this.getBoard() != \old(this.getBoard());
+	 * \old(this.getBoard()); ensures args.length() != 10 ==> this.getBoard() !=
+	 * \old(this.getBoard());
 	 */
 	private void handleTurn(String args) {
 		Scanner reader = new Scanner(args);
 		RealPlayer player = getPlayer(Integer.parseInt(reader.next()));
 		String word = reader.next();
 		if (word.equals("empty")) {
-			view.showMessage("Tiles have been swapped.");
+			view.displayMessage("Tiles have been swapped.");
 		} else {
-			List<Move> moves = stringToPlaceList(word + " " + reader.nextLine());
-			if (stackSize > moves.size()) {
-				stackSize -= moves.size();
-			} else if (stackSize < moves.size()) {
-				stackSize = 0;
+			List<Move> moves = stringToListMove(word + " " + reader.nextLine());
+			if (tilebag > moves.size()) {
+				tilebag -= moves.size();
+			} else if (tilebag < moves.size()) {
+				tilebag = 0;
 			}
 			player.updateScore(board.decideScore(moves));
 			for (Move p : moves) {
@@ -305,7 +307,7 @@ public class Client extends Observable {
 		}
 		setChanged();
 		notifyObservers();
-		view.showScore(player);
+		view.displayScore(player);
 		reader.close();
 	}
 
@@ -318,7 +320,7 @@ public class Client extends Observable {
 	private void handleWinner(String args) {
 		Scanner reader = new Scanner(args);
 		int winner = Integer.parseInt(reader.next());
-		view.showMessage("Player: " + getPlayer(winner).getName() + " won the game");
+		view.displayMessage("Player: " + getPlayer(winner).getName() + " won the game");
 		reader.close();
 		gameend = true;
 		shutDown();
@@ -347,7 +349,7 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Checks if the players has all cards he wants to play.
+	 * Checks if the players has all Tiles he wants to play.
 	 * 
 	 * @param moves
 	 */
@@ -355,22 +357,22 @@ public class Client extends Observable {
 	 * @ ensures (\forall int i; 0 <= i & i <
 	 * this.getThisPlayer().getHand().size(); (\forall int j; 0 <= j & j <
 	 * moves.size(); this.getThisPlayer().getHand().get(i).getColor() ==
-	 * moves.get(j).getCard().getColor() &&
-	 * this.getThisPlayer().getHand().get(i).getFigure() ==
-	 * moves.get(j).getCard().getFigure()) ==> \result == true);
+	 * moves.get(j).getTile().getColor() &&
+	 * this.getThisPlayer().getHand().get(i).getShape() ==
+	 * moves.get(j).getTile().getShape()) ==> \result == true);
 	 */
-	public Boolean hasAllCardsMove(List<Place> moves) {
+	public Boolean hasAllTilesMove(List<Move> moves) {
 		boolean result = true;
-		List<Card> playedcards = new ArrayList<Card>();
+		List<Tile> playedtiles = new ArrayList<Tile>();
 		int i = 0;
-		for (Place p : moves) {
-			Card c = p.getCard();
-			playedcards.add(c);
+		for (Move m : moves) {
+			Tile t = m.getTile();
+			playedtiles.add(t);
 		}
 
-		outer: for (Card c : playedcards) {
-			for (Card chand : thisplayer.getHand()) {
-				if (c.getColor().equals(chand.getColor()) && c.getFigure().equals(chand.getFigure())) {
+		outer: for (Tile t : playedtiles) {
+			for (Tile tilehand : thisplayer.getHand()) {
+				if (t.getColor().equals(tilehand.getColor()) && t.getShape().equals(tilehand.getShape())) {
 					i++;
 					continue outer;
 				}
@@ -383,7 +385,7 @@ public class Client extends Observable {
 	}
 
 	/**
-	 * Checks if the players has all cards he wants to swap.
+	 * Checks if the players has all Tiles he wants to swap.
 	 * 
 	 * @param moves
 	 */
@@ -391,22 +393,22 @@ public class Client extends Observable {
 	 * @ ensures (\forall int i; 0 <= i & i <
 	 * this.getThisPlayer().getHand().size(); (\forall int j; 0 <= j & j <
 	 * moves.size(); this.getThisPlayer().getHand().get(i).getColor() ==
-	 * moves.get(j).getCard().getColor() &&
-	 * this.getThisPlayer().getHand().get(i).getFigure() ==
-	 * moves.get(j).getCard().getFigure()) ==> \result == true);
+	 * moves.get(j).getTile().getColor() &&
+	 * this.getThisPlayer().getHand().get(i).getShape() ==
+	 * moves.get(j).getTile().getShape()) ==> \result == true);
 	 */
-	public Boolean hasAllCardsSwap(List<Switch> moves) {
+	public Boolean hasAllTilesSwap(List<Move> moves) {
 		boolean result = true;
-		List<Card> playedcards = new ArrayList<Card>();
+		List<Tile> playedtiles = new ArrayList<Tile>();
 		int i = 0;
-		for (Switch s : moves) {
-			Card c = s.getCard();
-			playedcards.add(c);
+		for (Move s : moves) {
+			Tile c = s.getTile();
+			playedtiles.add(c);
 		}
 
-		outer: for (Card c : playedcards) {
-			for (Card chand : thisplayer.getHand()) {
-				if (c.getColor().equals(chand.getColor()) && c.getFigure().equals(chand.getFigure())) {
+		outer: for (Tile c : playedtiles) {
+			for (Tile chand : thisplayer.getHand()) {
+				if (c.getColor().equals(chand.getColor()) && c.getShape().equals(chand.getShape())) {
 					i++;
 					continue outer;
 				}
@@ -426,74 +428,66 @@ public class Client extends Observable {
 	 * @param movestring
 	 * @return List<Place>
 	 */
-	public List<Place> stringToPlaceList(String movestring) {
+	public List<Move> stringToListMove(String movestring) {
 		Scanner reader = new Scanner(movestring);
 		Scanner countreader = new Scanner(movestring);
 		int i = 0;
 		while (countreader.hasNext() && countreader.next() != null) {
 			i++;
 		}
-		List<Place> moves = new ArrayList<Place>();
+		List<Move> result = new ArrayList<Move>();
 		if (i % 3 == 0) {
 			while (reader.hasNext()) {
-				String cardstring = reader.next();
-				char[] cardchars = cardstring.toCharArray();
-				if (cardchars.length != 2) {
+				String tilestring = reader.next();
+				char[] tilechars = tilestring.toCharArray();
+				if (tilechars.length != 2) {
 					break;
 				}
-				try {
-					Card card = new Card(cardchars[0], cardchars[1]);
-					if (!reader.hasNext()) {
-						break;
-					}
-					String y = reader.next();
-					int ycoor = Integer.parseInt(y);
-
-					if (!reader.hasNext()) {
-						break;
-					}
-					String x = reader.next();
-					int xcoor = Integer.parseInt(x);
-
-					Place place = new Place(card, ycoor, xcoor);
-					moves.add(place);
-				} catch (InvalidCharacterException e) {
-					moves = null;
+				Tile t = new Tile(tilechars[0], tilechars[1]);
+				if (!reader.hasNext()) {
+					break;
 				}
+				String y = reader.next();
+				int ycoor = Integer.parseInt(y);
+
+				if (!reader.hasNext()) {
+					break;
+				}
+				String x = reader.next();
+				int xcoor = Integer.parseInt(x);
+
+				Move move = new Move(t, new Coord(ycoor, xcoor));
+				result.add(move);
 			}
 		} else {
-			moves = null;
+			result = null;
 		}
 		countreader.close();
 		reader.close();
-		return moves;
+		return result;
 	}
 
 	/**
-	 * This methods converts a string with correctly formatted Switch. to a List
-	 * <Switch> JML is including Spacebar and requires there to not be a space
-	 * at the end.
+	 * This methods converts a string with correctly formatted Move. to a List
+	 * <Move> JML is including Spacebar and requires there to not be a space at
+	 * the end.
 	 * 
 	 * @param movestring
 	 * @return List<Swtich>
 	 */
 	/* @ requires (movestring.length() - 6) % 3 == 0; */
-	public List<Switch> stringToSwitchList(String movestring) {
+	public List<Move> stringToMoveList(String movestring) {
 		Scanner reader = new Scanner(movestring);
-		List<Switch> moves = new ArrayList<Switch>();
+		List<Move> moves = new ArrayList<Move>();
 		while (reader.hasNext()) {
-			String cardstring = reader.next();
-			char[] cardchars = cardstring.toCharArray();
-			if (cardchars.length != 2) {
+			String Tilestring = reader.next();
+			char[] Tilechars = Tilestring.toCharArray();
+			if (Tilechars.length != 2) {
 				break;
 			}
-			try {
-				Card card = new Card(cardchars[0], cardchars[1]);
-				moves.add(new Switch(card));
-				// catches an invalid card
-			} catch (InvalidCharacterException e) {
-				moves = null;
-			}
+			Tile Tile = new Tile(Tilechars[0], Tilechars[1]);
+			moves.add(new Move(Tile));
+			// catches an invalid Tile
 			if (!reader.hasNext()) {
 				break;
 			}
@@ -554,8 +548,8 @@ public class Client extends Observable {
 		return view;
 	}
 
-	/* @pure */public int getStackSize() {
-		return stackSize;
+	/* @pure */public int getTileBag() {
+		return tilebag;
 	}
 
 	/* @pure */public boolean getGameEnd() {
@@ -563,7 +557,7 @@ public class Client extends Observable {
 	}
 
 	public void shutDown() {
-		clienthandler.stopConnection();
+		clienthandler.shutdown();
 		System.exit(0);
 	}
 }

@@ -36,10 +36,9 @@ public class TileBag {
 	}
 
 	/**
-	 * Returns a list of random tiles.
+	 * Retourneert een lijst met willekeurige tiles.
 	 * 
 	 * @param amount
-	 *            Amount of tiles to return
 	 */
 	// @ requires amount > 0 && amount <= Player.SIZE_HAND;
 	// @ ensures \result != null;

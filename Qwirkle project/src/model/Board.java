@@ -374,7 +374,7 @@ public class Board {
 	/* @ ensures \result < DIM; */
 	/* @pure */
 	public int lowestY() {
-		int y = 92;
+		int y = 91;
 		while (!this.emptyYRow(y)) {
 			y--;
 		}
@@ -384,7 +384,7 @@ public class Board {
 	/* @ ensures \result < DIM; */
 	/* @pure */
 	public int highestY() {
-		int y = 92;
+		int y = 91;
 		while (!this.emptyYRow(y)) {
 			y++;
 		}
@@ -393,8 +393,8 @@ public class Board {
 
 	/**
 	 * Telkens als je een Tile op het bord zet, krijg je punten bij je
-	 * score. Het puntensysteem gaat als volgt: als je een tile in een rij 
-	 * legt van tiles, dan krijg je het aantal punten equivalent aan het 
+	 * score opgeteld. Het puntensysteem gaat als volgt: als je een tile 
+	 * in een rij legt van tiles, dan krijg je het aantal punten equivalent aan het 
 	 * aantal tiles in de rij. Als je tile grenst aan nog een rij met
 	 * tiles, dan krijg je het aantal punten equivalent aan de lengte van
 	 * die rij, inclusief de tile die beide rijen kruisen, dus die tile

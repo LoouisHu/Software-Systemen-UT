@@ -105,7 +105,7 @@ public class ClientHandler extends Thread {
 	 * Als het commando Protocol.SWAP is, dan wordt er ижижn of meerdere Tiles
 	 * omgewisseld met de pot van de server.
 	 * 
-	 * Als het commando Protocol.TURN_BLOCK is, dan wordt er eerst gecheckt of
+	 * Als het commando Protocol.MOVE is, dan wordt er eerst gecheckt of
 	 * deze Client aan de beurt is en of er een TURN_BLOCK wordt verwacht en
 	 * niet een SET_TILE. Daarna worden de volgende twee woorden bekeken. Deze
 	 * twee woorden stellen het blok en de draairichting voor. Eerst wordt er
@@ -215,7 +215,7 @@ public class ClientHandler extends Thread {
 	// }
 
 	/**
-	 * Stuurt de Client van deze ClientHandler een Protocol.QUIT.
+	 * Stuurt de Client van deze ClientHandler een Protocol.KICK.
 	 */
 	public void kick(String reason) {
 		server.getTileBag().returnTiles(player.getHand());

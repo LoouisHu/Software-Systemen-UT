@@ -34,12 +34,6 @@ public class ServerController extends Thread {
 			
 	}
 	
-	public void nextGame() {
-		(serverlist.get(serverlist.size() - 1)).start();
-		Server server = new Server(this, aithinktime, view);
-		serverlist.add(server);
-	}	
-	
 	public void handleInput(String command) {
 		if (command.equals("start")) {
 			nextGame();
@@ -48,6 +42,12 @@ public class ServerController extends Thread {
 		}
 	}
 
+	public void nextGame() {
+		(serverlist.get(serverlist.size() - 1)).start();
+		Server server = new Server(this, aithinktime, view);
+		serverlist.add(server);
+	}	
+	
 	public static void main(String[] args) {
 		if (args.length != 2) {
 			System.out.println(USAGE);
