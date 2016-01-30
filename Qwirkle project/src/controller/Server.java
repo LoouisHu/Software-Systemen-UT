@@ -13,7 +13,8 @@ import java.util.*;
 import view.TUI;
 
 public class Server extends Thread {
-	public static final String USAGE = "usage: " + Server.class.getName() + "<port>" + " <aithinktime>";
+	public static final String USAGE = "usage: " + Server.class.getName() 
+						  + "<port>" + " <aithinktime>";
 	/*
 	 * @ invariant getThreads().size() <= 4; invariant
 	 * getTileBag().getTileBagSize() <= 108;
@@ -151,7 +152,8 @@ public class Server extends Thread {
 		} else if (getPlayer(playerturn).getHand().size() == 0 && tilebag.getTileBagSize() == 0) {
 			getPlayer(playerturn).updateScore(6);
 			gameOver();
-		} else if (!noValidMoveAvailable(getClientHandler(getPlayer(playerturn))) && tilebag.getTileBagSize() == 0) {
+		} else if (!noValidMoveAvailable(getClientHandler(getPlayer(playerturn))) &&
+				  tilebag.getTileBagSize() == 0) {
 			announce(Protocol.NEXT + " " + getPlayer(playerturn).getNumber());
 		} else {
 			playerturn = (playerturn + 1) % threads.size();
@@ -231,64 +233,65 @@ public class Server extends Thread {
 		if (sc.hasNext()) {
 			commando = sc.next();
 			switch (commando) {
-			case Protocol.HELLO:
-				if (sc.hasNext()) {
-					String tempname = sc.next();
-					if (tempname.length() < 1 || tempname.length() > 16 || !tempname.matches("[a-zA-Z]*")) {
-						kick(ch, "Name too long or no use of a-zA-Z.");
-					} else {
-						ch.getPlayer().setName(tempname);
-						ch.getPlayer().setNumber(this.addPlayer());
-						ch.sendMessage(Protocol.WELCOME + " " + tempname + " " + ch.getPlayer().getNumber());
-					}
-				}
-				break;
-			case Protocol.SWAP:
-				if (sc.hasNext()) {
-					// TODO check turn
-					List<Tile> tiles = new ArrayList<Tile>();
-					while (sc.hasNext()) {
-						tiles.add(ClientHandler.convertTextToTile(sc.next()));
-					}
-					if (tilebag.getTileBagSize() - tiles.size() >= 0) {
-						List<Tile> swapped = tilebag.getTiles(tiles.size());
-						tilebag.returnTiles(tiles);
-						String swapcommand = Protocol.NEW;
-						for (Tile t : swapped) {
-							swapcommand += " " + t.toString();
-						}
-						ch.sendMessage(swapcommand);
-						// TODO Protocol.TURN Protocol.NEW Protocol.NEXT
-
-					} else {
-						kick(ch, "Swapping tiles amount larger than tiles left in the bag.");
-					}
-				} else {
-					kick(ch, "Must swap at least 1 tile");
-				}
-				break;
-			case Protocol.MOVE:
-				// TODO check turn && check message array length
-				if (sc.hasNext() && ch.getPlayer().getNumber() == playerturn) {
-					String[] string = message.split(" ");
-					Tile t = ClientHandler.convertTextToTile(string[1]);
-					try {
-						int x = Integer.parseInt(string[2]);
-						int y = Integer.parseInt(string[3]);
-						Coord c = new Coord(x, y);
-						Move m = new Move(t, c);
-						if (board.validMove(m)) {
-							board.boardAddMove(m);
-							// sendMessage();// TODO Protocol.TURN Protocol.NEW
-							// Protocol.NEXT
+				case Protocol.HELLO:
+					if (sc.hasNext()) {
+						String tempname = sc.next();
+						if (tempname.length() < 1 || tempname.length() > 16 ||
+								  !tempname.matches("[a-zA-Z]*")) {
+							kick(ch, "Name too long or no use of a-zA-Z.");
 						} else {
-							kick(ch, "Not a valid move.");
+							ch.getPlayer().setName(tempname);
+							ch.getPlayer().setNumber(this.addPlayer());
+							ch.sendMessage(Protocol.WELCOME + " " + tempname + " " +
+							    ch.getPlayer().getNumber());
 						}
-					} catch (NumberFormatException e) {
-						kick(ch, "Onjuiste [TILE ROW COLUMN]");
 					}
-				}
-				break;
+					break;
+				case Protocol.SWAP:
+					if (sc.hasNext()) {
+						// TODO check turn
+						List<Tile> tiles = new ArrayList<Tile>();
+						while (sc.hasNext()) {
+							tiles.add(ClientHandler.convertTextToTile(sc.next()));
+						}
+						if (tilebag.getTileBagSize() - tiles.size() >= 0) {
+							List<Tile> swapped = tilebag.getTiles(tiles.size());
+							tilebag.returnTiles(tiles);
+							String swapcommand = Protocol.NEW;
+							for (Tile t : swapped) {
+								swapcommand += " " + t.toString();
+							}
+							ch.sendMessage(swapcommand);
+							// TODO Protocol.TURN Protocol.NEW Protocol.NEXT
+						} else {
+							kick(ch, "Swapping tiles amount larger than tiles left in the bag.");
+						}
+					} else {
+						kick(ch, "Must swap at least 1 tile");
+					}
+					break;
+				case Protocol.MOVE:
+				// TODO check turn && check message array length
+					if (sc.hasNext() && ch.getPlayer().getNumber() == playerturn) {
+						String[] string = message.split(" ");
+						Tile t = ClientHandler.convertTextToTile(string[1]);
+						try {
+							int x = Integer.parseInt(string[2]);
+							int y = Integer.parseInt(string[3]);
+							Coord c = new Coord(x, y);
+							Move m = new Move(t, c);
+							if (board.validMove(m)) {
+								board.boardAddMove(m);
+								// sendMessage();// TODO Protocol.TURN Protocol.NEW
+								// Protocol.NEXT
+							} else {
+								kick(ch, "Not a valid move.");
+							}
+						} catch (NumberFormatException e) {
+							kick(ch, "Onjuiste [TILE ROW COLUMN]");
+						}
+					}
+					break;
 			}
 		}
 	}
@@ -296,7 +299,7 @@ public class Server extends Thread {
 	
 	
 	/**
-	 * Maakt een string van de lijst van objecten Tile
+	 * Maakt een string van de lijst van objecten Tile.
 	 * 
 	 * @param Tilelist
 	 * @return
@@ -332,7 +335,8 @@ public class Server extends Thread {
 
 		outer: for (Tile t : playedTiles) {
 			for (Tile tilehand : ch.getPlayer().getHand()) {
-				if (t.getColor().equals(tilehand.getColor()) && t.getShape().equals(tilehand.getShape())) {
+				if (t.getColor().equals(tilehand.getColor()) &&
+						  t.getShape().equals(tilehand.getShape())) {
 					i++;
 					continue outer;
 				}
@@ -363,7 +367,8 @@ public class Server extends Thread {
 
 		outer: for (Tile t : playedTiles) {
 			for (Tile tilehand : ch.getPlayer().getHand()) {
-				if (t.getColor().equals(tilehand.getColor()) && t.getShape().equals(tilehand.getShape())) {
+				if (t.getColor().equals(tilehand.getColor()) &&
+						  t.getShape().equals(tilehand.getShape())) {
 					i++;
 					continue outer;
 				}
@@ -425,44 +430,44 @@ public class Server extends Thread {
 			int maxscore = 0;
 			for (Tile t : ch.getPlayer().getHand()) {
 				switch (t.getColor()) {
-				case RED:
-					score[0]++;
-					break;
-				case ORANGE:
-					score[1]++;
-					break;
-				case YELLOW:
-					score[2]++;
-					break;
-				case GREEN:
-					score[3]++;
-					break;
-				case BLUE:
-					score[4]++;
-					break;
-				case PURPLE:
-					score[5]++;
-					break;
+					case RED:
+						score[0]++;
+						break;
+					case ORANGE:
+						score[1]++;
+						break;
+					case YELLOW:
+						score[2]++;
+						break;
+					case GREEN:
+						score[3]++;
+						break;
+					case BLUE:
+						score[4]++;
+						break;
+					case PURPLE:
+						score[5]++;
+						break;
 				}
 				switch (t.getShape()) {
-				case CIRCLE:
-					score[6]++;
-					break;
-				case CROSS:
-					score[7]++;
-					break;
-				case DIAMOND:
-					score[8]++;
-					break;
-				case SQUARE:
-					score[9]++;
-					break;
-				case STAR:
-					score[10]++;
-					break;
-				case CLOVER:
-					score[11]++;
-					break;
+					case CIRCLE:
+						score[6]++;
+						break;
+					case CROSS:
+						score[7]++;
+						break;
+					case DIAMOND:
+						score[8]++;
+						break;
+					case SQUARE:
+						score[9]++;
+						break;
+					case STAR:
+						score[10]++;
+						break;
+					case CLOVER:
+						score[11]++;
+						break;
 				}
 				for (int i = 0; i < 12; i++) {
 					if (score[i] > maxscore) {

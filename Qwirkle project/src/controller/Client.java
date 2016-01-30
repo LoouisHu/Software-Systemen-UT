@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 import view.TUI;
 import model.Board;
-import model.Coord;
 import model.Tile;
 import player.HumanPlayer;
 import player.SocketPlayer;
@@ -30,7 +29,8 @@ public class Client extends Observable {
 	private ClientHandler clienthandler;
 	private int aithinktime;
 	private boolean completemoveprocessed = false;
-	public static final String USAGE = "usage: " + Client.class.getName() + "<port>" + "<Host> " + "<Name>";
+	public static final String USAGE = "usage: " + Client.class.getName() 
+			  + "<port>" + "<Host> " + "<Name>";
 
 	public static void main(String[] args) {
 		if (args.length != 4) {
@@ -81,19 +81,12 @@ public class Client extends Observable {
 		this.view = new TUI(this);
 		this.players = new ArrayList<RealPlayer>();
 		switch (playertype) {
-		case "HUMAN":
-			this.thisplayer = new HumanPlayer(name, this);
-			break;
-		case "AI":
-			this.thisplayer = new RetardedPlayer(name, this); // de
-																	// AIThinkTime
-																	// is
-																	// gehardcoded,
-																	// moet nog
-																	// van
-																	// server
-																	// krijgen.
-			break;
+			case "HUMAN":
+				this.thisplayer = new HumanPlayer(name, this);
+				break;
+			case "AI":
+				this.thisplayer = new RetardedPlayer(name, this);
+				break;
 		}
 		clienthandler = new ClientHandler(this, sockarg);
 		this.addObserver(view);
@@ -117,27 +110,27 @@ public class Client extends Observable {
 			command = sc.next();
 		}
 		switch (command) {
-		case Protocol.WELCOME:
-			handleWelcome(message);
-			break;
-		case Protocol.NAMES:
-			handleNames(message);
-			break;
-		case Protocol.NEXT:
-			handleNext(message);
-			break;
-		case Protocol.NEW:
-			handleNew(message);
-			break;
-		case Protocol.TURN:
-			handleTurn(message);
-			break;
-		case Protocol.KICK:
-			handleKick(message);
-			break;
-		case Protocol.WINNER:
-			handleWinner(message);
-			break;
+			case Protocol.WELCOME:
+				handleWelcome(message);
+				break;
+			case Protocol.NAMES:
+				handleNames(message);
+				break;
+			case Protocol.NEXT:
+				handleNext(message);
+				break;
+			case Protocol.NEW:
+				handleNew(message);
+				break;
+			case Protocol.TURN:
+				handleTurn(message);
+				break;
+			case Protocol.KICK:
+				handleKick(message);
+				break;
+			case Protocol.WINNER:
+				handleWinner(message);
+				break;
 		}
 
 		sc.close();
@@ -372,7 +365,8 @@ public class Client extends Observable {
 
 		outer: for (Tile t : playedtiles) {
 			for (Tile tilehand : thisplayer.getHand()) {
-				if (t.getColor().equals(tilehand.getColor()) && t.getShape().equals(tilehand.getShape())) {
+				if (t.getColor().equals(tilehand.getColor()) && 
+					   t.getShape().equals(tilehand.getShape())) {
 					i++;
 					continue outer;
 				}
@@ -386,7 +380,7 @@ public class Client extends Observable {
 
 	/**
 	 * This methods converts a string with correctly formatted Move. to a List
-	 * <Move> JML is including Spacebar and requires there to not be a space at
+	 * <Move> JML is including space bar and requires there to not be a space at
 	 * the end.
 	 * 
 	 * @param movestring
@@ -397,13 +391,13 @@ public class Client extends Observable {
 		Scanner sc = new Scanner(movestring);
 		List<Move> moves = new ArrayList<Move>();
 		while (sc.hasNext()) {
-			String Tilestring = sc.next();
-			char[] Tilechars = Tilestring.toCharArray();
-			if (Tilechars.length != 2) {
+			String tilestring = sc.next();
+			char[] tilechars = tilestring.toCharArray();
+			if (tilechars.length != 2) {
 				break;
 			}
-			Tile Tile = new Tile(Tilechars[0], Tilechars[1]);
-			moves.add(new Move(Tile));
+			Tile tile = new Tile(tilechars[0], tilechars[1]);
+			moves.add(new Move(tile));
 			// catches an invalid Tile
 			if (!sc.hasNext()) {
 				break;

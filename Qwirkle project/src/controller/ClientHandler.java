@@ -27,8 +27,6 @@ public class ClientHandler extends Thread {
 	private BufferedReader in;
 	private BufferedWriter out;
 	private SocketPlayer socketplayer;
-	private Client client;
-	private Socket sock;
 
 	/**
 	 * Construeert een ClientHandler object. Initialiseert de beide Data
@@ -43,15 +41,11 @@ public class ClientHandler extends Thread {
 			in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
 		} catch (IOException e) {
-			System.out.println("Fout bij aanmaken van BufferedReader en BufferedWriter in ClientHandler");
+			System.out.println("Fout bij aanmaken van BufferedReader en "
+			  		  + "BufferedWriter in ClientHandler");
 		}
 	}
 	
-	public ClientHandler(Client client, Socket socket) {
-		this.client = client;
-		this.sock = socket;
-	}
-
 	/**
 	 * Deze methode leest elke regel dat Client stuurt en vervolgens meteen
 	 * doorgeeft aan verwerk(message) als de regel niet null is. Als er een
