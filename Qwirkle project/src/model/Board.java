@@ -10,7 +10,7 @@ public class Board {
 
 	public static Tile[][] boardSpaces;
 	public static final int DIM = 183;
-	public static final int powerMoveLength = 6;
+	public static final int POVERMOVELENGTH = 6;
 
 	/**
 	 * Maakt in de constructor een tweedimensionale bord van de Tile klasse, met
@@ -102,7 +102,7 @@ public class Board {
 	 * @return true als de zet mogelijk is.
 	 */
 
-	/*@ requires y < DIM;
+	/*@ requires c.getY() < DIM;
  	requires x < DIM;
 	ensures ((\forall int i; 
  					(\forall int j; 0 <= j & j < i; boardSpaces[y - j][x] != null); 
@@ -126,14 +126,14 @@ public class Board {
 		int x = c.getX();
 		int y = c.getY();
 
-		for (int i = 1; i < powerMoveLength; i++) {
+		for (int i = 1; i < POVERMOVELENGTH; i++) {
 			Tile tit = boardSpaces[x][y + i];
 			if (tit == null) {
 				break;
 			}
 			tiles.add(tit);
 		}
-		for (int i = 1; i < powerMoveLength; i++) {
+		for (int i = 1; i < POVERMOVELENGTH; i++) {
 			Tile tit = boardSpaces[x][y - i];
 			if (tit == null) {
 				break;
@@ -191,14 +191,14 @@ public class Board {
 		int x = c.getX();
 		int y = c.getY();
 
-		for (int i = 1; i < powerMoveLength; i++) {
+		for (int i = 1; i < POVERMOVELENGTH; i++) {
 			Tile tit = boardSpaces[x + i][y];
 			if (tit == null) {
 				break;
 			}
 			tiles.add(tit);
 		}
-		for (int i = 1; i < powerMoveLength; i++) {
+		for (int i = 1; i < POVERMOVELENGTH; i++) {
 			Tile tit = boardSpaces[x - i][y];
 			if (tit == null) {
 				break;
@@ -425,7 +425,7 @@ public class Board {
 			boolean east = true;
 			int horizontal = 1;
 			int vertical = 1;
-			for (int j = 1; j < powerMoveLength; j++) {
+			for (int j = 1; j < POVERMOVELENGTH; j++) {
 
 				if (boardSpaces[currentX - j][currentY] != null && west) {
 					horizontal++;
@@ -459,11 +459,11 @@ public class Board {
 					result = result + horizontal;
 				}
 			}
-			if (horizontal == powerMoveLength && (i == 0 || y != currentY)) {
-				result += powerMoveLength;
+			if (horizontal == POVERMOVELENGTH && (i == 0 || y != currentY)) {
+				result += POVERMOVELENGTH;
 			}
-			if (vertical == powerMoveLength && (i == 0 || x != currentX)) {
-				result += powerMoveLength;
+			if (vertical == POVERMOVELENGTH && (i == 0 || x != currentX)) {
+				result += POVERMOVELENGTH;
 			}
 
 		}
@@ -508,10 +508,10 @@ public class Board {
 		return result;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		Board b = new Board();
-		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.STAR), new Coord(92, 92)));
-		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.STAR), new Coord(92, 93)));
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.STAR), new Coord(91, 91)));
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.STAR), new Coord(91, 92))); 
 		System.out.println(b.toString());
 	}
 }

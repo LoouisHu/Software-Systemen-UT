@@ -9,7 +9,7 @@ public class ServerController extends Thread {
 	TUI view;
 	int aithinktime;
 	public static final String USAGE = 
-			  "usage: " + Server.class.getName() + "<port>" + " <aithinktime>";
+			  "usage: " + Server.class.getName() + " <port>" + " <aithinktime>";
 	
 	public void run() {
 		while (true) {

@@ -30,7 +30,7 @@ public class Client extends Observable {
 	private int aithinktime;
 	private boolean completemoveprocessed = false;
 	public static final String USAGE = "usage: " + Client.class.getName() 
-			  + "<port>" + "<Host> " + "<Name>";
+			  + " <port> " + "<Host> " + "<Name>";
 
 	public static void main(String[] args) {
 		if (args.length != 4) {
