@@ -85,7 +85,7 @@ public class Client extends Observable {
 			this.thisplayer = new HumanPlayer(name, this);
 			break;
 		case "AI":
-			this.thisplayer = new RetardedPlayer(name, this, 2000); // de
+			this.thisplayer = new RetardedPlayer(name, this); // de
 																	// AIThinkTime
 																	// is
 																	// gehardcoded,
@@ -206,7 +206,7 @@ public class Client extends Observable {
 		if (getThisPlayer() == getPlayer(Integer.parseInt(reader.next()))) {
 			HumanPlayer p = new RetardedPlayer("louis", this);
 			String message = "";
-			view.displayMessage(p.determineMove(board, this.getThisPlayer().getHand()).);
+			view.displayMessage(p.determineMove(board, this.getThisPlayer().getHand()));
 			message = thisplayer.determineMove(board, thisplayer.getHand());
 			view.displayMessage("Tilebag size : " + tilebag);
 			Scanner readmessage = new Scanner(message);

@@ -112,24 +112,6 @@ public class ClientHandler extends Thread {
 	 * Als het commando Protocol.SWAP is, dan wordt er ижижn of meerdere Tiles
 	 * omgewisseld met de pot van de server.
 	 * 
-	 * Als het commando Protocol.MOVE is, dan wordt er eerst gecheckt of
-	 * deze Client aan de beurt is en of er een TURN_BLOCK wordt verwacht en
-	 * niet een SET_TILE. Daarna worden de volgende twee woorden bekeken. Deze
-	 * twee woorden stellen het blok en de draairichting voor. Eerst wordt er
-	 * gecheckt of ze wel in het goede formaat gestuurd zijn en dan wordt het
-	 * verandert naar de formaat die bij ons Bord en wordt de draai gedaan en
-	 * gebroadcast naar alle spelers in hetzelfde spel. Vervolgens wordt er
-	 * gecheckt of het spel is afgelopen. Als dat niet zo is, dan is de volgende
-	 * speler aan de beurt.
-	 * 
-	 * Als het commando Protocol.QUIT is, dan wordt disconnected() aangeroepen
-	 * die het verder afhandelt.
-	 * 
-	 * Als het commando Protocol.CHAT is, dan wordt er gecontroleerd of deze
-	 * Client zich in de lobby bevind of in een gestarte spel en wordt het
-	 * bericht op de goede plek gebroadcast.
-	 * 
-	 * @require message != null
 	 */
 	
 	/**
