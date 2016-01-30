@@ -30,7 +30,6 @@ public class ClientHandler extends Thread {
 	private boolean isRunning = true;
 	private Client client;
 	private Socket sock;
-	private String name;
 
 	/**
 	 * Construeert een ClientHandler object. Initialiseert de beide Data
@@ -87,7 +86,7 @@ public class ClientHandler extends Thread {
 			out.write(message);
 			out.newLine();
 			out.flush();
-			server.addMessage(message);
+//			server.addMessage(message);
 		} catch (IOException e) {
 			shutdown();
 		}
@@ -126,42 +125,52 @@ public class ClientHandler extends Thread {
 	 * @require message != null
 	 */
 	public void verwerk(String message) {
-		server.addMessage(message);
+//		server.addMessage(message);
 		Scanner sc = new Scanner(message);
 		String commando;
 		if (sc.hasNext()) {
 			commando = sc.next();
 			switch (commando) {
 				case Protocol.HELLO:
-					if (server.containsCH(this) && sc.hasNext()) {
+					if (server.getThreads().contains(this) && sc.hasNext()) {
 						String tempnaam = sc.next();
-						if (server.contains(tempnaam, this) || tempnaam.length() < 1 
+						if (tempnaam.length() < 1 //geen zelfde naam check
 							   || tempnaam.length() > 16 
 							   || !tempnaam.matches("[a-zA-Z]*")) {
 							kick("name already exists or name too long or use only letters");
 						} else {
-							name = tempnaam;
-							sendMessage(Protocol.WELCOME + " " + name + " " + server.getNumber());
+							player.setName(tempnaam);
+							player.setNumber(server.addPlayer());
+							sendMessage(Protocol.WELCOME + " " + tempnaam + " " + player.getNumber());
+							//TODO potential game start
 						}
 					}
 					break;
 				case Protocol.SWAP:
-					List<Tile> tiles = new ArrayList<Tile>();
-					while (sc.hasNext()) {
-						tiles.add(convertTextToTile(sc.next()));
-					}
-					if (tiles.size() <= server.remainingTiles()) {
-						List<Tile> swapped = server.getGame(this).swap(tiles);
-						String swapcommand = Protocol.NEW;
-						for (Tile t : swapped) {
-							swapcommand += " " + t.toString();
+					if(sc.hasNext()){
+						//TODO check turn
+						List<Tile> tiles = new ArrayList<Tile>();
+						while (sc.hasNext()) {
+							tiles.add(convertTextToTile(sc.next()));
 						}
-						sendMessage(swapcommand);
+						if (server.getTileBag().getTileBagSize() - tiles.size() >= 0) {
+							List<Tile> swapped = server.getTileBag().getTiles(tiles.size());
+							server.getTileBag().returnTiles(tiles);
+							String swapcommand = Protocol.NEW;
+							for (Tile t : swapped) {
+								swapcommand += " " + t.toString();
+							}
+							sendMessage(swapcommand);
+							//TODO Protocol.TURN Protocol.NEW Protocol.NEXT
+						} else {
+							kick("Swapping tiles amount larger than tiles left in the bag");
+						}
 					} else {
-						kick("Swapping tiles amount larger than tiles left in the bag");
+						kick("Must swap at least 1 tile");
 					}
 					break;
 				case Protocol.MOVE:
+					//TODO check turn && check message array length
 					String[] string = message.split(" ");
 					Tile t = convertTextToTile(string[1]);
 					try {
@@ -169,9 +178,9 @@ public class ClientHandler extends Thread {
 						int y = Integer.parseInt(string[3]);
 						Coord c = new Coord(x, y);
 						Move m = new Move(t, c);
-						if(server.getGame(this).getBoard().validMove(m)) {
-							server.getGame(this).getBoard().boardAddMove(m);
-							sendMessage()
+						if(server.getBoard().validMove(m)) {
+							server.getBoard().boardAddMove(m);
+							sendMessage()//TODO Protocol.TURN Protocol.NEW Protocol.NEXT
 						} else {
 							kick("Not a valid move");
 						}
@@ -209,8 +218,12 @@ public class ClientHandler extends Thread {
 	 * Stuurt de Client van deze ClientHandler een Protocol.QUIT.
 	 */
 	public void kick(String reason) {
-		sendMessage(Protocol.KICK + " " + reason);
-		server.remove(this);
+		for (Tile t: player.getHand()) {
+			server.getTileBag.addCard(t);
+		}
+		sendMessage(Protocol.KICK + player.getHand().size() + reason);
+		//TODO Protocol.TURN Protocol.NEW Protocol.NEXT en mogelijk nog iets in server aanpassen door gekickte speler
+		server.getThreads().remove(this);
 		shutdown();
 	}
 
@@ -226,10 +239,10 @@ public class ClientHandler extends Thread {
 	}
 	
 	/**
-	 * Levert de naam op van de Client van deze ClientHandler
+	 * 
 	 */
-	public String getName_(){
-		return name;
+	public SocketPlayer getPlayer(){
+		return player;
 	}
 
 	public static Tile convertTextToTile(String s) {
