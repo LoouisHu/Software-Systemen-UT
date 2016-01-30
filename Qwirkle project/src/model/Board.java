@@ -113,10 +113,10 @@ public class Board {
  			i == y) &&
  				(\forall int i; 
  					(\forall int j; 0 <= j & j < i; boardSpaces[y + i][x] != null); 
- 			(boardSpaces[y + i][x].getColor() == c.getColor() && 
- 				!(boardSpaces[y + i][x].getShape() == c.getShape())) || 
- 			(boardSpaces[y + i][x].getShape() == c.getShape() && 
- 				!(boardSpaces[y + i][x].getColor() == c.getColor())) ||
+ 			(boardSpaces[y + i][x].getColor() == t.getColor() && 
+ 				!(boardSpaces[y + i][x].getShape() == t.getShape())) || 
+ 			(boardSpaces[y + i][x].getShape() == t.getShape() && 
+ 				!(boardSpaces[y + i][x].getColor() == t.getColor())) ||
  			i == y)) ==> \result == true;
 	/* @pure */
 	public boolean inLineV(Move m) {
