@@ -33,5 +33,12 @@ public class TileTest {
 		assertTrue(tile.getColor().equals(tile3.getColor()));
 		assertFalse(tile.equals(tile4));
 	}
+	
+	public void testToString() {
+		Tile t1 = new Tile(Color.GREEN, Shape.SQUARE)
+		System.out.print(t1.toString());
+		assertEquals(t1.toString(), 1);
+		System.out.println(t1.getColor().toString());
+	}
 
 }

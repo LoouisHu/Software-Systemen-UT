@@ -51,20 +51,38 @@ public class BoardTest {
 	}
 
 	@Test
-	public void longerThanSix() {
-		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.CIRCLE), new Coord(92, 92))); 
-		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 93))); 
-		b.boardAddMove(new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(92, 94))); 
-		b.boardAddMove(new Move(new Tile(Color.PURPLE, Shape.CIRCLE), new Coord(92, 95))); 
-		b.boardAddMove(new Move(new Tile(Color.RED, Shape.CIRCLE), new Coord(92, 96))); 
-		b.boardAddMove(new Move(new Tile(Color.YELLOW, Shape.CIRCLE), new Coord(92, 97))); 
-		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 98))); 
-		System.out.println(b.getField(92, 92));
+	public void longerThanSixAndScore() {
+		Move m1 = new Move(new Tile(Color.BLUE, Shape.CIRCLE), new Coord(92, 92));
+		Move m2 = new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 93));
+		Move m3 = new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(92, 94));
+		Move m4 = new Move(new Tile(Color.PURPLE, Shape.CIRCLE), new Coord(92, 95));
+		Move m5 = new Move(new Tile(Color.RED, Shape.CIRCLE), new Coord(92, 96));
+		Move m6 = new Move(new Tile(Color.YELLOW, Shape.CIRCLE), new Coord(92, 97));
+		Move m7 = new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 98));
+		b.boardAddMove(m1); 
+		b.boardAddMove(m2); 
+		b.boardAddMove(m3); 
+		b.boardAddMove(m4); 
+		b.boardAddMove(m5); 
+		b.boardAddMove(m6); 
+		b.boardAddMove(m7); 
+		List<Move> moves = new ArrayList<Move>();
+		moves.add(m1);
+		moves.add(m2);
+		moves.add(m3);
+		moves.add(m4);
+		moves.add(m5);
+		moves.add(m6);
+		moves.add(m7);
+		b.decideScore(moves);
+	//	System.out.println(b.decideScore(moves));
+	//	System.out.println(b.getField(92, 92));
 		Tile t1 = new Tile(Color.BLUE, Shape.CIRCLE);
-		System.out.println(t1);
+	//	System.out.println(t1);
 		assertEquals(b.getField(92, 92).getColor(), t1.getColor());
 		assertEquals(b.getField(92, 92).getShape(), t1.getShape());
 		assertFalse(b.validMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 98))));
+		assertEquals(b.decideScore(moves), 12);
 	}
 
 	@Test
