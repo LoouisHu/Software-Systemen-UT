@@ -25,14 +25,15 @@ public class RetardedPlayer extends HumanPlayer {
 		boolean isFound = false;
 		for (int i = 0; i < board.getUsedSpaces().size() && !isFound; i++) {
 			Move m = board.getUsedSpaces().get(i);
-			for (int j = 0; j < 4 && !isFound; i++) {
+			for (int j = 0; j < 4 && !isFound; j++) {
 				int x = m.getCoord().getAdjacentCoords()[j].getX();
 				int y = m.getCoord().getAdjacentCoords()[j].getY();
 				for (int k = 0; k < hand.size() && !isFound; k++) {
 					Move tempmove = new Move(hand.get(k), new Coord(x, y));
 					if (board.validMove(tempmove)) {
 						isFound = true;
-						result = tempmove.getTile().toString() + " " + tempmove.getCoord().getX() + " " + tempmove.getCoord().getY();
+						result = tempmove.getTile().toString() + " " +
+						tempmove.getCoord().getX() + " " + tempmove.getCoord().getY();
 					}
 				}
 			}

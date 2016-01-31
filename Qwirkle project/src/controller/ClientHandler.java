@@ -76,7 +76,7 @@ public class ClientHandler extends Thread {
 	/**
 	 * Deze methode kan gebruikt worden om een bericht over de socketverbinding
 	 * naar de Client te sturen. Daarna wordt de message doorgegeven aan de
-	 * Server die het moet laten zien op de JTextArea van de ServerGUI. Als het
+	 * Server die het moet laten zien op de TUI. Als het
 	 * schrijven van het bericht mis gaat, dan concludeert de methode dat de
 	 * socketverbinding verbroken is en roept shutdown() aan.
 	 * 

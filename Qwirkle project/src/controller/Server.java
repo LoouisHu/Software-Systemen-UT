@@ -31,8 +31,8 @@ public class Server extends Thread {
 	Connect connect;
 
 	/**
-	 * Constructs a new server object with a control object think time and a
-	 * View.
+	 * Maakt een nieuw Server object met een controller object, thinktime en
+	 * een view.
 	 * 
 	 * @param controller
 	 * @param thinktime
@@ -45,10 +45,10 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Run methods creates a new game by calling the method creatGame(). After
-	 * the game is created the game is started with an equal naming. While the
-	 * game should keep going this happens, when it shouldn't be the winner is
-	 * determined and the server is shutdown.
+	 * De run methode start een game door de createGame() en startGame() op te
+	 * roepen. Als de boolean gameOver() op false wordt gezet, wordt het spel
+	 * gestopt en determineWinner() bepaalt  wie er gewonnen heeft en daarna
+	 * sluit de Server socket.
 	 */
 	public void run() {
 		createGame();
@@ -61,7 +61,7 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Returns the number of players.
+	 * Retourneert het aantal spelers aka hun threads.
 	 * 
 	 * @return int
 	 */
@@ -72,11 +72,10 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Returns the player.
+	 * Retourneert het type player
 	 * 
 	 * @param playerno
-	 *            the number assigned by the server to a player.
-	 * @return the players which the number is assigned too.
+	 * @return de speler die het aangegeven nummer vasthoudt.
 	 */
 	/*
 	 * @ requires playerno < 4; ensures \result ==
@@ -87,14 +86,13 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Adds a client to the list threads. A client has a player. In this way
-	 * players are connected to a server.
+	 * Maakt een nieuwe client aan met een speler.
 	 * 
-	 * @param c
+	 * @param ch
 	 */
 	/* @ ensures getThreads().contains(c); */
-	public void addClient(ClientHandler c) {
-		threads.add(c);
+	public void addClient(ClientHandler ch) {
+		threads.add(ch);
 	}
 
 	public int addPlayer() {
@@ -104,10 +102,8 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Starts the game. announces all the players + no and as a last integer the
-	 * aithinktime. Sends a complete hand of six Tiles to all players.
-	 * Determines and send the first player to play Tiles, done so by
-	 * dertermineFirstTurn().
+	 * Deze methode start het spel en stuurt aan alle spelers hun naam en nummer.
+	 * Als het een AI is neemt het de aithinktime ook mee.
 	 */
 	/*
 	 * @ ensures (\forall int i; 0 <= i & i < getThreads().size();
@@ -190,7 +186,7 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Sends a message too all the clients.
+	 * Stuurt  een bericht naar alle clienthandlers
 	 * 
 	 * @param msg
 	 */
@@ -198,7 +194,7 @@ public class Server extends Thread {
 	 * @ requires msg != null; requires getThreads().size() > 0;
 	 */
 	public void announce(String msg) {
-		System.out.println("[FROM SERVER] : " + msg);
+		System.out.println("From Server: " + msg);
 		for (ClientHandler ch : threads) {
 			ch.sendMessage(msg);
 		}
@@ -224,8 +220,7 @@ public class Server extends Thread {
 	 * gecheckt of het spel is afgelopen. Als dat niet zo is, dan is de volgende
 	 * speler aan de beurt.
 	 *	
-	 * @author Glorious Louis
-	 * @param
+	 * @param message, ch
 	 * */
 	public void processMessage(String message, ClientHandler ch) {
 		Scanner sc = new Scanner(message);
