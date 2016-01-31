@@ -1,6 +1,5 @@
 package ss.week4.tictactoe;
 
-import ss.week4.tictactoe.Mark;
 
 /**
  * Game student for the Tic Tac Toe game. Module 2 lab assignment.
@@ -31,7 +30,8 @@ public class Board {
      */
     //@ ensures (\forall int i; 0 <= i & i < DIM * DIM; this.getField(i) == Mark.EMPTY);
     public Board() {
-    	// TODO: implement, see exercise P-4.18
+    	this.fields = new Mark[DIM*DIM];
+    	reset();
     }
 
     /**
@@ -43,7 +43,10 @@ public class Board {
       @*/
     public Board deepCopy() {
     	// TODO: implement, see exercise P-4.18
-        return null;
+        Board newBoard = new Board();
+        for (int i = 0; i < (Board.DIM * Board.DIM); i++)
+        	newBoard.setField(i, this.getField(i));
+        return newBoard;
     }
 
     /**
@@ -56,7 +59,7 @@ public class Board {
     /*@pure*/
     public int index(int row, int col) {
     	// TODO: implement, see exercise P-4.18
-        return 0;
+        return Board.DIM*row + col;
     }
 
     /**
@@ -64,10 +67,10 @@ public class Board {
      * @return true if 0 <= index < DIM*DIM
      */
     //@ ensures \result == (0 <= index && index < DIM * DIM);
-    /*@pure*/
+    /*@pure*/ 	
     public boolean isField(int index) {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        return (index < (Board.DIM * Board.DIM) && index >= 0);
     }
 
     /**
@@ -79,7 +82,7 @@ public class Board {
     /*@pure*/
     public boolean isField(int row, int col) {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        return isField(index(row, col));
     }
     
     /**
@@ -94,7 +97,7 @@ public class Board {
     /*@pure*/
     public Mark getField(int i) {
     	// TODO: implement, see exercise P-4.18
-        return null;
+        return (isField(i) ? fields[i] : Mark.EMPTY);
     }
 
     /**
@@ -111,7 +114,7 @@ public class Board {
     /*@pure*/
     public Mark getField(int row, int col) {
     	// TODO: implement, see exercise P-4.18
-        return null;
+        return getField(index(row, col));
     }
 
     /**
@@ -126,7 +129,7 @@ public class Board {
     /*@pure*/
     public boolean isEmptyField(int i) {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        return getField(i).equals(Mark.EMPTY);
     }
 
     /**
@@ -143,7 +146,7 @@ public class Board {
     /*@pure*/
     public boolean isEmptyField(int row, int col) {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        return isEmptyField(index(row,col));
     }
 
     /**
@@ -155,7 +158,13 @@ public class Board {
     /*@pure*/
     public boolean isFull() {
     	// TODO: implement, see exercise P-4.18
-        return false;
+    	boolean vol = true;
+        for (int i = 0; i < Board.DIM*Board.DIM; i++){
+        	if (fields[i].equals(Mark.EMPTY)) {
+        		vol = false;
+        	}
+        }
+        	return vol;
     }
 
     /**
@@ -168,7 +177,8 @@ public class Board {
     /*@pure*/
     public boolean gameOver() {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        	return isFull() || hasWinner();
+        		
     }
 
     /**
@@ -182,7 +192,21 @@ public class Board {
     /*@ pure */
     public boolean hasRow(Mark m) {
     	// TODO: implement, see exercise P-4.18
-        return false;
+    	//Loop waarbij elke rij wordt gecheckt
+    	  for (int row = 0; row < Board.DIM; row++) {
+    		  //Nieuwe instantie van boolean
+          	boolean othermark = false;
+          	//Loop waarbij elke column wordt gecheckt
+          	for (int col = 0; col < Board.DIM; col++) {
+          		
+          		if (!getField(row, col).equals(m)) {
+          			othermark = true;
+          			break;
+          		}
+          	}
+          	if (othermark == false) return true;
+          }
+          return false;
     }
 
     /**
@@ -196,6 +220,16 @@ public class Board {
     /*@ pure */
     public boolean hasColumn(Mark m) {
     	// TODO: implement, see exercise P-4.18
+    	for (int col = 0; col < Board.DIM; col++) {
+        	boolean othermark = false;
+        	for (int row = 0; row < Board.DIM; row++) {
+        		if (!getField(row, col).equals(m)) {
+        			othermark = true;
+        			break;
+        		}
+        	}
+        	if (othermark == false) return true;
+        }
         return false;
     }
 
@@ -210,7 +244,18 @@ public class Board {
     /*@ pure */
     public boolean hasDiagonal(Mark m) {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        boolean topleft = true;
+        boolean topright = true;
+        for (int i = 0; i <= Board.DIM; i++) {
+        	if (!getField(i, i).equals(m)) {
+        		topleft = false;
+        	}
+        	if (!getField(Board.DIM-i-1, i).equals(m)) {
+        		topright = false;
+        	}
+        	if (!(topleft || topright)) break;
+        }
+        return (topleft || topright);
     }
 
     /**
@@ -226,7 +271,7 @@ public class Board {
     /*@ pure */
     public boolean isWinner(Mark m) {
     	// TODO: implement, see  exercise P-4.18
-        return false;
+        return (hasRow(m) || hasColumn(m) || hasDiagonal(m));
     }
 
     /**
@@ -239,7 +284,7 @@ public class Board {
     /*@pure*/
     public boolean hasWinner() {
     	// TODO: implement, see exercise P-4.18
-        return false;
+        return isWinner(Mark.XX) || isWinner(Mark.OO);
     }
 
     /**
@@ -280,6 +325,9 @@ public class Board {
                                 this.getField(i) == Mark.EMPTY); @*/
     public void reset() {
     	// TODO: implement, see exercise P-4.18
+    	for (int i = 0; i < (Board.DIM * Board.DIM);i++){
+    		fields[i] = Mark.EMPTY;
+    	}
     }
 
     /**
@@ -293,7 +341,7 @@ public class Board {
     //@ requires this.isField(i);
     //@ ensures this.getField(i) == m;
     public void setField(int i, Mark m) {
-    	// TODO: implement, see exercise P-4.18
+    	fields[i] = m;
     }
 
     /**
@@ -311,5 +359,7 @@ public class Board {
     //@ ensures this.getField(row,col) == m;
     public void setField(int row, int col, Mark m) {
     	// TODO: implement, see exercise P-4.18
+        setField(index(row, col), m);
     }
+
 }

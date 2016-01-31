@@ -1,5 +1,6 @@
 package ss.week4;
 
+
 public class DoublyLinkedList<Element> {
 
     private /*@ spec_public @*/ int size;
@@ -20,7 +21,16 @@ public class DoublyLinkedList<Element> {
     public void add(int index, Element element) {
     	assert element != null;
     	assert 0 <= index && index <= this.size;
-    	size += size + 1;
+    	Node newNode = new Node(element);
+    	if(index == 0){
+    		newNode.next = head.next;
+    		head.next = newNode;
+    	} else {
+    		Node p = getNode(index-1);
+    		newNode.next = p.next;
+    		p.next = newNode;
+    	}
+    	size = size + 1;
     	
     }
 
@@ -28,6 +38,14 @@ public class DoublyLinkedList<Element> {
     //@ ensures this.size == \old(size) - 1;
     public void remove(int index) {
         // TODO: implement, see exercise P-4.17
+    	if (index == 0){
+    		head = head.next;
+    	}
+    	else {
+    		Node p = getNode(index-1);
+    		p.next = p.next.next;
+    	}
+    	size = size -1;
     }
 
     //@ requires 0 <= index && index < this.size;
