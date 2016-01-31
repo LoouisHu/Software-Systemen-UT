@@ -86,7 +86,7 @@ public class Client extends Observable {
 				this.thisplayer = new RetardedPlayer(name, this);
 				break;
 		}
-		clienthandler = new ClientHandler(, sockarg);
+		clienthandler = new ClientHandler(null, sockarg, null);
 		this.addObserver(view);
 		clienthandler.sendMessage(Protocol.HELLO + " " + getThisPlayer().getName());
 	}

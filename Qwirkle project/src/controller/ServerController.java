@@ -19,15 +19,16 @@ public class ServerController extends Thread {
 	}
 
 	/**
-	 * Constructs a ServerController with an AIThinkTime and a port.
-	 * @param portArg
-	 * @param aiThinkTimearg
+	 * Bouwt een ServerController met een AIThinkTime en een port.
+	 * @param portArg is de port voor de server
+	 * @param aiThinkTimearg is de tijd die de AI neemt voordat een zet wordt gedaan door
+	 * de AI.
 	 */
 	public ServerController(int portArg,  int aiThinkTimearg) {
 		aithinktime = aiThinkTimearg;
 		view = new TUI(this);
 		serverlist = new ArrayList<Server>();
-		Server server = new Server(this, aithinktime, view);
+		Server server = new Server(this, aithinktime);
 		serverlist.add(server);
 		connect = new Connect(server, portArg, view);
 		this.start();
@@ -44,7 +45,7 @@ public class ServerController extends Thread {
 
 	public void nextGame() {
 		(serverlist.get(serverlist.size() - 1)).start();
-		Server server = new Server(this, aithinktime, view);
+		Server server = new Server(this, aithinktime);
 		serverlist.add(server);
 	}	
 	

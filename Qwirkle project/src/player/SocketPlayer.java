@@ -25,15 +25,26 @@ public class SocketPlayer implements RealPlayer {
 		this.score = 0;
 	}
 
+	/**
+	 * Geeft een SocketPlayer een nieuwe hand van tiles.
+	 * @param newhand is een lijst van tiles
+	 */
 	public void setHand(List<Tile> newhand) {
 		hand = newhand;
 	}
-	
+	/**
+	 * Ruilt tiles uit een SocketPlayer's hand met stenen uit de tilebag.
+	 * @param newtiles
+	 * @param swaps
+	 */
 	public void swapHand(List<Tile> newtiles, List<Move> swaps) {
 		removeFromHandMoves(swaps);
 		hand.addAll(newtiles);
 	}
-	
+	/**
+	 * Haalt tiles uit de hand van een SocketPlayer's hand.
+	 * @param moves
+	 */
 	public void removeFromHandMoves(List<Move> moves) {
 		for (Move m : moves) {
 			for (int i = 0; i < hand.size(); i++) {
@@ -44,7 +55,11 @@ public class SocketPlayer implements RealPlayer {
 			}
 		}
 	}
-	
+	/**
+	 * Plaatst een SocketPlayer's tiles op de board.
+	 * @param moves
+	 * @param newcards
+	 */
 	public void placeTiles(List<Move> moves, List<Tile> newcards) {
 		outer : for (Move m: moves) {
 			for (int i = 0; i < hand.size(); i++) {

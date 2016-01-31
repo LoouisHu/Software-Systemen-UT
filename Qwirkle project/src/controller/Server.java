@@ -10,8 +10,6 @@ import player.RealPlayer;
 
 import java.util.*;
 
-import view.TUI;
-
 public class Server extends Thread {
 	public static final String USAGE = "usage: " + Server.class.getName() 
 						  + "<port>" + " <aithinktime>";
@@ -27,7 +25,6 @@ public class Server extends Thread {
 	private int playerturn;
 	boolean notover;
 	private ServerController controller;
-	private TUI view;
 	Connect connect;
 
 	/**
@@ -38,8 +35,7 @@ public class Server extends Thread {
 	 * @param thinktime
 	 * @param ui
 	 */
-	public Server(ServerController controller, int thinktime, TUI ui) {
-		this.view = ui;
+	public Server(ServerController controller, int thinktime) {
 		aithinktime = thinktime;
 		this.controller = controller;
 	}
@@ -88,7 +84,7 @@ public class Server extends Thread {
 	/**
 	 * Maakt een nieuwe client aan met een speler.
 	 * 
-	 * @param ch
+	 * @param ch is de clienthandler die wordt toegevoegd aan de server.
 	 */
 	/* @ ensures getThreads().contains(c); */
 	public void addClient(ClientHandler ch) {
@@ -129,9 +125,10 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Checks if there is more then one/zero player in the game. Checks if the
-	 * hand of the player who just played is empty. If the first check passes
-	 * and the hand is not empty the next player is send.
+	 * Kijkt of er meer dan één of nul spelers zijn in het spel. Kijkt of the hand
+	 * van de speler die een zet heeft gedaan leeg is. Als er meer dan één of nul spelers
+	 * zijn, en de hand van de speler is niet leeg dan krijgt de volgende speler
+	 * de beurt.
 	 */
 	/*
 	 * @ ensures getThreads().size() > 1 ==> getPlayerturn() == (getPlayerturn()
@@ -161,11 +158,10 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Checks if the game is over, if players is 1, the tilebag and player hand
-	 * is 0, or there are no valid moves anymore the game is over.
-	 * 
-	 * @param ch
-	 * @return
+	 * Kijkt of het spel klaar is, als players 1 is, de tilebag leeg is and de hand van
+	 * player leeg is, of er kunnen geen geldige zetten gemaakt worden is het spel klaar.
+	 * @return true als er 1 player is of als de tilebag leeg is en er kunnen geen geldige
+	 * zetten geplaats worden false als die voorwaarden niet waar zijn.
 	 */
 	/*
 	 * @ ensures getThreads().size() == 1 ==> \result == true; ensures
@@ -186,9 +182,9 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Stuurt  een bericht naar alle clienthandlers
+	 * Stuurt  een bericht naar alle clienthandlers.
 	 * 
-	 * @param msg
+	 * @param msg is de het bericht dat wordt gestuurd.
 	 */
 	/*
 	 * @ requires msg != null; requires getThreads().size() > 0;
@@ -296,8 +292,8 @@ public class Server extends Thread {
 	/**
 	 * Maakt een string van de lijst van objecten Tile.
 	 * 
-	 * @param Tilelist
-	 * @return
+	 * @param Tilelist is List die geconverteerd wordt naar String.
+	 * @return result is de lijst van Tile objecten in een String.
 	 */
 	public String giveTilesString(List<Tile> tilelist) {
 		String result = Protocol.NEW;
@@ -312,12 +308,11 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Checks if a player has all the Tiles he tries to play.
+	 * Kijkt of een player alle Tiles heeft die hij in een zet wil doen.
 	 * 
-	 * @param ch
-	 * @param moves
-	 *            List <Move>
-	 * @return
+	 * @param ch is de player.
+	 * @param moves zijn de zetten die gemaakt wordt door de player.
+	 * @return true als alle Tiles in de player's hand zijn, false als dat niet zo is.
 	 */
 	public Boolean hasAllTilesMove(ClientHandler ch, List<Move> moves) {
 		boolean result = true;
@@ -344,11 +339,11 @@ public class Server extends Thread {
 	}
 	
 	/**
-	 * Handles a player kick.
-	 * Sends a message to all the client with the amount of cards returned to the stack
-	 * and add the cards to the stack.
-	 * @param ch
-	 * @param reason
+	 * Hanteert een player kick.
+	 * Stuurt een bericht naar alle clients met het aantal Tiles die terug naar de tilebag
+	 * vervoerd worden.
+	 * @param ch is player die gekickt wordt.
+	 * @param reason is de reden waarvoor een player gekickt wordt.
 	 */
 	public void kick(ClientHandler ch, String reason) {
 		List<Tile> hand = ch.getPlayer().getHand();
@@ -363,12 +358,11 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Checks if a player has all the Tiles he tries to play.
+	 * Kijkt of player alle Tiles heeft die hij probeert te ruilen.
 	 * 
-	 * @param ch
-	 * @param moves
-	 *            List <Move>
-	 * @return
+	 * @param ch is de player
+	 * @param moves is de List die wordt gecheckt.
+	 * @return true als de player alle tiles heeft in moves, false als de player die niet heeft.
 	 */
 	public Boolean hasAllTilesSwap(ClientHandler ch, List<Move> moves) {
 		boolean result = true;
@@ -395,12 +389,11 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Checks if a player has a move left. It goes through all the possibilities
-	 * and checks if there is atleast one.
+	 * Kijkt of een player nog een geldige zet kan doen, als die wordt gevonden
+	 * retourneert de methode true.
 	 * 
-	 * @param ch
-	 *            ClientHandler
-	 * @return
+	 * @param ch is de player
+	 * @return true als er een geldige zet is gevonden, false als die er niet is.
 	 */
 	/*
 	 * @ ensures (\forall int i, j, k; 0 <= i & i < 183 & 0 <= k & k <= 183 & 0
@@ -430,11 +423,10 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Calculates the max score for each player's first turn . returns the
-	 * number of the player that had the highest score and goes first
-	 * 
-	 * @param handlerlist
-	 * @return
+	 * Berekent de max score voor elke spelers eerste beurt. Retourneert de playernumber van de
+	 * player met de hoogste score die als eerst mag beginnen.
+	 * @param handlerlist zijn de players
+	 * @return playerNo van de player met de hoogste score.
 	 */
 	public int determineFirstTurn(List<ClientHandler> handlerlist) {
 		Map<Integer, Integer> playerscores = new HashMap<Integer, Integer>();
@@ -502,7 +494,7 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Determines who wins the game by comparing all the scores.
+	 * Kijkt wie de winnaar is van het spel door alle scores te vergelijken.
 	 */
 	public void determineWinner() {
 		int highscore = 0;
@@ -518,7 +510,7 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Creates a new game environment.
+	 * Maak een nieuwe Game.
 	 */
 	public void createGame() {
 		board = new Board();
@@ -526,7 +518,7 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * Closes all the connections and finally the server.
+	 * Sluit alle connecties met de clients en sluit de server.
 	 */
 	public void shutDown() {
 		for (int i = 0; i < threads.size(); i++) {
@@ -535,6 +527,11 @@ public class Server extends Thread {
 		this.interrupt();
 	}
 
+	/**
+	 * Gets de ClientHandler van een player.
+	 * @param player is
+	 * @return de ClientHandler van een player
+	 */
 	public ClientHandler getClientHandler(RealPlayer player) {
 		ClientHandler found = null;
 		for (ClientHandler ch : threads) {

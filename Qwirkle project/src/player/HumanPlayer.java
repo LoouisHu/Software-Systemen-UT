@@ -20,6 +20,11 @@ public class HumanPlayer implements RealPlayer {
 	private int playernumber;
 	private ArrayList<Tile> hand;
 
+	/**
+	 * Bouwt een HumanPlayer met een naam en een client.
+	 * @param name is de naam van de HumanPlayer.
+	 * @param client is de client voor de HumanPlayer.
+	 */
 	public HumanPlayer(String name, Client client) {
 		this.hand = new ArrayList<Tile>();
 		this.score = 0;
@@ -27,15 +32,26 @@ public class HumanPlayer implements RealPlayer {
 		this.client = client;
 		this.tui = client.getView();
 	}
-	
+	/**
+	 * Geeft een HumanPlayer een nieuwe hand met Tiles.
+	 * @param newHand
+	 */
 	public void setHand(List<Tile> newHand) {
 		hand.addAll(newHand);
 	}
-	
+	/**
+	 * Bepaalt zetten die een HumanPlayer op een board wil doen.
+	 * @param b is een board
+	 * @param hand zijn de Tiles van een HumanPlayer in zijn hand
+	 * @return de zetten die een HumanPlayer wil zetten in String.
+	 */
 	public String determineMove(Board b, List<Tile> hand) {
 		return tui.waitForMove();
 	}
-	
+	/**
+	 * Haalt een tile uit de hand van een HumanPlayer als hij een zet maakt.
+	 * @param move is de zet die hij wil maken
+	 */
 	public void removeFromHandByMove(Move move) {
 		Tile removedTile = null;
 		for (Tile t: hand) {
@@ -46,7 +62,10 @@ public class HumanPlayer implements RealPlayer {
 		}
 		hand.remove(removedTile);
 	}
-	
+	/**
+	 * Haalt tiles uit de hand van een HumanPlayer als hij ruilt.
+	 * @param moves
+	 */
 	public void removeFromHandBySwap(List<Move> moves) {
 		for (Move m: moves) {
 			Color c = m.getTile().getColor();
