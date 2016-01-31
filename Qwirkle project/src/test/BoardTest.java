@@ -52,7 +52,19 @@ public class BoardTest {
 
 	@Test
 	public void longerThanSix() {
-		
+		b.boardAddMove(new Move(new Tile(Color.BLUE, Shape.CIRCLE), new Coord(92, 92))); 
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 93))); 
+		b.boardAddMove(new Move(new Tile(Color.ORANGE, Shape.CIRCLE), new Coord(92, 94))); 
+		b.boardAddMove(new Move(new Tile(Color.PURPLE, Shape.CIRCLE), new Coord(92, 95))); 
+		b.boardAddMove(new Move(new Tile(Color.RED, Shape.CIRCLE), new Coord(92, 96))); 
+		b.boardAddMove(new Move(new Tile(Color.YELLOW, Shape.CIRCLE), new Coord(92, 97))); 
+		b.boardAddMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 98))); 
+		System.out.println(b.getField(92, 92));
+		Tile t1 = new Tile(Color.BLUE, Shape.CIRCLE);
+		System.out.println(t1);
+		assertEquals(b.getField(92, 92).getColor(), t1.getColor());
+		assertEquals(b.getField(92, 92).getShape(), t1.getShape());
+		assertFalse(b.validMove(new Move(new Tile(Color.GREEN, Shape.CIRCLE), new Coord(92, 98))));
 	}
 
 	@Test

@@ -40,7 +40,7 @@ public class HumanPlayer implements RealPlayer {
 		Tile removedTile = null;
 		for (Tile t: hand) {
 			if (t.getColor() == move.getTile().getColor() &&
-					t.getShape() == move.getTile().getShape()) {
+				   	  t.getShape() == move.getTile().getShape()) {
 				removedTile = t;
 			}
 		}
